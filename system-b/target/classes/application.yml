@@ -1,0 +1,31 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /system-b
+
+spring:
+  application:
+    name: system-b
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: system-b-client
+            client-secret: 5e0aTfw1nVnlnNd3PrW5UVs030tIDiVE
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8082/system-b/login/oauth2/code/keycloak
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/demo
+            authorization-uri: http://localhost:8080/realms/demo/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/demo/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/demo/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

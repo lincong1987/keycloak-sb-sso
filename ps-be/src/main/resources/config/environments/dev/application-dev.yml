@@ -4,7 +4,7 @@
 #############  port: Tomcat服务端口
 ############################################################
 server:
-  port: 8088
+  port: 8080
   tomcat:
     uri-encoding: UTF-8
     max-threads: 1000

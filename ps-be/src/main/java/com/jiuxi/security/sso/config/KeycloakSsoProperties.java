@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
  * @author SSO Integration
  * @since 2.2.2
  */
-@Component
 @ConfigurationProperties(prefix = "keycloak.sso")
 public class KeycloakSsoProperties {
     

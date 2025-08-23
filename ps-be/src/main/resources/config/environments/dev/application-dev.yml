@@ -213,7 +213,7 @@ localtion:
 keycloak:
   sso:
     # 启用 Keycloak SSO
-    enabled: true
+    enabled: false
     # Keycloak 服务器地址
     server-url: http://localhost:8180
     # Realm 名称

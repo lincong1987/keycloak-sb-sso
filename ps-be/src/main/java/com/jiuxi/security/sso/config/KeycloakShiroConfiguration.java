@@ -31,7 +31,7 @@ import java.util.Map;
  * @author SSO Integration
  * @since 2.2.2
  */
-// @Configuration
+@Configuration
 @ConditionalOnProperty(name = "keycloak.sso.enabled", havingValue = "true", matchIfMissing = false)
 public class KeycloakShiroConfiguration {
     

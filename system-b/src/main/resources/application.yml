@@ -8,11 +8,14 @@ spring:
     name: system-b
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/demo
       client:
         registration:
           keycloak:
             client-id: system-b-client
-            client-secret: 5e0aTfw1nVnlnNd3PrW5UVs030tIDiVE
+            client-secret: M62bWF7udAQE7TJ3NRF4fwJgNBlHtpBI
             scope: openid,profile,email
             authorization-grant-type: authorization_code
             redirect-uri: http://localhost:8082/system-b/login/oauth2/code/keycloak

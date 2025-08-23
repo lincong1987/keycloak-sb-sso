@@ -11,7 +11,15 @@ Write-Host ""
 if (-not (Test-Path "package.json")) {
     Write-Host "错误: 未找到 package.json 文件，请在 ps-fe 目录下运行此脚本" -ForegroundColor Red
     exit 1
+
+    }
 }
+
+
+
+
+
+
 
 # 查找 Node.js 应用进程
 Write-Host "正在查找 Node.js 应用进程..." -ForegroundColor Cyan
@@ -23,6 +31,9 @@ $nodeProcesses = Get-Process -Name "node" -ErrorAction SilentlyContinue | Where-
     $_.CommandLine -like "*ps-fe*" -or
     $_.Path -like "*ps-fe*"
 }
+
+
+
 
 if ($nodeProcesses) {
     Write-Host "找到 $($nodeProcesses.Count) 个相关 Node.js 进程" -ForegroundColor Green
@@ -39,17 +50,20 @@ if ($nodeProcesses) {
             if (-not $process.HasExited) {
                 Write-Host "优雅停止失败，强制终止进程..." -ForegroundColor Orange
                 Stop-Process -Id $process.Id -Force
-            }
             
+
             Write-Host "进程 $($process.Id) 已停止" -ForegroundColor Green
         }
+
         catch {
             Write-Host "停止进程 $($process.Id) 时出错: $($_.Exception.Message)" -ForegroundColor Red
         }
     }
+} else {
+
 }
-else {
     Write-Host "未找到运行中的 Node.js 应用进程" -ForegroundColor Yellow
+}
 }
 
 # 方法2: 通过端口查找进程

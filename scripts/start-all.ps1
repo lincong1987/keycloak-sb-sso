@@ -1,7 +1,5 @@
-#!/usr/bin/env pwsh
 # PS 全栈服务启动脚本
-# 作者: AI Assistant
-# 描述: 同时启动 PS-BE 后端服务和 PS-FE 前端服务
+# 描述: 按顺序启动 Redis、后端服务和前端服务
 
 Write-Host "=== PS 全栈服务启动脚本 ===" -ForegroundColor Green
 Write-Host "正在启动 PS-BMP 全栈应用..." -ForegroundColor Yellow
@@ -48,7 +46,7 @@ Write-Host ""
 Write-Host "请选择启动模式:" -ForegroundColor Cyan
 Write-Host "1. 仅启动后端服务 (ps-be)" -ForegroundColor White
 Write-Host "2. 仅启动前端服务 (ps-fe)" -ForegroundColor White
-Write-Host "3. 同时启动前后端服务 (推荐)" -ForegroundColor White
+Write-Host "3. 启动全栈服务 (Redis + 后端 + 前端，推荐)" -ForegroundColor White
 Write-Host "4. 退出" -ForegroundColor White
 Write-Host ""
 
@@ -63,11 +61,39 @@ elseif ($choice -eq "2") {
     & $frontendStartScript
 }
 elseif ($choice -eq "3") {
-    Write-Host "正在同时启动前后端服务..." -ForegroundColor Yellow
+    Write-Host "正在启动全栈服务 (Redis + 后端 + 前端)..." -ForegroundColor Yellow
+    Write-Host ""
+    
+    # 启动 Redis Docker 容器
+    Write-Host "[1/3] 启动 Redis 服务..." -ForegroundColor Cyan
+    try {
+        $redisContainer = docker ps --filter "name=ps-redis" --format "{{.Names}}" 2>$null
+        if ($redisContainer -eq "ps-redis") {
+            Write-Host "Redis 容器已在运行" -ForegroundColor Green
+     else {
+            Write-Host "启动 Redis 容器..." -ForegroundColor Yellow
+            docker-compose -f docker\docker-compose.pyml up redis -d 2>$null
+            Start-Sleep -Seconds 3
+            
+            # 验证 Redis 启动
+            $redisCheck = docker exec ps-redis redis-cli ping 2>$null
+            if ($redisCheck -eq "PONG") {
+                Write-Host "Redis 服务启动成功" -ForegroundColor Green
+            } else {
+                Write-Host "Redis 服务启动失败" -ForegroundColor Red
+                exit 1
+            }
+        }
+    }
+    catch {
+        Write-Host "启动 Redis 时出错" -ForegroundColor Red
+        exit 1
+    }
+    
     Write-Host ""
     
     # 启动后端服务（后台运行）
-    Write-Host "[1/2] 启动后端服务..." -ForegroundColor Cyan
+    Write-Host "[2/3] 启动后端服务..." -ForegroundColor Cyan
     $backendJob = Start-Job -ScriptBlock {
         Set-Location $using:beDir
         $env:DB_USERNAME = "root"
@@ -82,7 +108,7 @@ elseif ($choice -eq "3") {
     # 检查后端服务状态
     $backendStatus = Get-Job -Id $backendJob.Id
     if ($backendStatus.State -eq "Running") {
-        Write-Host "后端服务启动成功 (Job ID: $($backendJob.Id))" -ForegroundColor Green
+        Write-Host "后端服务启动成功" -ForegroundColor Green
     } else {
         Write-Host "后端服务启动失败" -ForegroundColor Red
         Receive-Job -Id $backendJob.Id
@@ -91,11 +117,11 @@ elseif ($choice -eq "3") {
     }
     
     Write-Host ""
-    Write-Host "[2/2] 启动前端服务..." -ForegroundColor Cyan
+    Write-Host "[3/3] 启动前端服务..." -ForegroundColor Cyan
     
     # 启动前端服务
     try {
-        & $using:frontendStartScript
+        & $frontendStartScript
     } finally {
         # 清理后端服务
         Write-Host ""

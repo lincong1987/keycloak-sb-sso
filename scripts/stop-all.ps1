@@ -25,7 +25,7 @@ Write-Host ""
 Write-Host "Please select an option:" -ForegroundColor Cyan
 Write-Host "1. Stop Backend Only (PS-BE)"
 Write-Host "2. Stop Frontend Only (PS-FE)"
-Write-Host "3. Stop Both Services (PS-BE + PS-FE)"
+Write-Host "3. Stop Both Services and Redis (PS-BE + PS-FE + Redis)"
 Write-Host "4. Force Stop All Java and Node Processes"
 Write-Host "5. Exit"
 Write-Host ""
@@ -54,7 +54,7 @@ switch ($choice) {
         }
     }
     "3" {
-        Write-Host "Stopping Both Services..." -ForegroundColor Yellow
+        Write-Host "Stopping Both Services and Redis..." -ForegroundColor Yellow
         
         # Stop Frontend first
         Write-Host "Stopping Frontend..." -ForegroundColor Cyan
@@ -76,7 +76,24 @@ switch ($choice) {
             Write-Host "Java processes stopped" -ForegroundColor Green
         }
         
-        Write-Host "All services stopped successfully!" -ForegroundColor Green
+        Start-Sleep -Seconds 2
+        
+        # Stop Redis Docker container
+        Write-Host "Stopping Redis Docker container..." -ForegroundColor Cyan
+        try {
+            $redisContainer = docker ps --filter "name=ps-redis" --format "{{.Names}}" 2>$null
+            if ($redisContainer -eq "ps-redis") {
+                docker stop ps-redis 2>$null
+                Write-Host "Redis container stopped" -ForegroundColor Green
+            } else {
+                Write-Host "Redis container not running" -ForegroundColor Gray
+            }
+        }
+        catch {
+            Write-Host "Error stopping Redis container: $($_.Exception.Message)" -ForegroundColor Red
+        }
+        
+        Write-Host "All services and Redis stopped successfully!" -ForegroundColor Green
     }
     "4" {
         Write-Host "Force stopping all Java and Node processes..." -ForegroundColor Red

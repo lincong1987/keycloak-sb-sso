@@ -67,9 +67,9 @@ topinfo:
       # mysql数据库接配置
       url: jdbc:mariadb://alilaoba.cn:13307/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       # 用户名
-      username: root
+      username: ${DB_USERNAME:root}
       # 密码
-      password: W4HV=QxtHz
+      password: ${DB_PASSWORD:your-password}
       ## 最新连接数（可选）， 默认：5
       minIdle: 5
       ## 最大连接数（可选）， 默认：500

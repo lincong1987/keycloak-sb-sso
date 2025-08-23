@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  nginx-proxy:
+    image: nginx:1.25-alpine
+    container_name: ps-nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - ps-test_sso-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  nginx_logs:
+    driver: local
+
+networks:
+  ps-test_sso-network:
+    external: true

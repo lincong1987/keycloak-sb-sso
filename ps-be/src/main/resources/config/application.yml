@@ -1,0 +1,74 @@
+############################################################
+#############  全局配置
+############################################################
+
+############################################################
+#############  配置文件切换：
+#############  开发： dev
+#############  测试： test
+#############  生产： prod
+############################################################
+spring:
+  config:
+    import: "classpath:config/environments/dev/application-dev.yml"
+  profiles:
+    active: dev
+  application:
+    name: topinfo-admin
+    id: topinfo-admin-01
+  main:
+    allow-circular-references: true
+  servlet:
+    multipart:
+      # 单个上传数据大小
+      max-file-size: 50MB
+      # 总上传数据大小
+      max-request-size: 100MB
+  resources:
+    # 多个逗号隔开 classpath:/static/,classpath:/views/
+    static-locations: classpath:/static/,classpath:/views/
+  # 将/static/**访问映射到 static-locations 目录中
+  mvc:
+     static-path-pattern: /static/**
+  quartz:
+    ## 必须配置，原因是要开启数据库存储方式
+    job-store-type: jdbc
+    ##
+    ## 下面的各项参数均有默认值
+  datasource:
+     initialization-mode: never
+     # 初始化表结构
+     schema:
+       - classpath*:META-INF/sql/all/mysql-schema-all.sql
+     # 初始化表数据
+     data:
+       - classpath*:META-INF/sql/all/mysql-data-all.sql
+     # 默认数据库驱动配置
+     driver-class-name: org.mariadb.jdbc.Driver
+
+
+##########################################################################
+#############  mybatis-plus 配置
+##########################################################################
+mybatis-plus:
+  # XML扫描，包含本项目和jar包中的mapper文件
+  mapper-locations:
+      - classpath*:mapper/**/*.xml
+      - classpath*:mapper/schedule/*.xml
+  # 实体扫描，多个package用逗号或者分号隔离
+  typeAliasesPackage: com.jiuxi.admin.core.bean.entity
+  global-config:
+    # 不显示 banner
+    banner: false
+
+
+############################################################
+############# logging 日志配置
+############################################################  
+logging:
+  # 日志文件,绝对路径或相对路径 D:/upload, 最后不需要添加“/”
+  # dir:  D:/logs
+  # 日志输出级别: 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG
+  level:
+    # 配置spring web日志级别
+    root: INFO

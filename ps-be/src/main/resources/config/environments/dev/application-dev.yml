@@ -107,6 +107,7 @@ topinfo:
         - /sys/**
         - /sys/person/getUserInfo
         # 图形验证
+        - /**
         - /app/sys/captcha/verification-image
         - /platform/captcha/get-slider-captcha
         # 附件下载

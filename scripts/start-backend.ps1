@@ -15,9 +15,22 @@ Write-Host "  用户名: $env:DB_USERNAME" -ForegroundColor White
 Write-Host "  密码: [已设置]" -ForegroundColor White
 Write-Host "" 
 
+# 切换到 ps-be 目录
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+$backendDir = Join-Path $projectRoot "ps-be"
+
+if (-not (Test-Path $backendDir)) {
+    Write-Host "错误: 未找到 ps-be 目录" -ForegroundColor Red
+    exit 1
+}
+
+Set-Location $backendDir
+Write-Host "工作目录: $backendDir" -ForegroundColor Cyan
+
 # 检查是否在正确的目录
 if (-not (Test-Path "pom.xml")) {
-    Write-Host "错误: 未找到 pom.xml 文件，请确保在 ps-be 目录下运行此脚本" -ForegroundColor Red
+    Write-Host "错误: 未找到 pom.xml 文件" -ForegroundColor Red
     exit 1
 }
 

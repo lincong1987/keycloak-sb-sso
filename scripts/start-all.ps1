@@ -7,25 +7,37 @@ Write-Host "=== PS 全栈服务启动脚本 ===" -ForegroundColor Green
 Write-Host "正在启动 PS-BMP 全栈应用..." -ForegroundColor Yellow
 Write-Host ""
 
+# 获取脚本目录和项目根目录
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+
 # 检查项目目录结构
-if (-not (Test-Path "ps-be\pom.xml")) {
-    Write-Host "错误: 未找到 ps-be/pom.xml 文件，请确保在项目根目录下运行此脚本" -ForegroundColor Red
+$beDir = Join-Path $projectRoot "ps-be"
+$feDir = Join-Path $projectRoot "ps-fe"
+$bePom = Join-Path $beDir "pom.xml"
+$fePackage = Join-Path $feDir "package.json"
+
+if (-not (Test-Path $bePom)) {
+    Write-Host "错误: 未找到 ps-be/pom.xml 文件" -ForegroundColor Red
     exit 1
 }
 
-if (-not (Test-Path "ps-fe\package.json")) {
-    Write-Host "错误: 未找到 ps-fe/package.json 文件，请确保在项目根目录下运行此脚本" -ForegroundColor Red
+if (-not (Test-Path $fePackage)) {
+    Write-Host "错误: 未找到 ps-fe/package.json 文件" -ForegroundColor Red
     exit 1
 }
 
 # 检查启动脚本是否存在
-if (-not (Test-Path "ps-be\start-backend.ps1")) {
-    Write-Host "错误: 未找到 ps-be/start-backend.ps1 启动脚本" -ForegroundColor Red
+$backendStartScript = Join-Path $scriptDir "start-backend.ps1"
+$frontendStartScript = Join-Path $scriptDir "start-frontend.ps1"
+
+if (-not (Test-Path $backendStartScript)) {
+    Write-Host "错误: 未找到 start-backend.ps1 启动脚本" -ForegroundColor Red
     exit 1
 }
 
-if (-not (Test-Path "ps-fe\start-frontend.ps1")) {
-    Write-Host "错误: 未找到 ps-fe/start-frontend.ps1 启动脚本" -ForegroundColor Red
+if (-not (Test-Path $frontendStartScript)) {
+    Write-Host "错误: 未找到 start-frontend.ps1 启动脚本" -ForegroundColor Red
     exit 1
 }
 
@@ -44,13 +56,11 @@ $choice = Read-Host "请输入选择 (1-4)"
 
 if ($choice -eq "1") {
     Write-Host "正在启动后端服务..." -ForegroundColor Yellow
-    Set-Location "ps-be"
-    & ".\start-backend.ps1"
+    & $backendStartScript
 }
 elseif ($choice -eq "2") {
     Write-Host "正在启动前端服务..." -ForegroundColor Yellow
-    Set-Location "ps-fe"
-    & ".\start-frontend.ps1"
+    & $frontendStartScript
 }
 elseif ($choice -eq "3") {
     Write-Host "正在同时启动前后端服务..." -ForegroundColor Yellow
@@ -59,8 +69,7 @@ elseif ($choice -eq "3") {
     # 启动后端服务（后台运行）
     Write-Host "[1/2] 启动后端服务..." -ForegroundColor Cyan
     $backendJob = Start-Job -ScriptBlock {
-        Set-Location $using:PWD
-        Set-Location "ps-be"
+        Set-Location $using:beDir
         $env:DB_USERNAME = "root"
         $env:DB_PASSWORD = "123456"
         mvn spring-boot:run
@@ -86,8 +95,7 @@ elseif ($choice -eq "3") {
     
     # 启动前端服务
     try {
-        Set-Location "ps-fe"
-        & ".\start-frontend.ps1"
+        & $using:frontendStartScript
     } finally {
         # 清理后端服务
         Write-Host ""

@@ -11,9 +11,15 @@ Write-Host ""
 $ErrorActionPreference = "Stop"
 
 try {
+    # 获取脚本目录和项目根目录
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $projectRoot = Split-Path -Parent $scriptDir
+    $beDir = Join-Path $projectRoot "ps-be"
+    $feDir = Join-Path $projectRoot "ps-fe"
+    
     # 检查项目结构
-    if (-not (Test-Path "ps-be\pom.xml") -or -not (Test-Path "ps-fe\package.json")) {
-        throw "项目结构不完整，请确保在项目根目录下运行"
+    if (-not (Test-Path (Join-Path $beDir "pom.xml")) -or -not (Test-Path (Join-Path $feDir "package.json"))) {
+        throw "项目结构不完整"
     }
     
     Write-Host "✓ 项目结构检查通过" -ForegroundColor Green
@@ -21,8 +27,7 @@ try {
     # 启动后端服务（后台）
     Write-Host "🚀 启动后端服务..." -ForegroundColor Cyan
     $backendJob = Start-Job -ScriptBlock {
-        Set-Location $using:PWD
-        Set-Location "ps-be"
+        Set-Location $using:beDir
         $env:DB_USERNAME = "root"
         $env:DB_PASSWORD = "123456"
         mvn spring-boot:run -q
@@ -41,7 +46,7 @@ try {
     
     # 启动前端服务
     Write-Host "🎨 启动前端服务..." -ForegroundColor Cyan
-    Set-Location "ps-fe"
+    Set-Location $feDir
     
     # 检查依赖
     if (-not (Test-Path "node_modules")) {

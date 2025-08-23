@@ -70,9 +70,9 @@ elseif ($choice -eq "3") {
         $redisContainer = docker ps --filter "name=ps-redis" --format "{{.Names}}" 2>$null
         if ($redisContainer -eq "ps-redis") {
             Write-Host "Redis 容器已在运行" -ForegroundColor Green
-     else {
+        } else {
             Write-Host "启动 Redis 容器..." -ForegroundColor Yellow
-            docker-compose -f docker\docker-compose.pyml up redis -d 2>$null
+            docker-compose -f docker\docker-compose.yml up redis -d 2>$null
             Start-Sleep -Seconds 3
             
             # 验证 Redis 启动

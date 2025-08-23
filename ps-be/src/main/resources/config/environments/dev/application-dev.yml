@@ -12,7 +12,7 @@ server:
     # 设定Httppost数据大小
     max-http-form-post-size: 10MB
   servlet:
-    context-path: /chemicalpark-manage-app
+    context-path: /ps-be
   max-http-header-size: 10MB
 
 # Spring Boot标准数据源配置
@@ -215,7 +215,7 @@ keycloak:
     # 启用 Keycloak SSO
     enabled: true
     # Keycloak 服务器地址
-    server-url: http://localhost:8080
+    server-url: http://localhost:8180
     # Realm 名称
     realm: ps-realm
     # 客户端 ID

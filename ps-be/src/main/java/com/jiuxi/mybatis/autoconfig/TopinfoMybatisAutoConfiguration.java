@@ -398,7 +398,7 @@ public class TopinfoMybatisAutoConfiguration {
      * @return com.jiuxi.security.core.service.TopinfoSecurityLogoutService
      * @date 2024/10/8 14:00
      */
-    @Bean
+    // @Bean
     public LocalLicenceCacheService localLicenceCacheService() {
         return new LocalLicenceCacheServiceImpl();
     }

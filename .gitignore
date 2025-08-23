@@ -140,7 +140,6 @@ coverage/
 
 # Test results
 test-results/
-*.xml
 
 # Backup files
 *.bak

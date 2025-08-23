@@ -27,13 +27,18 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/sso")
-@ConditionalOnProperty(name = "keycloak.sso.enabled", havingValue = "true", matchIfMissing = false)
+// @ConditionalOnProperty(name = "keycloak.sso.enabled", havingValue = "true", matchIfMissing = false)
 public class SsoController {
     
     private static final Logger logger = LoggerFactory.getLogger(SsoController.class);
     
     @Autowired
     private KeycloakSsoProperties properties;
+    
+    public SsoController() {
+        System.out.println("SsoController 已创建！");
+        logger.info("SsoController 已创建！");
+    }
     
     /**
      * 获取当前用户信息
@@ -109,6 +114,10 @@ public class SsoController {
      */
     @GetMapping("/login-url")
     public ResponseEntity<Map<String, Object>> getLoginUrl(HttpServletRequest request) {
+        logger.info("收到 SSO 登录 URL 请求");
+        logger.info("Keycloak SSO 配置 - enabled: {}, serverUrl: {}, realm: {}, clientId: {}", 
+                   properties.isEnabled(), properties.getServerUrl(), properties.getRealm(), properties.getClientId());
+        
         String redirectUri = request.getParameter("redirect_uri");
         if (redirectUri == null || redirectUri.trim().isEmpty()) {
             redirectUri = request.getHeader("Referer");
@@ -126,6 +135,8 @@ public class SsoController {
             redirectUri
         );
         
+        logger.info("生成的登录 URL: {}", loginUrl);
+        
         Map<String, Object> data = new HashMap<>();
         data.put("loginUrl", loginUrl);
         data.put("redirectUri", redirectUri);
@@ -134,6 +145,7 @@ public class SsoController {
         response.put("success", true);
         response.put("data", data);
         
+        logger.info("返回响应: {}", response);
         return ResponseEntity.ok(response);
     }
     

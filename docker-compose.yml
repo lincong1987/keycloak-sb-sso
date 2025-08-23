@@ -45,7 +45,7 @@ services:
     command:
       - start-dev
     ports:
-      - "8080:8080"
+      - "8180:8080"
     networks:
       - keycloak-network
     depends_on:

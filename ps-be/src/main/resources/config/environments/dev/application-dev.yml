@@ -4,7 +4,7 @@
 #############  port: Tomcat服务端口
 ############################################################
 server:
-  port: 8080
+  port: 8082
   tomcat:
     uri-encoding: UTF-8
     max-threads: 1000
@@ -17,6 +17,8 @@ server:
 
 # Spring Boot标准数据源配置
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://alilaoba.cn:13307/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
@@ -206,3 +208,41 @@ localtion:
   host: http://192.168.90.227:8091/location-service
   hisDataUrl: /api/td/getDataHis
   nowDataUrl: /api/td/getData
+
+# Keycloak SSO 配置
+keycloak:
+  sso:
+    # 启用 Keycloak SSO
+    enabled: true
+    # Keycloak 服务器地址
+    server-url: http://localhost:8080
+    # Realm 名称
+    realm: ps-realm
+    # 客户端 ID
+    client-id: ps-be
+    # 客户端密钥（如果需要）
+    client-secret: 
+    # JWT 验证配置
+    jwt:
+      # 是否验证 Token 过期时间
+      verify-expiration: true
+      # 是否验证签发者
+      verify-issuer: true
+      # 是否验证受众
+      verify-audience: false
+      # Token 缓存时间（秒）
+      cache-ttl: 300
+    # 用户信息头配置（从 Nginx 代理获取）
+    user-header:
+      # 用户 ID 头名称
+      user-id-header: X-User-Id
+      # 用户名头名称
+      username-header: X-Username
+      # 邮箱头名称
+      email-header: X-User-Email
+      # 姓名头名称
+      name-header: X-User-Name
+      # 角色头名称
+      roles-header: X-User-Roles
+      # 权限头名称
+      permissions-header: X-User-Permissions

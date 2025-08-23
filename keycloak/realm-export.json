@@ -164,10 +164,13 @@
       "secret": "ps-bmp-client-secret",
       "redirectUris": [
         "http://localhost/callback",
-        "http://localhost/*"
+        "http://localhost/*",
+        "http://localhost:8080/callback",
+        "http://localhost:8080/*"
       ],
       "webOrigins": [
-        "http://localhost"
+        "http://localhost",
+        "http://localhost:8080"
       ],
       "notBefore": 0,
       "bearerOnly": false,

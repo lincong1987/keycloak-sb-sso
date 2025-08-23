@@ -1,8 +1,8 @@
 {
-  "id": "demo",
-  "realm": "demo",
-  "displayName": "Demo Realm",
-  "displayNameHtml": "<div class=\"kc-logo-text\"><span>Demo Realm</span></div>",
+  "id": "ps-bmp",
+  "realm": "ps-bmp",
+  "displayName": "PS BMP Realm",
+  "displayNameHtml": "<div class=\"kc-logo-text\"><span>PS BMP Realm</span></div>",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -48,8 +48,8 @@
   "roles": {
     "realm": [
       {
-        "id": "default-roles-demo",
-        "name": "default-roles-demo",
+        "id": "default-roles-ps-bmp",
+        "name": "default-roles-ps-bmp",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
@@ -59,7 +59,8 @@
           }
         },
         "clientRole": false,
-        "containerId": "demo"
+        "containerId": "ps-bmp",
+        "attributes": {}
       },
       {
         "id": "uma_authorization",
@@ -67,7 +68,8 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "demo"
+        "containerId": "ps-bmp",
+        "attributes": {}
       },
       {
         "id": "offline_access",
@@ -75,18 +77,20 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "demo"
+        "containerId": "ps-bmp",
+        "attributes": {}
       }
-    ]
+    ],
+    "client": {}
   },
   "groups": [],
   "defaultRole": {
-    "id": "default-roles-demo",
-    "name": "default-roles-demo",
+    "id": "default-roles-ps-bmp",
+    "name": "default-roles-ps-bmp",
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
-    "containerId": "demo"
+    "containerId": "ps-bmp"
   },
   "requiredCredentials": ["password"],
   "otpPolicyType": "totp",
@@ -95,8 +99,7 @@
   "otpPolicyDigits": 6,
   "otpPolicyLookAheadWindow": 1,
   "otpPolicyPeriod": 30,
-  "otpPolicyCodeReusable": false,
-  "otpSupportedApplications": ["totpAppFreeOTPName", "totpAppGoogleName"],
+  "otpSupportedApplications": ["FreeOTP", "Google Authenticator"],
   "webAuthnPolicyRpEntityName": "keycloak",
   "webAuthnPolicySignatureAlgorithms": ["ES256"],
   "webAuthnPolicyRpId": "",
@@ -119,29 +122,27 @@
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "users": [
     {
-      "id": "demo-user-id",
-      "createdTimestamp": 1640995200000,
+      "id": "demouser-id",
       "username": "demouser",
       "enabled": true,
       "totp": false,
-      "emailVerified": true,
+      "emailVerified": false,
       "firstName": "Demo",
       "lastName": "User",
       "email": "demo@example.com",
       "credentials": [
         {
-          "id": "demo-password-id",
+          "id": "password-credential-id",
           "type": "password",
           "userLabel": "My password",
           "createdDate": 1640995200000,
-          "secretData": "{\"value\":\"$2a$10$1234567890123456789012345678901234567890123456789012345678\",\"salt\":\"$2a$10$1234567890123456789012\"}",
-          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}",
-          "temporary": false
+          "secretData": "{\"value\":\"$2a$10$abcdefghijklmnopqrstuvwxyz123456789\",\"salt\":\"salt123\"}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}"
         }
       ],
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-demo"],
+      "realmRoles": ["default-roles-ps-bmp"],
       "notBefore": 0,
       "groups": []
     }
@@ -149,77 +150,24 @@
   "scopeMappings": [],
   "clients": [
     {
-      "id": "system-a-client-id",
-      "clientId": "system-a-client",
-      "name": "System A Client",
-      "description": "OAuth2 client for System A",
-      "rootUrl": "http://localhost:8081",
-      "adminUrl": "http://localhost:8081/system-a",
-      "baseUrl": "/system-a",
+      "id": "ps-bmp-client-id",
+      "clientId": "ps-bmp-client",
+      "name": "PS BMP Client",
+      "description": "OAuth2 client for PS BMP System",
+      "rootUrl": "http://localhost",
+      "adminUrl": "http://localhost",
+      "baseUrl": "/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "system-a-secret-key",
+      "secret": "ps-bmp-client-secret",
       "redirectUris": [
-        "http://localhost:8081/system-a/login/oauth2/code/keycloak"
+        "http://localhost/callback",
+        "http://localhost/*"
       ],
       "webOrigins": [
-        "http://localhost:8081"
-      ],
-      "notBefore": 0,
-      "bearerOnly": false,
-      "consentRequired": false,
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": false,
-      "publicClient": false,
-      "frontchannelLogout": false,
-      "protocol": "openid-connect",
-      "attributes": {
-        "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1640995200",
-        "backchannel.logout.session.required": "true",
-        "oauth2.device.authorization.grant.enabled": "false",
-        "display.on.consent.screen": "false",
-        "backchannel.logout.revoke.offline.tokens": "false"
-      },
-      "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": true,
-      "nodeReRegistrationTimeout": -1,
-      "defaultClientScopes": [
-        "web-origins",
-        "acr",
-        "profile",
-        "roles",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access",
-        "microprofile-jwt"
-      ]
-    },
-    {
-      "id": "system-b-client-id",
-      "clientId": "system-b-client",
-      "name": "System B Client",
-      "description": "OAuth2 client for System B",
-      "rootUrl": "http://localhost:8082",
-      "adminUrl": "http://localhost:8082/system-b",
-      "baseUrl": "/system-b",
-      "surrogateAuthRequired": false,
-      "enabled": true,
-      "alwaysDisplayInConsole": false,
-      "clientAuthenticatorType": "client-secret",
-      "secret": "system-b-secret-key",
-      "redirectUris": [
-        "http://localhost:8082/system-b/login/oauth2/code/keycloak"
-      ],
-      "webOrigins": [
-        "http://localhost:8082"
+        "http://localhost"
       ],
       "notBefore": 0,
       "bearerOnly": false,

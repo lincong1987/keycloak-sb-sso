@@ -159,6 +159,19 @@ java -jar target/system-b-1.0.0.jar
    - 在任一系统中点击"退出登录"
    - 验证两个系统都已登出
 
+## API 验证与接口说明
+
+- 详细文档: 参考 `reference/API_VALIDATION_GUIDE.md`
+- 覆盖三项验证：
+  - 标准身份校验 API（第三方使用）
+  - 脱敏用户信息查询 API（安全输出）
+  - 基于 SCOPE 的权限控制与 API 审计日志
+- 核心端点（示例，System B）：
+  - 校验: `GET http://localhost:8082/system-b/api/v1/auth/verify`（需 `Authorization: Bearer <TOKEN>`）
+  - 取 Token（调试）: `GET http://localhost:8082/system-b/api/v1/auth/token`（已登录会话）
+  - 脱敏信息: `GET http://localhost:8082/system-b/api/v1/users/me`（需 `SCOPE_profile`）
+
+
 ## 功能特性
 
 ### 系统A功能

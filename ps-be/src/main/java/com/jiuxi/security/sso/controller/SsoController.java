@@ -1,12 +1,18 @@
 package com.jiuxi.security.sso.controller;
 
+import com.jiuxi.common.bean.JsonResponse;
+import com.jiuxi.security.core.entity.vo.AccountVO;
+import com.jiuxi.security.core.service.AccountService;
+import com.jiuxi.security.core.service.TopinfoSecurityCommonService;
 import com.jiuxi.security.sso.config.KeycloakSsoProperties;
 import com.jiuxi.security.sso.principal.KeycloakUserPrincipal;
+import com.jiuxi.security.sso.service.KeycloakOAuth2Service;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +33,23 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/sso")
-// @ConditionalOnProperty(name = "keycloak.sso.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "keycloak.sso.enabled", havingValue = "true", matchIfMissing = false)
 public class SsoController {
     
     private static final Logger logger = LoggerFactory.getLogger(SsoController.class);
     
     @Autowired
     private KeycloakSsoProperties properties;
+    
+    @Autowired
+    private KeycloakOAuth2Service oAuth2Service;
+    
+    @Autowired
+    @Qualifier("pwdAccountService")
+    private AccountService accountService;
+    
+    @Autowired
+    private TopinfoSecurityCommonService topinfoSecurityCommonService;
     
     public SsoController() {
         System.out.println("SsoController 已创建！");
@@ -114,6 +130,7 @@ public class SsoController {
      */
     @GetMapping("/login-url")
     public ResponseEntity<Map<String, Object>> getLoginUrl(HttpServletRequest request) {
+        System.out.println("=== getLoginUrl 方法被调用 ===");
         logger.info("收到 SSO 登录 URL 请求");
         logger.info("Keycloak SSO 配置 - enabled: {}, serverUrl: {}, realm: {}, clientId: {}", 
                    properties.isEnabled(), properties.getServerUrl(), properties.getRealm(), properties.getClientId());
@@ -197,45 +214,90 @@ public class SsoController {
      * @return 回调处理结果
      */
     @GetMapping("/callback")
-    public ResponseEntity<Map<String, Object>> handleCallback(
+    public void handleCallback(
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "error_description", required = false) String errorDescription,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
         
         logger.info("收到 OIDC 回调请求: code={}, state={}, error={}", code, state, error);
         
         // 检查是否有错误
         if (error != null) {
             logger.error("OIDC 认证失败: {} - {}", error, errorDescription);
-            Map<String, Object> errorResponse = createErrorResponse("认证失败: " + errorDescription);
-            return ResponseEntity.status(400).body(errorResponse);
+            String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode(errorDescription != null ? errorDescription : error, "UTF-8");
+            response.sendRedirect(errorUrl);
+            return;
         }
         
         // 检查授权码
         if (code == null || code.trim().isEmpty()) {
             logger.error("未收到授权码");
-            return ResponseEntity.status(400).body(createErrorResponse("未收到授权码"));
+            String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode("未收到授权码", "UTF-8");
+            response.sendRedirect(errorUrl);
+            return;
         }
         
         try {
-            // 这里应该用授权码换取访问令牌，然后创建 Shiro 会话
-            // 目前先返回成功响应，表示回调端点工作正常
-            Map<String, Object> data = new HashMap<>();
-            data.put("message", "回调处理成功");
-            data.put("code", code);
-            data.put("redirectUrl", "/"); // 重定向到主页
+            // 1. 使用授权码向 Keycloak 换取访问令牌
+            String redirectUri = request.getRequestURL().toString();
+            KeycloakOAuth2Service.TokenResponse tokenResponse = oAuth2Service.exchangeCodeForToken(code, redirectUri);
             
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("success", true);
-            responseData.put("data", data);
+            // 2. 使用访问令牌获取用户信息
+            KeycloakUserPrincipal userPrincipal = oAuth2Service.getUserInfoFromToken(tokenResponse.getAccessToken());
+            String keycloakUsername = userPrincipal.getUsername();
             
-            return ResponseEntity.ok(responseData);
+            logger.info("从Keycloak获取到用户信息: username={}, email={}", keycloakUsername, userPrincipal.getEmail());
+            
+            // 3. 在ps-be系统中校验用户名是否存在
+            AccountVO accountVO = null;
+            try {
+                accountVO = accountService.queryAccountByUsername(keycloakUsername);
+                if (accountVO == null) {
+                    logger.warn("用户名 {} 在ps-be系统中不存在", keycloakUsername);
+                    String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode("用户名在系统中不存在: " + keycloakUsername, "UTF-8");
+                    response.sendRedirect(errorUrl);
+                    return;
+                }
+                logger.info("在ps-be系统中找到用户: personId={}, userName={}", accountVO.getPersonId(), accountVO.getUserName());
+            } catch (Exception e) {
+                logger.error("查询用户信息时发生异常: {}", e.getMessage(), e);
+                String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode("查询用户信息失败", "UTF-8");
+                response.sendRedirect(errorUrl);
+                return;
+            }
+            
+            // 4. 生成ps-be系统的token
+            try {
+                String token = topinfoSecurityCommonService.createToken(accountVO);
+                accountVO.setToken(token);
+                
+                logger.info("成功为用户 {} 生成token", keycloakUsername);
+                
+                // 登录成功，重定向到成功页面
+                String successUrl = properties.getRedirect().getSuccessUrl();
+                // 可以在URL中添加token参数，供前端使用
+                if (successUrl.contains("?")) {
+                    successUrl += "&token=" + java.net.URLEncoder.encode(token, "UTF-8");
+                } else {
+                    successUrl += "?token=" + java.net.URLEncoder.encode(token, "UTF-8");
+                }
+                response.sendRedirect(successUrl);
+                return;
+                
+            } catch (Exception e) {
+                logger.error("生成token时发生异常: {}", e.getMessage(), e);
+                String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode("生成token失败", "UTF-8");
+                response.sendRedirect(errorUrl);
+                return;
+            }
             
         } catch (Exception e) {
             logger.error("处理回调失败", e);
-            return ResponseEntity.status(500).body(createErrorResponse("处理回调失败: " + e.getMessage()));
+            String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + java.net.URLEncoder.encode("处理回调失败: " + e.getMessage(), "UTF-8");
+            response.sendRedirect(errorUrl);
+            return;
         }
     }
     

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # PS-FE 前端服务启动脚本
 # 作者: AI Assistant
 # 描述: 启动 PS-BMP 前端开发服务器

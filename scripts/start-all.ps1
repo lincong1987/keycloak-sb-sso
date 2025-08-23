@@ -1,5 +1,10 @@
-# PS 全栈服务启动脚本
+﻿# PS 全栈服务启动脚本
 # 描述: 按顺序启动 Redis、后端服务和前端服务
+
+# 检查是否有命令行参数
+param(
+    [string]$Choice
+)
 
 Write-Host "=== PS 全栈服务启动脚本 ===" -ForegroundColor Green
 Write-Host "正在启动 PS-BMP 全栈应用..." -ForegroundColor Yellow
@@ -42,15 +47,20 @@ if (-not (Test-Path $frontendStartScript)) {
 Write-Host "项目结构检查通过" -ForegroundColor Green
 Write-Host ""
 
-# 提示用户选择启动模式
-Write-Host "请选择启动模式:" -ForegroundColor Cyan
-Write-Host "1. 仅启动后端服务 (ps-be)" -ForegroundColor White
-Write-Host "2. 仅启动前端服务 (ps-fe)" -ForegroundColor White
-Write-Host "3. 启动全栈服务 (Redis + 后端 + 前端，推荐)" -ForegroundColor White
-Write-Host "4. 退出" -ForegroundColor White
-Write-Host ""
-
-$choice = Read-Host "请输入选择 (1-4)"
+# 如果没有提供命令行参数，则提示用户选择启动模式
+if (-not $Choice) {
+    Write-Host "请选择启动模式:" -ForegroundColor Cyan
+    Write-Host "1. 仅启动后端服务 (ps-be)" -ForegroundColor White
+    Write-Host "2. 仅启动前端服务 (ps-fe)" -ForegroundColor White
+    Write-Host "3. 启动全栈服务 (Redis + 后端 + 前端，推荐)" -ForegroundColor White
+    Write-Host "4. 退出" -ForegroundColor White
+    Write-Host ""
+    
+    $choice = Read-Host "请输入选择 (1-4)"
+} else {
+    $choice = $Choice
+    Write-Host "使用命令行参数: $choice" -ForegroundColor Green
+}
 
 if ($choice -eq "1") {
     Write-Host "正在启动后端服务..." -ForegroundColor Yellow
@@ -70,9 +80,9 @@ elseif ($choice -eq "3") {
         $redisContainer = docker ps --filter "name=ps-redis" --format "{{.Names}}" 2>$null
         if ($redisContainer -eq "ps-redis") {
             Write-Host "Redis 容器已在运行" -ForegroundColor Green
-     else {
+        } else {
             Write-Host "启动 Redis 容器..." -ForegroundColor Yellow
-            docker-compose -f docker\docker-compose.pyml up redis -d 2>$null
+            docker-compose -f "$projectRoot\docker-compose.yml" up redis -d 2>$null
             Start-Sleep -Seconds 3
             
             # 验证 Redis 启动

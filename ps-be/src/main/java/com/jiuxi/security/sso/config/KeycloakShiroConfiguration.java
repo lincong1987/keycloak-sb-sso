@@ -164,10 +164,10 @@ public class KeycloakShiroConfiguration {
         filterChainDefinitionMap.put("/api/sso/auth-status", "anon");
         
         // API 接口需要 JWT 认证
-        filterChainDefinitionMap.put("/api/**", "keycloakJwt");
+        //filterChainDefinitionMap.put("/api/**", "keycloakJwt");
         
         // 其他所有请求都需要认证
-        filterChainDefinitionMap.put("/**", "keycloakJwt");
+        //filterChainDefinitionMap.put("/**", "keycloakJwt");
         
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         

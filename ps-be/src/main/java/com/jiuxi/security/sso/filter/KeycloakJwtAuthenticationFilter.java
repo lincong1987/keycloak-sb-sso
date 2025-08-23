@@ -203,11 +203,19 @@ public class KeycloakJwtAuthenticationFilter extends AuthenticatingFilter {
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         
+        System.out.println("=== KeycloakJwtAuthenticationFilter.preHandle 被调用 ===");
+        System.out.println("请求路径: " + httpRequest.getRequestURI());
+        System.out.println("请求方法: " + httpRequest.getMethod());
+        System.out.println("Authorization头: " + httpRequest.getHeader("Authorization"));
+        
         // 对于 OPTIONS 请求，直接放行
         if ("OPTIONS".equals(httpRequest.getMethod())) {
+            System.out.println("OPTIONS请求，直接放行");
             return true;
         }
         
-        return super.preHandle(request, response);
+        boolean result = super.preHandle(request, response);
+        System.out.println("super.preHandle返回结果: " + result);
+        return result;
     }
 }

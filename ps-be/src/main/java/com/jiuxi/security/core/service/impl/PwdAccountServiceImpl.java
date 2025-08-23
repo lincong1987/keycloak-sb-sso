@@ -73,6 +73,77 @@ public class PwdAccountServiceImpl implements AccountService {
      */
     private static final String accountExinfoSql = "select account_id, err_count, last_err_time, last_login_time from tp_account_exinfo where account_id = ?";
 
+    /**
+     /**
+     * 根据用户名查询账号信息
+     * <p>
+     * 该方法仅根据用户名查询账号基本信息，不进行密码验证、账号锁定检查等登录相关的复杂逻辑。
+     * 适用于SSO回调等场景，只需要获取用户基本信息的情况。
+     * </p>
+     *
+     * @param userName 用户名，不能为空
+     * @return AccountVO 账号信息对象，如果用户不存在则返回null
+     * @throws TopinfoRuntimeException 当存在多个相同用户名的账号或查询用户信息失败时抛出
+     * @throws RuntimeException 当jdbcTemplate为null时抛出
+     * @author 系统生成
+     * @since 1.0
+     */
+    public AccountVO queryAccountByUsername(String userName) {
+        // 记录方法调用开始
+        LOGGER.info("=== queryAccountByUsername 方法开始执行 ===");
+        LOGGER.info("输入参数 - userName: {}", userName);
+        
+        // 检查jdbcTemplate是否为空
+        if (jdbcTemplate == null) {
+            LOGGER.error("jdbcTemplate为null，无法执行数据库查询");
+            throw new RuntimeException("在执行认证时，jdbcTemplate为null，请先在项目中引入了连接池的配置...");
+        }
+        LOGGER.debug("jdbcTemplate检查通过，开始执行数据库查询");
+
+        // 记录执行的SQL语句和参数
+        LOGGER.debug("执行SQL查询 - SQL: {}", loginSql);
+        LOGGER.debug("查询参数: [{}]", userName);
+        
+        // BeanPropertyRowMapper 字段转换时，注意数据库字段与实体属性的对应
+        List<AccountVO> list = jdbcTemplate.query(loginSql, new Object[]{userName}, new BeanPropertyRowMapper<>(AccountVO.class));
+        
+        // 记录查询结果
+        LOGGER.info("数据库查询完成，返回结果数量: {}", list != null ? list.size() : 0);
+        
+        // 检查查询结果是否为空
+        if (list == null || list.isEmpty()) {
+            LOGGER.error("查询失败，用户名不存在，当前查询用户名:{}", userName);
+            LOGGER.info("=== queryAccountByUsername 方法执行结束，返回null ===");
+            return null;
+        }
+        
+        // 检查是否存在多个相同用户名的账号
+        if (list.size() > 1) {
+            LOGGER.error("查询失败，存在多个相同用户名的账号，当前查询用户名:{}, 查询到的账号数量:{}", userName, list.size());
+            throw new TopinfoRuntimeException(-1, "查询失败，存在多个相同用户名的账号");
+        }
+
+        // 获取唯一的账号信息
+        AccountVO accountVO = list.get(0);
+        LOGGER.info("成功获取账号信息 - accountId: {}, tenantId: {}, personId: {}", 
+                   accountVO.getAccountId(), accountVO.getTenantId(), accountVO.getPersonId());
+        LOGGER.debug("账号详细信息 - locked: {}, expiredTime: {}", 
+                    accountVO.getLocked(), accountVO.getExpiredTime());
+        
+        // 查询人员是政府人员还是企业人员的标示
+        LOGGER.debug("开始查询人员类别信息 - personId: {}", accountVO.getPersonId());
+        LOGGER.debug("执行人员类别查询SQL - SQL: {}", personSql);
+        Integer category = jdbcTemplate.queryForObject(personSql, new Object[]{accountVO.getPersonId()}, Integer.class);
+        if (null == category) {
+            LOGGER.error("查询失败，用户信息有问题，当前查询用户名:{}, personId:{}", userName, accountVO.getPersonId());
+            throw new TopinfoRuntimeException(-1, "查询失败，用户信息查询失败");
+        }
+        LOGGER.info("成功查询到人员类别 - category: {}", category);
+        accountVO.setCategory(category);
+
+        LOGGER.info("=== queryAccountByUsername 方法执行成功结束 ===");
+        return accountVO;
+    }
 
     /**
      * 用户名密码登陆，根据用户名查询用户/账号是否存在，存在继续校验账号是否可用

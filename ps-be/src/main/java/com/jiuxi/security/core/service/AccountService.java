@@ -20,4 +20,13 @@ public interface AccountService {
      */
     AccountVO queryAccount(AccountVO vo);
 
+
+        /**
+         * 根据用户名查询账户信息
+         * 
+         * @param userName 用户名
+         * @return 返回对应的账户信息，如果未找到则返回null
+         */
+        AccountVO queryAccountByUsername(String userName);
+
 }

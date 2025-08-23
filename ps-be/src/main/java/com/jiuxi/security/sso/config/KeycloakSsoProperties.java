@@ -47,6 +47,11 @@ public class KeycloakSsoProperties {
      */
     private UserHeaderConfig userHeader = new UserHeaderConfig();
     
+    /**
+     * 回调重定向配置
+     */
+    private RedirectConfig redirect = new RedirectConfig();
+    
     public static class JwtConfig {
         /**
          * 时钟偏差容忍时间（秒）
@@ -144,6 +149,38 @@ public class KeycloakSsoProperties {
         }
     }
     
+    /**
+     * 回调重定向配置类
+     */
+    public static class RedirectConfig {
+        /**
+         * 登录成功后重定向地址
+         */
+        private String successUrl = "http://localhost:10801/#/main";
+        
+        /**
+         * 登录失败后重定向地址
+         */
+        private String errorUrl = "http://localhost:10801/#/login";
+        
+        // getters and setters
+        public String getSuccessUrl() {
+            return successUrl;
+        }
+        
+        public void setSuccessUrl(String successUrl) {
+            this.successUrl = successUrl;
+        }
+        
+        public String getErrorUrl() {
+            return errorUrl;
+        }
+        
+        public void setErrorUrl(String errorUrl) {
+            this.errorUrl = errorUrl;
+        }
+    }
+    
     // getters and setters
     public boolean isEnabled() {
         return enabled;
@@ -199,5 +236,21 @@ public class KeycloakSsoProperties {
     
     public void setUserHeader(UserHeaderConfig userHeader) {
         this.userHeader = userHeader;
+    }
+    
+    public RedirectConfig getRedirect() {
+        return redirect;
+    }
+    
+    public void setRedirect(RedirectConfig redirect) {
+        this.redirect = redirect;
+    }
+    
+    /**
+     * 获取 Issuer URI
+     * @return Issuer URI
+     */
+    public String getIssuerUri() {
+        return serverUrl + "/realms/" + realm;
     }
 }

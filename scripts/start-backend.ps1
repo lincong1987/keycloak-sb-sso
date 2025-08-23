@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # PS-BE 后端服务启动脚本
 # 作者: AI Assistant
 # 描述: 启动 PS-BMP 后端服务，包含数据库连接配置

@@ -113,6 +113,8 @@ topinfo:
         - /sys/file/download
         - /app/sys/file/download
         - /app/**
+        - /api/**
+        - /platform/**
         - /app/sys/file/upload
         - /app/trainoffline/**
         - /gdemergencyvehicle/sgddcreservation/**
@@ -213,7 +215,7 @@ localtion:
 keycloak:
   sso:
     # 启用 Keycloak SSO
-    enabled: false
+    enabled: true
     # Keycloak 服务器地址
     server-url: http://localhost:8180
     # Realm 名称
@@ -221,7 +223,13 @@ keycloak:
     # 客户端 ID
     client-id: ps-be
     # 客户端密钥（如果需要）
-    client-secret: 
+    client-secret: xMXvDGzby4Z48szob7i2fuZlZy5Wlqrh
+    # 回调重定向配置
+    redirect:
+      # 登录成功后重定向地址
+      success-url: http://localhost:10801/#/sso/login
+      # 登录失败后重定向地址
+      error-url: http://localhost:10801/#/login 
     # JWT 验证配置
     jwt:
       # 是否验证 Token 过期时间

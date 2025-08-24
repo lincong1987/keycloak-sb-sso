@@ -65,6 +65,11 @@ public class TpPersonBasicQuery {
      * 每页记录数
      */
     private Integer size;
+    
+    /**
+     * 选中的用户ID列表（用于导出选中用户）
+     */
+    private java.util.List<String> selectedUserIds;
 
     public String getDeptId() {
         return deptId;
@@ -152,5 +157,13 @@ public class TpPersonBasicQuery {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+    
+    public java.util.List<String> getSelectedUserIds() {
+        return selectedUserIds;
+    }
+    
+    public void setSelectedUserIds(java.util.List<String> selectedUserIds) {
+        this.selectedUserIds = selectedUserIds;
     }
 }

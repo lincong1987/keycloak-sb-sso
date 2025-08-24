@@ -6,6 +6,7 @@ import com.jiuxi.admin.core.bean.vo.TpPersonBasicinfoVO;
 import com.jiuxi.admin.core.bean.vo.TpPersonExinfoVO;
 import com.jiuxi.admin.core.bean.vo.TpPersonRoleVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -91,5 +92,15 @@ public interface TpPersonBasicinfoService {
      * @date 2024/5/30 17:10
      */
     void updatePhone(String personId, String phone, String jwtpid);
+
+    /**
+     * 导出用户信息到Excel
+     *
+     * @param query    查询条件
+     * @param jwtpid   操作人id
+     * @param response HTTP响应对象
+     * @throws Exception 导出异常
+     */
+    void exportExcel(TpPersonBasicQuery query, String jwtpid, HttpServletResponse response) throws Exception;
 }
 

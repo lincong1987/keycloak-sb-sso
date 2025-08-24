@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -291,6 +292,18 @@ public class TpPersonBasicinfoController {
         tpPersonBasicinfoService.auth(personId, deptId, roleIds);
 
         return JsonResponse.buildSuccess();
+    }
+
+    /**
+     * 导出用户信息到Excel
+     */
+    @RequestMapping(value = "/export-excel")
+    public void exportExcel(@RequestBody TpPersonBasicQuery query, String jwtpid, HttpServletResponse response) {
+        try {
+            tpPersonBasicinfoService.exportExcel(query, jwtpid, response);
+        } catch (Exception e) {
+            throw new RuntimeException("导出Excel失败", e);
+        }
     }
 
 }

@@ -41,6 +41,8 @@ import com.jiuxi.security.core.holder.SessionHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 // import org.apache.poi.ss.formula.functions.T;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -719,5 +725,102 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
             throw new TopinfoRuntimeException(-1, "修改手机号失败");
         }
 
+    }
+
+    /**
+     * 导出人员信息到Excel
+     *
+     * @param query    查询条件
+     * @param jwtpid   操作人id
+     * @param response HTTP响应对象
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    @Override
+    public void exportExcel(TpPersonBasicQuery query, String jwtpid, HttpServletResponse response) throws Exception {
+        try {
+            List<TpPersonBasicinfoVO> personList;
+            
+            // 如果有选中的用户ID列表，则只导出选中的用户
+            if (query.getSelectedUserIds() != null && !query.getSelectedUserIds().isEmpty()) {
+                personList = new ArrayList<>();
+                for (String userId : query.getSelectedUserIds()) {
+                    TpPersonBasicinfoVO person = tpPersonBasicinfoMapper.view(userId);
+                    if (person != null) {
+                        // 设置部门名称
+                        TpDeptBasicinfoVO tpDeptBasicinfoVO = tpDeptBasicinfoMapper.selectDeptById(person.getAscnId());
+                        if (tpDeptBasicinfoVO != null) {
+                            person.setAscnName(tpDeptBasicinfoVO.getDeptFullName());
+                        }
+                        personList.add(person);
+                    }
+                }
+            } else {
+                // 查询所有数据（不分页）
+                query.setCurrent(1);
+                query.setSize(Integer.MAX_VALUE);
+                IPage<TpPersonBasicinfoVO> pageResult = queryPage(query);
+                personList = pageResult.getRecords();
+            }
+
+            // 创建工作簿
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("人员信息");
+
+            // 创建标题行
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"姓名", "性别", "身份证号", "手机号", "邮箱", "所属部门", "职务", "创建时间"};
+            
+            // 设置标题样式
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // 创建数据行
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < personList.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                TpPersonBasicinfoVO person = personList.get(i);
+                
+                row.createCell(0).setCellValue(StrUtil.isNotBlank(person.getPersonName()) ? person.getPersonName() : "");
+                row.createCell(1).setCellValue(person.getSex() != null ? (person.getSex() == 1 ? "男" : "女") : "");
+                row.createCell(2).setCellValue(StrUtil.isNotBlank(person.getIdcard()) ? person.getIdcard() : "");
+                row.createCell(3).setCellValue(StrUtil.isNotBlank(person.getPhone()) ? person.getPhone() : "");
+                row.createCell(4).setCellValue(StrUtil.isNotBlank(person.getEmail()) ? person.getEmail() : "");
+                row.createCell(5).setCellValue(StrUtil.isNotBlank(person.getAscnName()) ? person.getAscnName() : "");
+                row.createCell(6).setCellValue(StrUtil.isNotBlank(person.getOffice()) ? person.getOffice() : "");
+                row.createCell(7).setCellValue(StrUtil.isNotBlank(person.getCreateTime()) ? person.getCreateTime() : "");
+            }
+
+            // 自动调整列宽
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // 设置响应头
+            String fileName = "人员信息_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()) + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+
+            // 写入响应流
+            workbook.write(response.getOutputStream());
+            workbook.close();
+            
+        } catch (IOException e) {
+            LOGGER.error("导出Excel失败！query:{}, e: {}", JSONObject.toJSONString(query), ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, "导出Excel失败！");
+        } catch (Exception e) {
+            LOGGER.error("导出Excel失败！query:{}, e: {}", JSONObject.toJSONString(query), ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "导出Excel失败！" : e.getMessage());
+        }
     }
 }

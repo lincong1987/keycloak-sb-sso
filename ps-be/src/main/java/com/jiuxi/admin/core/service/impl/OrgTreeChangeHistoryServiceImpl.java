@@ -1,9 +1,13 @@
 package com.jiuxi.admin.core.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiuxi.admin.core.bean.OrgTreeChangeHistory;
+import com.jiuxi.admin.core.bean.query.OrgTreeChangeHistoryQuery;
+import com.jiuxi.admin.core.bean.vo.OrgTreeChangeHistoryVO;
 import com.jiuxi.admin.core.mapper.OrgTreeChangeHistoryMapper;
 import com.jiuxi.admin.core.service.OrgTreeChangeHistoryService;
 import org.slf4j.Logger;
@@ -15,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Optional;
 
 /**
  * 组织机构树变更历史记录服务实现类
@@ -32,6 +37,22 @@ public class OrgTreeChangeHistoryServiceImpl implements OrgTreeChangeHistoryServ
     private OrgTreeChangeHistoryMapper changeHistoryMapper;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public IPage<OrgTreeChangeHistoryVO> queryPage(OrgTreeChangeHistoryQuery query) {
+        try {
+            Integer pageNum = Optional.ofNullable(query.getCurrent()).orElse(1);
+            Integer pageSize = Optional.ofNullable(query.getSize()).orElse(10);
+            
+            Page<OrgTreeChangeHistoryVO> page = new Page<>(pageNum, pageSize);
+            IPage<OrgTreeChangeHistoryVO> iPage = changeHistoryMapper.getPage(page, query);
+            
+            return iPage;
+        } catch (Exception e) {
+            logger.error("查询组织机构变更历史失败！query:{}, 错误: {}", query, e.getMessage(), e);
+            throw new RuntimeException("查询组织机构变更历史失败！");
+        }
+    }
 
     @Override
     public Long recordChange(String operationType, Long operatorId, String beforeData, String afterData) {

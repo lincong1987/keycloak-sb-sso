@@ -3,20 +3,12 @@ package com.jiuxi.admin.core.controller.pc;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiuxi.admin.core.bean.OrgTreeChangeHistory;
+import com.jiuxi.admin.core.bean.query.OrgTreeChangeHistoryQuery;
+import com.jiuxi.admin.core.bean.vo.OrgTreeChangeHistoryVO;
 import com.jiuxi.admin.core.service.OrgTreeChangeHistoryService;
 import com.jiuxi.common.bean.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 组织机构变更历史控制器
@@ -34,22 +26,10 @@ public class OrgTreeChangeHistoryController {
      * 分页查询历史记录
      */
     @PostMapping("/list")
-    public JsonResponse list(
-            @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer size) {
-        
+    public JsonResponse list(OrgTreeChangeHistoryQuery query) {
         try {
-            // 使用现有的分页方法
-            java.util.List<OrgTreeChangeHistory> records = orgTreeChangeHistoryService.getByPage(current, size);
-            Long total = orgTreeChangeHistoryService.countTotal();
-            
-            Map<String, Object> data = new HashMap<>();
-            data.put("records", records);
-            data.put("total", total);
-            data.put("current", current);
-            data.put("size", size);
-            
-            return JsonResponse.buildSuccess(data);
+            IPage<OrgTreeChangeHistoryVO> page = orgTreeChangeHistoryService.queryPage(query);
+            return JsonResponse.buildSuccess(page);
         } catch (Exception e) {
             return JsonResponse.buildFailure("查询失败: " + e.getMessage());
         }

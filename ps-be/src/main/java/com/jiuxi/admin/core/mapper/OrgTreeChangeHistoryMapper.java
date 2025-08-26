@@ -1,7 +1,11 @@
 package com.jiuxi.admin.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiuxi.admin.core.bean.OrgTreeChangeHistory;
+import com.jiuxi.admin.core.bean.query.OrgTreeChangeHistoryQuery;
+import com.jiuxi.admin.core.bean.vo.OrgTreeChangeHistoryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -18,6 +22,15 @@ import java.util.Map;
  */
 @Mapper
 public interface OrgTreeChangeHistoryMapper extends BaseMapper<OrgTreeChangeHistory> {
+
+    /**
+     * 分页查询组织机构变更历史记录
+     *
+     * @param page 分页对象
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    IPage<OrgTreeChangeHistoryVO> getPage(Page<OrgTreeChangeHistoryVO> page, @Param("query") OrgTreeChangeHistoryQuery query);
 
 
 

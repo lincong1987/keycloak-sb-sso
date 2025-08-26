@@ -2,10 +2,11 @@
 	<div class="history-version-dialog">
 		<fb-simple-table :service="service" :columns="columns">
 
-		 
-			<!-- <template #operation="props">
-				<fb-button type="primary" size="small" @click="handleCompare(props.row)">对比</fb-button>
-			</template> -->
+		 	 
+			<template #operation="props">
+				<fb-button editor type="primary" size="small" 
+				@on-click="handleCompare(props.row)">{{ props.row.operationTypeName}}</fb-button>
+			</template>
 
 
 		</fb-simple-table>
@@ -13,11 +14,16 @@
 		<fb-dialog ref="compareDialog">
 			<fb-flex>
 				<fb-flex>
-					<fb-tree :data="prevTree"></fb-tree>
+					<fb-tree :data="afterData"
+						style="overflow: auto"
+					:reader="{value: 'deptId', label: 'deptFullName'}"
+					></fb-tree>
 				</fb-flex>
 				
 				<fb-flex>
-					<fb-tree :data="nextTree"></fb-tree>
+					<fb-tree :data="afterData"
+					style="overflow: auto"
+					:reader="{value: 'deptId', label: 'deptFullName'}"></fb-tree>
 				</fb-flex>
 			</fb-flex>
 		</fb-dialog>
@@ -56,27 +62,16 @@ export default {
 			},
 			// 表格列定义
 			columns: [
-				{
-					label: '记录ID',
-					name: 'id',
-					key: 'id',
-					width: 120
-				},
+				 
 					{
-					label: '查看',
+					label: '类型',
 					name: 'operation',
 					key: 'operation',
 					width: 120,
 					slot: 'operation'
 				},
 			 
-				{
-					label: '操作类型',
-					name: 'operationType',
-					key: 'operationType',
-					width: 100,
-					//formatter: (text) => this.getOperationTypeName(text)
-				},
+		 
 			
 			 
 				{
@@ -103,8 +98,8 @@ export default {
 				// 	slot: 'operation'
 				// }
 			] ,
-			prevTree: [],
-			nextTree: []
+			afterData: {},
+			beforeData: {},
 		}
 	},
 	mounted() {
@@ -141,8 +136,12 @@ export default {
 		handleCompare (row) { 
 
 
-			//this.prevTree = this.row
+			this.beforeData =[ JSON.parse(row.beforeData)]
 
+			this.afterData = [JSON.parse(row.afterData)]
+
+debugger
+		 
 			this.$nextTick(() => {
 				this.$refs.compareDialog.show()
 			})

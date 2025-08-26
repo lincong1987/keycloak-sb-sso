@@ -1,6 +1,9 @@
 package com.jiuxi.admin.core.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiuxi.admin.core.bean.OrgTreeChangeHistory;
+import com.jiuxi.admin.core.bean.query.OrgTreeChangeHistoryQuery;
+import com.jiuxi.admin.core.bean.vo.OrgTreeChangeHistoryVO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +16,14 @@ import java.util.Map;
  * @since 1.0
  */
 public interface OrgTreeChangeHistoryService {
+
+    /**
+     * 分页查询组织机构变更历史记录
+     *
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    IPage<OrgTreeChangeHistoryVO> queryPage(OrgTreeChangeHistoryQuery query);
 
     /**
      * 记录组织机构树变更

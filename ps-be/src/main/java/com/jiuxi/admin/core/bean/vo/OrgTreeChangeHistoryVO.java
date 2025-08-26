@@ -57,6 +57,16 @@ public class OrgTreeChangeHistoryVO implements Serializable {
     private String afterData;
 
     /**
+     * 变更前的完整组织机构节点树JSON数据
+     */
+    private String beforeFullTree;
+
+    /**
+     * 变更后的完整组织机构节点树JSON数据
+     */
+    private String afterFullTree;
+
+    /**
      * 版本号
      */
     private Long version;
@@ -144,5 +154,21 @@ public class OrgTreeChangeHistoryVO implements Serializable {
 
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
+    }
+
+    public String getBeforeFullTree() {
+        return beforeFullTree;
+    }
+
+    public void setBeforeFullTree(String beforeFullTree) {
+        this.beforeFullTree = beforeFullTree;
+    }
+
+    public String getAfterFullTree() {
+        return afterFullTree;
+    }
+
+    public void setAfterFullTree(String afterFullTree) {
+        this.afterFullTree = afterFullTree;
     }
 }

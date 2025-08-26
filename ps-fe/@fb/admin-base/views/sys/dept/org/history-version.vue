@@ -12,18 +12,21 @@
 		</fb-simple-table>
 
 		<fb-dialog ref="compareDialog">
-			<fb-flex>
-				<fb-flex>
-					<fb-tree :data="afterData"
+			<fb-flex grid cols2 >
+				<fb-flex ai-start  >
+					<pre>{{ formatJsonData(beforeData) }}</pre>
+					<!-- <fb-tree :data="afterData" expand
 						style="overflow: auto"
-					:reader="{value: 'deptId', label: 'deptFullName'}"
-					></fb-tree>
+						:reader="{value: 'id', label: 'text'}"
+					></fb-tree> -->
 				</fb-flex>
 				
-				<fb-flex>
-					<fb-tree :data="afterData"
+				<fb-flex ai-start>
+					<pre>{{ formatJsonData(afterData) }}</pre>
+					<!-- <fb-tree :data="afterData"
 					style="overflow: auto"
-					:reader="{value: 'deptId', label: 'deptFullName'}"></fb-tree>
+				
+					:reader="{value: 'id', label: 'text'}"></fb-tree> -->
 				</fb-flex>
 			</fb-flex>
 		</fb-dialog>
@@ -136,11 +139,20 @@ export default {
 		handleCompare (row) { 
 
 
-			this.beforeData =[ JSON.parse(row.beforeData)]
+			// this.beforeData =[ JSON.parse(row.beforeData)]
 
-			this.afterData = [JSON.parse(row.afterData)]
+			// this.afterData = [JSON.parse(row.afterData)]
 
-debugger
+			
+			this.beforeData = JSON.parse(row.beforeData)
+			this.afterData = JSON.parse(row.afterData)
+// if (row.beforeFullTree) {
+// 			this.beforeData =JSON.parse(row.beforeFullTree)}
+// 			if (row.afterFullTree) {
+// 			this.afterData = JSON.parse(row.afterFullTree)
+// 			}
+
+ 
 		 
 			this.$nextTick(() => {
 				this.$refs.compareDialog.show()

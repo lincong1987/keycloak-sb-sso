@@ -14,7 +14,11 @@ CREATE TABLE `org_tree_change_history` (
     `operation_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
     `operator_id` BIGINT NOT NULL COMMENT '操作用户ID（外键关联用户表）',
     `before_data` LONGTEXT COMMENT '变更前的组织机构树JSON',
-    `after_data` LONGTEXT COMMENT '变更后的组织机构树JSON'
+    `after_data` LONGTEXT COMMENT '变更后的组织机构树JSON',
+    `before_full_tree` LONGTEXT COMMENT '变更前的完整组织机构节点树JSON',
+    `after_full_tree` LONGTEXT COMMENT '变更后的完整组织机构节点树JSON',
+    `version` BIGINT DEFAULT 1 COMMENT '版本号（数据库字段，不参与业务逻辑，用ID代替版本功能）',
+    `dept_id` BIGINT DEFAULT 0 COMMENT '部门ID（数据库字段，不参与业务逻辑）'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='组织机构树变更历史记录表';
 
 -- 创建索引

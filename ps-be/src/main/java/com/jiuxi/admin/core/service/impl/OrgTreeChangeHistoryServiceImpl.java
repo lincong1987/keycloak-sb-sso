@@ -83,6 +83,37 @@ public class OrgTreeChangeHistoryServiceImpl implements OrgTreeChangeHistoryServ
         }
     }
 
+    @Override
+    public Long recordChangeWithFullTree(String operationType, Long operatorId, String beforeData, String afterData, String beforeFullTree, String afterFullTree) {
+        try {
+            // 创建变更记录
+            OrgTreeChangeHistory changeHistory = new OrgTreeChangeHistory();
+            changeHistory.setOperationType(operationType);
+            changeHistory.setOperationTime(LocalDateTime.now());
+            changeHistory.setOperatorId(operatorId);
+            changeHistory.setBeforeData(beforeData);
+            changeHistory.setAfterData(afterData);
+            changeHistory.setBeforeFullTree(beforeFullTree);
+            changeHistory.setAfterFullTree(afterFullTree);
+            // 设置 version 默认值，满足数据库约束（不参与业务逻辑，用ID代替）
+            changeHistory.setVersion(1L);
+            // 设置 dept_id 默认值，满足数据库约束（不参与业务逻辑）
+            changeHistory.setDeptId(0L);
+
+            // 保存记录
+            changeHistoryMapper.insert(changeHistory);
+            
+            logger.info("记录组织机构树变更成功（包含全节点树）: 操作类型={}, 记录ID={}, 操作用户={}", 
+                       operationType, changeHistory.getId(), operatorId);
+            
+            return changeHistory.getId();
+        } catch (Exception e) {
+            logger.error("记录组织机构树变更失败（包含全节点树）: 操作类型={}, 操作用户={}", operationType, operatorId, e);
+            // 不抛出异常，返回 null 表示失败，不影响主业务
+            return null;
+        }
+    }
+
 
 
     @Override

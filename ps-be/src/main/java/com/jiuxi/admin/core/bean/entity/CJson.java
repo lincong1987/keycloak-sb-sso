@@ -1,6 +1,5 @@
 package com.jiuxi.admin.core.bean.entity;
 
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**

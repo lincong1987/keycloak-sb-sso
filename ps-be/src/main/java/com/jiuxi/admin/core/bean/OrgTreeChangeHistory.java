@@ -69,6 +69,20 @@ public class OrgTreeChangeHistory implements Serializable {
     private String afterData;
 
     /**
+     * 变更前的完整组织机构节点树JSON数据
+     */
+    // @ApiModelProperty(value = "变更前的完整组织机构节点树JSON数据")
+    @TableField("before_full_tree")
+    private String beforeFullTree;
+
+    /**
+     * 变更后的完整组织机构节点树JSON数据
+     */
+    // @ApiModelProperty(value = "变更后的完整组织机构节点树JSON数据")
+    @TableField("after_full_tree")
+    private String afterFullTree;
+
+    /**
      * 版本号（数据库字段，不参与业务逻辑，用ID代替版本功能）
      * 设置默认值以满足数据库约束
      */
@@ -98,6 +112,20 @@ public class OrgTreeChangeHistory implements Serializable {
         this.operatorId = operatorId;
         this.beforeData = beforeData;
         this.afterData = afterData;
+        this.operationTime = LocalDateTime.now();
+    }
+
+    /**
+     * 带全节点树参数的构造函数
+     */
+    public OrgTreeChangeHistory(String operationType, Long operatorId, String beforeData, 
+                               String afterData, String beforeFullTree, String afterFullTree) {
+        this.operationType = operationType;
+        this.operatorId = operatorId;
+        this.beforeData = beforeData;
+        this.afterData = afterData;
+        this.beforeFullTree = beforeFullTree;
+        this.afterFullTree = afterFullTree;
         this.operationTime = LocalDateTime.now();
     }
 
@@ -150,6 +178,22 @@ public class OrgTreeChangeHistory implements Serializable {
         this.afterData = afterData;
     }
 
+    public String getBeforeFullTree() {
+        return beforeFullTree;
+    }
+
+    public void setBeforeFullTree(String beforeFullTree) {
+        this.beforeFullTree = beforeFullTree;
+    }
+
+    public String getAfterFullTree() {
+        return afterFullTree;
+    }
+
+    public void setAfterFullTree(String afterFullTree) {
+        this.afterFullTree = afterFullTree;
+    }
+
     public Long getVersion() {
         return version;
     }
@@ -175,6 +219,8 @@ public class OrgTreeChangeHistory implements Serializable {
                 ", operatorId=" + operatorId +
                 ", beforeData='" + beforeData + '\'' +
                 ", afterData='" + afterData + '\'' +
+                ", beforeFullTree='" + beforeFullTree + '\'' +
+                ", afterFullTree='" + afterFullTree + '\'' +
                 ", version=" + version +
                 ", deptId=" + deptId +
                 '}';

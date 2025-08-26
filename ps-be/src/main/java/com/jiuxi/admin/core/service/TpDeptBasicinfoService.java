@@ -160,5 +160,17 @@ public interface TpDeptBasicinfoService {
      * @date 2024/5/30 10:09
      */
     void deleteDeptByAscnId(String ascnId, String jwtpid);
+
+    /**
+     * 获取完整的组织机构树（包含所有节点）
+     * 用于记录变更历史时保存完整的组织架构快照
+     *
+     * @param rootId 根节点ID，如果为空则从顶级节点开始
+     * @param category 类别：0政府 1企业 2其他
+     * @return 完整的组织机构树结构
+     * @author 系统生成
+     * @date 2025-01-27
+     */
+    List<TreeNode> getFullTree(String rootId, int category);
 }
 

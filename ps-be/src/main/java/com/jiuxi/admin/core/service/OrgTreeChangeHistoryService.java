@@ -36,6 +36,19 @@ public interface OrgTreeChangeHistoryService {
      */
     Long recordChange(String operationType, Long operatorId, String beforeData, String afterData);
 
+    /**
+     * 记录组织机构树变更（包含全节点树）
+     *
+     * @param operationType 操作类型
+     * @param operatorId    操作用户ID
+     * @param beforeData    变更前数据
+     * @param afterData     变更后数据
+     * @param beforeFullTree 变更前完整节点树
+     * @param afterFullTree  变更后完整节点树
+     * @return 记录ID
+     */
+    Long recordChangeWithFullTree(String operationType, Long operatorId, String beforeData, String afterData, String beforeFullTree, String afterFullTree);
+
 
 
     /**

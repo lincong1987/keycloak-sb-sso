@@ -24,6 +24,7 @@ import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.geo.GeoUtils;
 import com.jiuxi.common.util.CommonDateUtil;
 import com.jiuxi.common.util.CommonUniqueIndexUtil;
+import com.jiuxi.common.util.CommonTreeUtil;
 import com.jiuxi.common.util.SnowflakeIdUtil;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
 import com.jiuxi.common.bean.SessionVO;
@@ -401,11 +402,16 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
 
             // 记录组织架构变更历史
             try {
-                orgTreeChangeHistoryService.recordChange(
+                // 获取变更前后的完整组织树
+                List<TreeNode> afterFullTree = this.getFullTree(null, category);
+                
+                orgTreeChangeHistoryService.recordChangeWithFullTree(
                     "CREATE",
                     Long.valueOf(pid),
                     null, // 新增操作没有旧值
-                    JSONObject.toJSONString(bean)
+                    JSONObject.toJSONString(bean),
+                    null, // 新增操作没有变更前的树
+                    JSONObject.toJSONString(afterFullTree) // 变更后的完整树
                 );
             } catch (Exception e) {
                 LOGGER.warn("记录组织架构变更历史失败: {}", e.getMessage());
@@ -623,6 +629,14 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
     @CacheEvict(cacheNames = "platform.{TpDeptBasicinfoService}$[86400]", allEntries = true)
     public TpDeptBasicinfoVO update(TpDeptBasicinfoVO vo, String pid) {
         try {
+            // 在任何更新操作之前，先获取变更前的完整组织树
+            List<TreeNode> beforeFullTree = null;
+            try {
+                beforeFullTree = this.getFullTree(null, TpConstant.Category.ORG);
+            } catch (Exception e) {
+                LOGGER.warn("获取变更前的完整组织树失败: {}", e.getMessage());
+            }
+            
             // 当前修改机构的deptId
             String deptId = vo.getDeptId();
             // 先查询修改的数据的部门类型是否发生了变化，如果发生了变化，需要将该部门的下级部门所有的单位id进行修改
@@ -667,6 +681,14 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
             // 更新操作
             tpDeptBasicinfoMapper.update(bean);
 
+            // 在数据库更新后，获取变更后的完整组织树
+            List<TreeNode> afterFullTree = null;
+            try {
+                afterFullTree = this.getFullTree(null, vo.getCategory());
+            } catch (Exception e) {
+                LOGGER.warn("获取变更后的完整组织树失败: {}", e.getMessage());
+            }
+
             // 发布事件，推送部门基本信息给第三方系统
             if (null != tpDeptBasicinfoEventService) {
                 applicationContext.publishEvent(new TpDeptBasicinfoEvent("部门基本信息新增同步监听", tpDeptBasicinfoEventService, bean, OpertionTypeEnum.UPDATE.getOpertionType()));
@@ -679,11 +701,16 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
 
             // 记录组织架构变更历史
             try {
-                orgTreeChangeHistoryService.recordChange(
+                String beforeFullTreeJson = beforeFullTree != null ? JSONObject.toJSONString(beforeFullTree) : null;
+                String afterFullTreeJson = afterFullTree != null ? JSONObject.toJSONString(afterFullTree) : null;
+                
+                orgTreeChangeHistoryService.recordChangeWithFullTree(
                     "UPDATE",
                     Long.valueOf(pid),
                     JSONObject.toJSONString(deptVO), // 修改前的数据
-                    JSONObject.toJSONString(bean) // 修改后的数据
+                    JSONObject.toJSONString(bean), // 修改后的数据
+                    beforeFullTreeJson, // 变更前的完整树
+                    afterFullTreeJson // 变更后的完整树
                 );
             } catch (Exception e) {
                 // 记录变更历史失败不应该影响主业务，只记录警告日志
@@ -733,6 +760,14 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
     @CacheEvict(cacheNames = "platform.{TpDeptBasicinfoService}$[86400]", allEntries = true)
     public int removeById(String id, String jwtpid) {
         try {
+            // 在删除操作之前，先获取变更前的完整组织树
+            List<TreeNode> beforeFullTree = null;
+            try {
+                beforeFullTree = this.getFullTree(null, TpConstant.Category.ORG);
+            } catch (Exception e) {
+                LOGGER.warn("获取删除前的完整组织树失败: {}", e.getMessage());
+            }
+            
             // 查询是否有子节点部门
             int count = tpDeptBasicinfoMapper.findChildren(id);
             if (0 != count) {
@@ -758,6 +793,14 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
             // 删除时，唯一索引字段需要添加删除时间
             int updateCount = tpDeptBasicinfoMapper.deleteByDeptId(bean.getDeptId(), bean.getUpdateTime(), bean.getUpdator(), CommonUniqueIndexUtil.addDeleteTime(bean.getDeptLevelcode()));
 
+            // 在删除操作后，获取变更后的完整组织树
+            List<TreeNode> afterFullTree = null;
+            try {
+                afterFullTree = this.getFullTree(null, vo.getCategory());
+            } catch (Exception e) {
+                LOGGER.warn("获取删除后的完整组织树失败: {}", e.getMessage());
+            }
+
             // 发布事件，推送部门基本信息给第三方系统
             if (null != tpDeptBasicinfoEventService) {
                 applicationContext.publishEvent(new TpDeptBasicinfoEvent("部门基本信息新增同步监听", tpDeptBasicinfoEventService, bean, OpertionTypeEnum.DELETE.getOpertionType()));
@@ -770,11 +813,16 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
 
             // 记录组织架构变更历史
             try {
-                orgTreeChangeHistoryService.recordChange(
+                String beforeFullTreeJson = beforeFullTree != null ? JSONObject.toJSONString(beforeFullTree) : null;
+                String afterFullTreeJson = afterFullTree != null ? JSONObject.toJSONString(afterFullTree) : null;
+                
+                orgTreeChangeHistoryService.recordChangeWithFullTree(
                     "DELETE",
                     Long.valueOf(jwtpid),
                     JSONObject.toJSONString(vo), // 删除前的数据
-                    null // 删除操作没有新值
+                    null, // 删除操作没有新值
+                    beforeFullTreeJson, // 变更前的完整树
+                    afterFullTreeJson // 变更后的完整树
                 );
             } catch (Exception e) {
                 LOGGER.warn("记录组织架构变更历史失败: {}", e.getMessage());
@@ -815,6 +863,36 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
         List<TpDeptBasicinfoVO> deptIds = tpDeptBasicinfoMapper.listByEntId(ascnId);
         for (TpDeptBasicinfoVO vo: deptIds) {
             tpDeptBasicinfoMapper.deleteByDeptId(vo.getDeptId(), now, jwtpid, CommonUniqueIndexUtil.addDeleteTime(vo.getDeptLevelcode()));
+        }
+    }
+
+    /**
+     * 获取完整的组织机构树（包含所有节点）
+     * 用于记录变更历史时保存完整的组织架构快照
+     *
+     * @param rootId 根节点ID，如果为空则从顶级节点开始
+     * @param category 类别：0政府 1企业 2其他
+     * @return 完整的组织机构树结构
+     * @author 系统生成
+     * @date 2025-01-27
+     */
+    @Override
+    public List<TreeNode> getFullTree(String rootId, int category) {
+        try {
+            // 如果没有指定根节点，使用顶级节点
+            if (StrUtil.isBlank(rootId)) {
+                rootId = TpConstant.NODE.TOP_NODE_ID;
+            }
+            
+            // 使用已有的tree方法获取完整树，传入TOP_NODE_ID作为jwtdid以获取所有数据
+            List<TreeNode> fullTree = this.tree(rootId, TpConstant.NODE.TOP_NODE_ID, 1, category);
+            
+            return fullTree;
+            
+        } catch (Exception e) {
+            LOGGER.error("获取完整组织机构树失败! rootId:{}, category:{}, 错误:{}", rootId, category, ExceptionUtils.getStackTrace(e));
+            // 如果获取失败，返回空列表而不抛出异常，避免影响主业务
+            return new ArrayList<>();
         }
     }
 }

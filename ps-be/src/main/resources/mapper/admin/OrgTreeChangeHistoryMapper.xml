@@ -19,6 +19,8 @@
             IFNULL(p.person_name, CONCAT('用户ID:', h.operator_id)) AS operatorUserName,
             h.before_data AS beforeData,
             h.after_data AS afterData,
+            h.before_full_tree AS beforeFullTree,
+            h.after_full_tree AS afterFullTree,
             h.version,
             h.dept_id AS deptId
         FROM org_tree_change_history h

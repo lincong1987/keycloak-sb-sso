@@ -22,6 +22,9 @@
 					@on-select-change="handleSelectChange"></fb-tree>-->
 			</template>
 			<template slot="tree-actions">
+
+				<fb-button 
+						   @on-click=" handleHistoryVersionBtnClick">历史版本</fb-button>
 				<fb-button :icon="treeExpand ? 'tree-expansion': 'tree-closed'"
 						   @on-click="handleTreeExpand"></fb-button>
 			</template>
@@ -425,8 +428,10 @@
 			handleTreeExpand() {
 				this.treeExpand = !this.treeExpand
 				this.$refs.deptTree.expandAll(this.treeExpand)
+			},
+			handleHistoryVersionBtnClick() {
+				this.$refs.TpDialog.show(import('./history-version.vue'), this.formData.id, "历史版本");
 			}
-
 		}
 	}
 </script>

@@ -63,6 +63,11 @@ public class OrgTreeChangeHistoryServiceImpl implements OrgTreeChangeHistoryServ
     }
 
     @Override
+    public OrgTreeChangeHistory getById(String id) {
+        return changeHistoryMapper.selectById(Long.valueOf(id));
+    }
+
+    @Override
     public OrgTreeChangeHistory getLatestVersion() {
         return changeHistoryMapper.selectLatestVersion();
     }

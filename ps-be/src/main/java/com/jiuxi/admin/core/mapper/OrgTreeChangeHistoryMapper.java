@@ -29,6 +29,15 @@ public interface OrgTreeChangeHistoryMapper extends BaseMapper<OrgTreeChangeHist
     OrgTreeChangeHistory selectByVersion(@Param("version") Long version);
 
     /**
+     * 根据ID查询记录
+     *
+     * @param id 记录ID
+     * @return 记录详情
+     */
+    @Select("SELECT * FROM org_tree_change_history WHERE id = #{id}")
+    OrgTreeChangeHistory selectById(@Param("id") Long id);
+
+    /**
      * 根据时间范围查询记录
      *
      * @param startTime 开始时间

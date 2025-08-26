@@ -12,6 +12,24 @@ export default {
 		parttimejobTree(deptData) {
 			return app.service.get('/sys/dept/org/parttimejob-tree', {params: deptData})
 		},
+		// 组织机构历史查看相关API
+		history: {
+			list(queryData) {
+				return app.service.post('/api/org-tree-change-history/list', null, {params: queryData})
+			},
+			export(queryData) {
+				return app.service.request({
+					url: '/api/org-tree-change-history/export',
+					method: 'post',
+					data: queryData,
+					headers: {'Content-Type': 'application/json'},
+					responseType: 'blob'
+				})
+			},
+			latest() {
+				return app.service.get('/api/org-tree-change-history/latest')
+			}
+		},
 		add(formData) {
 			return app.service.request({
 				url: '/sys/dept/org/add',

@@ -34,6 +34,14 @@ public interface OrgTreeChangeHistoryService {
     OrgTreeChangeHistory getByVersion(Long version);
 
     /**
+     * 根据ID查询记录
+     *
+     * @param id 记录ID
+     * @return 记录详情
+     */
+    OrgTreeChangeHistory getById(String id);
+
+    /**
      * 获取最新版本记录
      *
      * @return 最新版本记录

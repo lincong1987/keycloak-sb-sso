@@ -1,35 +1,44 @@
 <template>
 	<div class="history-version-dialog">
-		<fb-simple-table
-			:service="service"
-			:columns="columns"  
+		<fb-simple-table :service="service" :columns="columns">
+
 		 
-		>
+			<!-- <template #operation="props">
+				<fb-button type="primary" size="small" @click="handleCompare(props.row)">对比</fb-button>
+			</template> -->
 
-        <template #operationType="props">
-			{{getOperationTypeName(props.row.operationType)}}
-		</template>
 
-			 
 		</fb-simple-table>
-		
-		 
+
+		<fb-dialog ref="compareDialog">
+			<fb-flex>
+				<fb-flex>
+					<fb-tree :data="prevTree"></fb-tree>
+				</fb-flex>
+				
+				<fb-flex>
+					<fb-tree :data="nextTree"></fb-tree>
+				</fb-flex>
+			</fb-flex>
+		</fb-dialog>
+
 	</div>
 </template>
 
 <script>
-import { filter } from 'vue/types/umd'
 
 export default {
 	name: 'HistoryVersion',
 	props: {
-		deptId: {
-			type: [String, Number],
-			required: true
-		}
+		 
+	},
+	computed: {
 	},
 	data() {
+	 
+		
 		return {
+			service: this.$svc.sys.dept.org.history,
 			// 操作类型映射
 			operationTypeMap: {
 				'CREATE': '创建',
@@ -37,10 +46,7 @@ export default {
 				'DELETE': '删除',
 				'QUERY': '查询'
 			},
-			// 查询参数
-			queryData: {
-				recordId: this.deptId
-			},
+		 
 			// 详情弹窗配置
 			detailModal: {
 				visible: false,
@@ -51,11 +57,19 @@ export default {
 			// 表格列定义
 			columns: [
 				{
-					label: '版本号',
-					name: 'version',
-					key: 'version',
+					label: '记录ID',
+					name: 'id',
+					key: 'id',
 					width: 120
 				},
+					{
+					label: '查看',
+					name: 'operation',
+					key: 'operation',
+					width: 120,
+					slot: 'operation'
+				},
+			 
 				{
 					label: '操作类型',
 					name: 'operationType',
@@ -63,19 +77,24 @@ export default {
 					width: 100,
 					//formatter: (text) => this.getOperationTypeName(text)
 				},
+			
+			 
 				{
+					label: '操作用户',
+					name: 'operatorUserName',
+					key: 'operatorUserName',
+					width: 120
+				},
+
+				 
+	{
 					label: '操作时间',
 					name: 'operationTime',
 					key: 'operationTime',
 					width: 160,
 				//	formatter: (text) => this.formatTime(text)
 				},
-				{
-					label: '操作用户ID',
-					name: 'operatorUserId',
-					key: 'operatorUserId',
-					width: 120
-				},
+
 				// {
 				// 	label: '操作',
 				// 	name: 'operation',
@@ -83,14 +102,12 @@ export default {
 				// 	width: 100,
 				// 	slot: 'operation'
 				// }
-			] 
+			] ,
+			prevTree: [],
+			nextTree: []
 		}
 	},
-	computed: {
-		// 服务配置
-		service() {
-			return this.$svc.sys.dept.org.history.list
-		}
+	mounted() {
 	},
 	methods: {
 		// 格式化时间
@@ -120,7 +137,17 @@ export default {
 			} catch (e) {
 				return data
 			}
-		}
+		},
+		handleCompare (row) { 
+
+
+			//this.prevTree = this.row
+
+			this.$nextTick(() => {
+				this.$refs.compareDialog.show()
+			})
+
+		},
 	}
 }
 </script>
@@ -130,14 +157,4 @@ export default {
 	padding: 16px;
 }
 
-pre {
-	background-color: #f5f5f5;
-	padding: 12px;
-	border-radius: 4px;
-	max-height: 400px;
-	overflow: auto;
-	font-family: 'Courier New', monospace;
-	font-size: 12px;
-	line-height: 1.4;
-}
 </style>

@@ -18,6 +18,7 @@ import com.jiuxi.admin.core.listener.service.TpDeptBasicinfoNewEventService;
 import com.jiuxi.admin.core.mapper.*;
 import com.jiuxi.admin.core.service.TpCityService;
 import com.jiuxi.admin.core.service.TpDeptBasicinfoService;
+import com.jiuxi.admin.core.service.OrgTreeChangeHistoryService;
 import com.jiuxi.common.bean.TreeNode;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.geo.GeoUtils;
@@ -86,6 +87,9 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
 
     @Autowired(required = false)
     private TpDeptBasicinfoNewEventService tpDeptBasicinfoNewEventService;
+
+    @Autowired
+    private OrgTreeChangeHistoryService orgTreeChangeHistoryService;
 
     /**
      * 机构树
@@ -395,6 +399,18 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
                 applicationContext.publishEvent(new TpDeptBasicinfoNewEvent("部门基本信息新增同步监听", tpDeptBasicinfoNewEventService, bean, OpertionTypeEnum.ADD.getOpertionType()));
             }
 
+            // 记录组织架构变更历史
+            try {
+                orgTreeChangeHistoryService.recordChange(
+                    "CREATE",
+                    Long.valueOf(pid),
+                    null, // 新增操作没有旧值
+                    JSONObject.toJSONString(bean)
+                );
+            } catch (Exception e) {
+                LOGGER.warn("记录组织架构变更历史失败: {}", e.getMessage());
+            }
+
             TpDeptBasicinfoVO result = new TpDeptBasicinfoVO();
             BeanUtil.copyProperties(bean, result);
             return result;
@@ -661,6 +677,19 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
                 applicationContext.publishEvent(new TpDeptBasicinfoNewEvent("部门基本信息新增同步监听", tpDeptBasicinfoNewEventService, bean, OpertionTypeEnum.UPDATE.getOpertionType()));
             }
 
+            // 记录组织架构变更历史
+            try {
+                orgTreeChangeHistoryService.recordChange(
+                    "UPDATE",
+                    Long.valueOf(pid),
+                    JSONObject.toJSONString(deptVO), // 修改前的数据
+                    JSONObject.toJSONString(bean) // 修改后的数据
+                );
+            } catch (Exception e) {
+                // 记录变更历史失败不应该影响主业务，只记录警告日志
+                LOGGER.warn("记录组织架构变更历史失败，但不影响主业务: {}", e.getMessage(), e);
+            }
+
             TpDeptBasicinfoVO result = new TpDeptBasicinfoVO();
             BeanUtil.copyProperties(bean, result);
             return result;
@@ -737,6 +766,18 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
             // 发布事件，推送部门基本信息给第三方系统 (新)
             if (null != tpDeptBasicinfoNewEventService) {
                 applicationContext.publishEvent(new TpDeptBasicinfoNewEvent("部门基本信息新增同步监听", tpDeptBasicinfoNewEventService, bean, OpertionTypeEnum.DELETE.getOpertionType()));
+            }
+
+            // 记录组织架构变更历史
+            try {
+                orgTreeChangeHistoryService.recordChange(
+                    "DELETE",
+                    Long.valueOf(jwtpid),
+                    JSONObject.toJSONString(vo), // 删除前的数据
+                    null // 删除操作没有新值
+                );
+            } catch (Exception e) {
+                LOGGER.warn("记录组织架构变更历史失败: {}", e.getMessage());
             }
 
             return updateCount;

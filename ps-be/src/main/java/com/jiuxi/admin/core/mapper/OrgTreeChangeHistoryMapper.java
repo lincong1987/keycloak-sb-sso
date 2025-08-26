@@ -19,14 +19,7 @@ import java.util.Map;
 @Mapper
 public interface OrgTreeChangeHistoryMapper extends BaseMapper<OrgTreeChangeHistory> {
 
-    /**
-     * 根据版本号查询记录
-     *
-     * @param version 版本号
-     * @return 版本记录
-     */
-    @Select("SELECT * FROM org_tree_change_history WHERE version = #{version}")
-    OrgTreeChangeHistory selectByVersion(@Param("version") Long version);
+
 
     /**
      * 根据ID查询记录
@@ -67,20 +60,14 @@ public interface OrgTreeChangeHistoryMapper extends BaseMapper<OrgTreeChangeHist
     List<OrgTreeChangeHistory> selectByOperationType(@Param("operationType") String operationType);
 
     /**
-     * 获取最新版本记录
+     * 获取最新记录
      *
-     * @return 最新版本记录
+     * @return 最新记录
      */
-    @Select("SELECT * FROM org_tree_change_history ORDER BY version DESC LIMIT 1")
+    @Select("SELECT * FROM org_tree_change_history ORDER BY operation_time DESC LIMIT 1")
     OrgTreeChangeHistory selectLatestVersion();
 
-    /**
-     * 获取最新版本号
-     *
-     * @return 最新版本号
-     */
-    @Select("SELECT MAX(version) FROM org_tree_change_history")
-    Long selectLatestVersionNumber();
+
 
     /**
      * 分页查询记录
@@ -108,16 +95,7 @@ public interface OrgTreeChangeHistoryMapper extends BaseMapper<OrgTreeChangeHist
     @Select("SELECT operation_type, COUNT(*) as count FROM org_tree_change_history GROUP BY operation_type")
     List<Map<String, Object>> selectOperationStatistics();
 
-    /**
-     * 根据版本范围查询记录
-     *
-     * @param startVersion 开始版本
-     * @param endVersion   结束版本
-     * @return 记录列表
-     */
-    @Select("SELECT * FROM org_tree_change_history WHERE version BETWEEN #{startVersion} AND #{endVersion} ORDER BY version ASC")
-    List<OrgTreeChangeHistory> selectByVersionRange(@Param("startVersion") Long startVersion, 
-                                                    @Param("endVersion") Long endVersion);
+
 
     /**
      * 删除指定时间之前的记录

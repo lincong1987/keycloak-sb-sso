@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 // import io.swagger.annotations.ApiModel;
 // import io.swagger.annotations.ApiModelProperty;
@@ -68,11 +69,20 @@ public class OrgTreeChangeHistory implements Serializable {
     private String afterData;
 
     /**
-     * 版本号（自增）
+     * 版本号（数据库字段，不参与业务逻辑，用ID代替版本功能）
+     * 设置默认值以满足数据库约束
      */
-    // @ApiModelProperty(value = "版本号（自增）")
     @TableField("version")
-    private Long version;
+    private Long version = 1L;
+
+    /**
+     * 部门ID（数据库字段，不参与业务逻辑）
+     * 设置默认值以满足数据库约束
+     */
+    @TableField("dept_id")
+    private Long deptId = 0L;
+
+
 
     /**
      * 默认构造函数
@@ -148,6 +158,14 @@ public class OrgTreeChangeHistory implements Serializable {
         this.version = version;
     }
 
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
     @Override
     public String toString() {
         return "OrgTreeChangeHistory{" +
@@ -158,6 +176,7 @@ public class OrgTreeChangeHistory implements Serializable {
                 ", beforeData='" + beforeData + '\'' +
                 ", afterData='" + afterData + '\'' +
                 ", version=" + version +
+                ", deptId=" + deptId +
                 '}';
     }
 

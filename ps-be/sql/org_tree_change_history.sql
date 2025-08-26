@@ -14,14 +14,10 @@ CREATE TABLE `org_tree_change_history` (
     `operation_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
     `operator_id` BIGINT NOT NULL COMMENT '操作用户ID（外键关联用户表）',
     `before_data` LONGTEXT COMMENT '变更前的组织机构树JSON',
-    `after_data` LONGTEXT COMMENT '变更后的组织机构树JSON',
-    `version` BIGINT AUTO_INCREMENT UNIQUE COMMENT '版本号'
+    `after_data` LONGTEXT COMMENT '变更后的组织机构树JSON'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='组织机构树变更历史记录表';
 
 -- 创建索引
--- 版本号唯一索引（已在字段定义中创建）
-CREATE UNIQUE INDEX `idx_version` ON `org_tree_change_history`(`version`);
-
 -- 操作时间普通索引
 CREATE INDEX `idx_operation_time` ON `org_tree_change_history`(`operation_time`);
 

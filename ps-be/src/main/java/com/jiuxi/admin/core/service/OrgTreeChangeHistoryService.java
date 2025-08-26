@@ -25,13 +25,7 @@ public interface OrgTreeChangeHistoryService {
      */
     Long recordChange(String operationType, Long operatorId, String beforeData, String afterData);
 
-    /**
-     * 根据版本号查询记录
-     *
-     * @param version 版本号
-     * @return 版本记录
-     */
-    OrgTreeChangeHistory getByVersion(Long version);
+
 
     /**
      * 根据ID查询记录
@@ -42,18 +36,13 @@ public interface OrgTreeChangeHistoryService {
     OrgTreeChangeHistory getById(String id);
 
     /**
-     * 获取最新版本记录
+     * 获取最新记录
      *
-     * @return 最新版本记录
+     * @return 最新记录
      */
     OrgTreeChangeHistory getLatestVersion();
 
-    /**
-     * 获取最新版本号
-     *
-     * @return 最新版本号
-     */
-    Long getLatestVersionNumber();
+
 
     /**
      * 根据时间范围查询记录
@@ -103,23 +92,16 @@ public interface OrgTreeChangeHistoryService {
      */
     List<Map<String, Object>> getOperationStatistics();
 
-    /**
-     * 根据版本范围查询记录
-     *
-     * @param startVersion 开始版本
-     * @param endVersion   结束版本
-     * @return 记录列表
-     */
-    List<OrgTreeChangeHistory> getByVersionRange(Long startVersion, Long endVersion);
+
 
     /**
-     * 比较两个版本的差异
+     * 比较两个记录的差异
      *
-     * @param fromVersion 起始版本
-     * @param toVersion   目标版本
+     * @param fromId 起始记录ID
+     * @param toId   目标记录ID
      * @return 差异信息
      */
-    Map<String, Object> compareVersions(Long fromVersion, Long toVersion);
+    Map<String, Object> compareVersions(Long fromId, Long toId);
 
     /**
      * 清理指定时间之前的记录
@@ -150,7 +132,7 @@ public interface OrgTreeChangeHistoryService {
     List<OrgTreeChangeHistory> getByTypeAndTimeRange(String operationType, LocalDateTime startTime, LocalDateTime endTime);
 
     /**
-     * 验证版本完整性
+     * 验证记录完整性
      *
      * @return 验证结果
      */

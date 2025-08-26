@@ -44,7 +44,7 @@ public class OrgTreeChangeHistoryController {
             Long total = orgTreeChangeHistoryService.countTotal();
             
             Map<String, Object> data = new HashMap<>();
-            data.put("list", records);
+            data.put("records", records);
             data.put("total", total);
             data.put("current", current);
             data.put("size", size);

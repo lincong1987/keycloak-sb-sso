@@ -1,7 +1,7 @@
 <template>
 	<div>
 
-		<fb-page-tree title="机构树">
+		<fb-page-tree title="组织机构树"  >
 			<template slot="tree">
 				<!-- 异步加载 -->
 				<fb-tree

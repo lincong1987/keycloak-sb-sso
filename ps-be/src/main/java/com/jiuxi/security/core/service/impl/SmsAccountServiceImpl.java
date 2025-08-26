@@ -111,4 +111,18 @@ public class SmsAccountServiceImpl implements SmsAccountService {
         // 生成验证码并发送
         return abstractValidateCode.create(phone);
     }
+
+    /**
+     * 根据用户名查询账户信息
+     * 
+     * @param userName 用户名
+     * @return 返回对应的账户信息，如果未找到则返回null
+     */
+    @Override
+    public AccountVO queryAccountByUsername(String userName) {
+        // 这里可以根据实际需求实现，目前返回null
+        // 因为SMS登录主要通过手机号，不通过用户名
+        LOGGER.warn("SMS账户服务不支持通过用户名查询账户: {}", userName);
+        return null;
+    }
 }

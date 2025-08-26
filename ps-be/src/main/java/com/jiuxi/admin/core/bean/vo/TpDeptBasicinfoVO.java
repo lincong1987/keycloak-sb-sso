@@ -2,6 +2,8 @@ package com.jiuxi.admin.core.bean.vo;
 
 import com.jiuxi.core.core.validator.group.AddGroup;
 import com.jiuxi.core.core.validator.group.UpdateGroup;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -156,8 +158,20 @@ public class TpDeptBasicinfoVO implements Serializable {
         return defaultDept;
     }
 
-    public void setDefaultDept(Integer defaultDept) {
-        this.defaultDept = defaultDept;
+    // 统一的setter方法处理所有类型的输入
+    @JsonSetter("defaultDept")
+    public void setDefaultDept(Object defaultDept) {
+        if (defaultDept == null || "null".equals(String.valueOf(defaultDept)) || String.valueOf(defaultDept).trim().isEmpty()) {
+            this.defaultDept = null;
+        } else if (defaultDept instanceof Integer) {
+            this.defaultDept = (Integer) defaultDept;
+        } else {
+            try {
+                this.defaultDept = Integer.valueOf(String.valueOf(defaultDept));
+            } catch (NumberFormatException e) {
+                this.defaultDept = null;
+            }
+        }
     }
 
     public String getPdeptId() {
@@ -389,15 +403,31 @@ public class TpDeptBasicinfoVO implements Serializable {
         return expand;
     }
 
-    public void setExpand(Boolean expand) {
-        this.expand = expand;
+    // 统一的setter方法处理所有类型的输入
+    @JsonSetter("expand")
+    public void setExpand(Object expand) {
+        if (expand == null || "null".equals(String.valueOf(expand)) || String.valueOf(expand).trim().isEmpty()) {
+            this.expand = null;
+        } else if (expand instanceof Boolean) {
+            this.expand = (Boolean) expand;
+        } else {
+            this.expand = Boolean.valueOf(String.valueOf(expand));
+        }
     }
 
     public Boolean getChecked() {
         return checked;
     }
 
-    public void setChecked(Boolean checked) {
-        this.checked = checked;
+    // 统一的setter方法处理所有类型的输入
+    @JsonSetter("checked")
+    public void setChecked(Object checked) {
+        if (checked == null || "null".equals(String.valueOf(checked)) || String.valueOf(checked).trim().isEmpty()) {
+            this.checked = null;
+        } else if (checked instanceof Boolean) {
+            this.checked = (Boolean) checked;
+        } else {
+            this.checked = Boolean.valueOf(String.valueOf(checked));
+        }
     }
 }

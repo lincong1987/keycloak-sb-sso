@@ -17,6 +17,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import java.beans.PropertyEditorSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,44 @@ public class TpDeptBasicinfoController {
 
     @Autowired
     private TpDeptBasicinfoService tpDeptBasicinfoService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        // 处理Boolean类型字段的"null"字符串
+        binder.registerCustomEditor(Boolean.class, "checked", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (text == null || text.trim().isEmpty() || "null".equals(text)) {
+                    setValue(null);
+                } else {
+                    setValue(Boolean.valueOf(text));
+                }
+            }
+        });
+        
+        binder.registerCustomEditor(Boolean.class, "expand", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (text == null || text.trim().isEmpty() || "null".equals(text)) {
+                    setValue(null);
+                } else {
+                    setValue(Boolean.valueOf(text));
+                }
+            }
+        });
+        
+        // 处理Integer类型字段的"null"字符串
+        binder.registerCustomEditor(Integer.class, "defaultDept", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (text == null || text.trim().isEmpty() || "null".equals(text)) {
+                    setValue(null);
+                } else {
+                    setValue(Integer.valueOf(text));
+                }
+            }
+        });
+    }
 
     /**
      * 机构树

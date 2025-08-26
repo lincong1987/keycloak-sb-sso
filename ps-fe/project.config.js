@@ -11,12 +11,14 @@ module.exports = {
 	theme: 'pc3',
 	TX_THEME: "sea_blue",
 
-	logoTitle: "省委党校业务中台管理系统",
+	//logoTitle: "省委党校业务中台管理系统",
+	logoTitle: "JPX3.0",
 
 	// 登录页相关配置 -- 后期可能成为组件包的配置
 	login: {
 		title: '',
-		copyright: 'Copyright © 2001-2025 省委党校业务中台管理系统 All Rights Reserved.'
+		copyright: 'Copyright © 2001-2025 JPX3.0 All Rights Reserved.',
+		//copyright: 'Copyright © 2001-2025 省委党校业务中台管理系统 All Rights Reserved.'
 	},
 	// 浏览器title
 	title: "JPX3.0",
@@ -98,7 +100,8 @@ module.exports = {
 			filename: 'index.html',
 			// 当使用 title 选项时，
 			// template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-			title: "省委党校业务中台管理系统",
+			//title: "省委党校业务中台管理系统",
+			title: "JPX3.0",
 			// 在这个页面中包含的块，默认情况下会包含
 			// 提取出来的通用 chunk 和 vendor chunk。
 			// chunks: ['chunk-vendors', 'chunk-common', 'index'],

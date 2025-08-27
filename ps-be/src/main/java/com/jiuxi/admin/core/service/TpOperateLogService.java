@@ -21,9 +21,10 @@ public interface TpOperateLogService {
     /**
      * 分页查询操作日志
      * @param query 查询条件
+     * @param jwtpid JWT中的人员ID
      * @return 分页结果
      */
-    IPage<TpOperateLogVO> queryPage(TpOperateLogQuery query);
+    IPage<TpOperateLogVO> queryPage(TpOperateLogQuery query, String jwtpid);
 
     /**
      * 新增操作日志

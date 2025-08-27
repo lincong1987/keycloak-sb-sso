@@ -30,7 +30,7 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
     private TpOperateLogMapper tpOperateLogMapper;
 
     @Override
-    public IPage<TpOperateLogVO> queryPage(TpOperateLogQuery query) {
+    public IPage<TpOperateLogVO> queryPage(TpOperateLogQuery query, String jwtpid) {
         Page<TpOperateLogVO> page = new Page<>(query.getCurrent(), query.getSize());
         return tpOperateLogMapper.getPage(page, query);
     }

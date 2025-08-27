@@ -20,17 +20,17 @@
                                 </fb-tree-select>
                             </fb-form-item>
                         </fb-col>
-                        <fb-col offset="1" span="10">
+                            <fb-col offset="1" span="10">
                             <fb-form-item :content-style="{ }" label="操作时间"
                                           prop="formData.operterTimeStart" style="display: inline-block; width: 56%">
-                                <tp-datepicker  :maxDate="formData.operterTimeEnd" clearable
+                                <tp-datepicker  :maxDate="maxDateForStart" clearable
                                                 format="YYYY-MM-DD HH:mm:ss" v-model="formData.operterTimeStart" value-format="YYYYMMDDHHmmss"></tp-datepicker>
                             </fb-form-item>
                             <fb-form-item  :content-style="{marginLeft: '30px'}" :label-style="{width:'30px', textAlign: 'center', paddingLeft: '5px'}"
                                            label="-"
                                            prop="formData.operterTimeEnd"
                                            style="display: inline-block; width: 44%">
-                                <tp-datepicker  :minDate="formData.operterTimeStart" clearable
+                                <tp-datepicker  :minDate="minDateForEnd" clearable
                                                 format="YYYY-MM-DD HH:mm:ss" v-model="formData.operterTimeEnd" value-format="YYYYMMDDHHmmss"></tp-datepicker>
                             </fb-form-item>
                         </fb-col>
@@ -131,7 +131,7 @@
 
             <template slot="table">
                 <fb-simple-table
-                        ref="table"
+			 ref="table"
                         :service="table.service.search"
                         :param="formData"
                         :pk="table.primaryKey"
@@ -175,12 +175,23 @@
             // });
         },
 
+                computed: {
+            maxDateForStart() {
+                if (!this.formData.operterTimeEnd) return null;
+                return new Date(this.formData.operterTimeEnd);
+            },
+            minDateForEnd() {
+                if (!this.formData.operterTimeStart) return null;
+                return new Date(this.formData.operterTimeStart);
+            }
+        },
+
         data() {
             return {
                 // onlineNum: 0,
 
                 formData: {
-                    operterTimeStart: this.formatDate(new Date(new Date().valueOf() - 24 * 60 * 60 * 1000), "YYYY-MM-DD HH:mm:ss"),
+                        operterTimeStart: this.formatDate(new Date(new Date().valueOf() - 24 * 60 * 60 * 1000), "YYYY-MM-DD HH:mm:ss"),
                     operterTimeEnd: this.formatDate(new Date(), "YYYY-MM-DD HH:mm:ss"),
                     category: "",
                     appName: "",
@@ -194,7 +205,7 @@
                 // Table列
                 table: {
 
-                    formatters: {
+                         formatters: {
                         operterType: (val, row) => {
 
                             this.$logconstant.operterTypeData.forEach(function (data) {

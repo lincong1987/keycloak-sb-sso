@@ -28,15 +28,15 @@
 						<fb-col offset="1" span="11">
 							<fb-form-item :content-style="{ }" label="操作时间"
 										  prop="formData.operationTimeStart" style="display: inline-block; width: 56%">
-								<tp-datepicker :maxDate="formData.operationTimeEnd" clearable
-											   format="YYYY-MM-DD HH:mm:ss" v-model="formData.operationTimeStart" value-format="YYYYMMDDHHmmss"></tp-datepicker>
+								<tp-datepicker :maxDate="maxDateForStart" clearable
+							   format="YYYY-MM-DD HH:mm:ss" v-model="formData.operationTimeStart" value-format="YYYYMMDDHHmmss"></tp-datepicker>
 							</fb-form-item>
 							<fb-form-item :content-style="{marginLeft: '30px'}" :label-style="{width:'30px', textAlign: 'center', paddingLeft: '5px'}"
 										  label="-"
 										  prop="formData.operationTimeEnd"
 										  style="display: inline-block; width: 44%">
-								<tp-datepicker :minDate="formData.operationTimeStart" clearable
-											   format="YYYY-MM-DD HH:mm:ss" v-model="formData.operationTimeEnd" value-format="YYYYMMDDHHmmss"></tp-datepicker>
+								<tp-datepicker :minDate="minDateForEnd" clearable
+							   format="YYYY-MM-DD HH:mm:ss" v-model="formData.operationTimeEnd" value-format="YYYYMMDDHHmmss"></tp-datepicker>
 							</fb-form-item>
 						</fb-col>
 					</fb-row>
@@ -127,6 +127,17 @@ export default {
 	mounted() {
 		// 执行界面初始化方法
 	},
+	computed: {
+		maxDateForStart() {
+			if (!this.formData.operationTimeEnd) return null;
+			return new Date(this.formData.operationTimeEnd);
+		},
+		minDateForEnd() {
+			if (!this.formData.operationTimeStart) return null;
+			return new Date(this.formData.operationTimeStart);
+		}
+	},
+
 	data() {
 		let that = this;
 		return {

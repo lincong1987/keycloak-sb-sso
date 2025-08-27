@@ -1,5 +1,6 @@
 package com.jiuxi.admin.core.bean.query;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
@@ -29,11 +30,13 @@ public class TpOperateLogQuery {
     /**
      * 操作时间开始
      */
+    @DateTimeFormat(pattern = "yyyyMMddHHmmss")
     private Date operterTimeStart;
 
     /**
      * 操作时间结束
      */
+    @DateTimeFormat(pattern = "yyyyMMddHHmmss")
     private Date operterTimeEnd;
 
     /**

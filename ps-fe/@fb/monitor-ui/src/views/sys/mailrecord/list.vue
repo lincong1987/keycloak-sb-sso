@@ -35,7 +35,7 @@
                         <fb-col span="14">
                             <fb-form-item :content-style="{ }" label="发送时间"
                                           prop="formData.sendTimeStart" style="display: inline-block; width: 55%">
-                                <tp-datepicker  :maxDate="formData.sendTimeEnd || null"
+                                <tp-datepicker  :maxDate="maxDateForStart"
                                                 :clearable="false"
                                                 format="YYYY-MM-DD HH:mm:ss"
                                                 v-model="formData.sendTimeStart"
@@ -45,7 +45,7 @@
                                            label="-"
                                            prop="formData.sendTimeEnd"
                                            style="display: inline-block; width: 45%">
-                                <tp-datepicker  :minDate="formData.sendTimeStart || null"
+                                <tp-datepicker  :minDate="minDateForEnd"
                                                 :clearable="false"
                                                 format="YYYY-MM-DD HH:mm:ss"
                                                 v-model="formData.sendTimeEnd"
@@ -103,6 +103,17 @@
         mounted() {
             // 执行界面初始化方法
         },
+        computed: {
+            maxDateForStart() {
+                if (!this.formData.sendTimeEnd) return null;
+                return new Date(this.formData.sendTimeEnd);
+            },
+            minDateForEnd() {
+                if (!this.formData.sendTimeStart) return null;
+                return new Date(this.formData.sendTimeStart);
+            }
+        },
+
         data() {
             return {
                 formData: {

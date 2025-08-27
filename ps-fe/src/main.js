@@ -20,7 +20,7 @@ import AdminBase, { AdminBaseScreenUtil } from '@fb/admin-base'
 import './assets/styles/main.less';
 //import MonitorUi from '@fb/monitor-ui'
 // 导入组件
-//import LogCenterUi from '@fb/log-center-ui'
+import LogCenterUi from '@fb/log-center-ui'
 
 window.app = new Application({
 	projectConfig: projectConfig,
@@ -38,12 +38,12 @@ window.app = new Application({
 			}
 		},
 		// 添加组件
-		// LogCenterUi:{
-		// 	plugin: LogCenterUi,
-		// 	options: {
+		LogCenterUi:{
+			plugin: LogCenterUi,
+			options: {
 
-		// 	},
-		// },
+			},
+		},
 		FbUI: {
 			plugin: FbUI,
 			options: {

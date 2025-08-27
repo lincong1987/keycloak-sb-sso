@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- TDengine -->
+<mapper namespace="com.topinfo.basic.platform.log.core.mapper.TpLogMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.topinfo.basic.platform.log.core.bean.entity.TpOperateLog" id="tpOperateLogMap">
+        <result property="operterTime" column="ts"/>
+        <result property="moduleCode" column="MODULE_CODE"/>
+        <result property="operterType" column="OPERTER_TYPE"/>
+        <result property="operterRid" column="OPERTER_RID"/>
+        <result property="ascnId" column="ASCN_ID"/>
+        <result property="cityCode" column="CITY_CODE"/>
+        <result property="operterIp" column="OPERTER_IP"/>
+        <result property="operterBrowser" column="OPERTER_BROWSER"/>
+        <result property="extend01" column="EXTEND01"/>
+        <result property="extend02" column="EXTEND02"/>
+        <result property="extend03" column="EXTEND03"/>
+    </resultMap>
+
+    <insert id="add" parameterType="com.topinfo.basic.platform.log.core.bean.entity.TpOperateLog">
+
+        INSERT INTO tp_log_#{personId} USING tp_log TAGS (#{username}, #{category}) VALUES (now, #{moduleCode}, #{operterType}, #{operterRid}, #{ascnId}, #{cityCode}, #{operterBrowser}, #{operterIp}, #{extend01}, #{extend02}, #{extend03});
+
+    </insert>
+
+    <select id="getPage" parameterType="com.topinfo.basic.platform.log.core.bean.query.TpOperateLogQuery" resultType="com.topinfo.basic.platform.log.core.bean.vo.TpOperateLogVO">
+        SELECT
+         ts as operter_time
+        ,username
+        ,category
+        ,module_code
+        ,operter_type
+        ,operter_rid
+        ,operter_ip
+        ,operter_browser
+        ,ascn_id
+        ,city_code
+        ,extend01
+        ,extend02
+        ,extend03
+        FROM tp_log tol
+        WHERE tol.ts >= #{query.operterTimeStart}  and tol.ts &lt;= #{query.operterTimeEnd}
+        <if test="null != query.moduleCode  and query.moduleCode != ''">
+            and MODULE_CODE =  #{query.moduleCode}
+        </if>
+        <if test="null != query.operterType  and query.operterType != ''">
+            and OPERTER_TYPE = #{query.operterType}
+        </if>
+        <if test="null != query.category">
+            and CATEGORY = #{query.category}
+        </if>
+        <if test="null != query.cityCode  and query.cityCode != ''">
+            and CITY_CODE like concat(#{query.cityCode} ,'%')
+        </if>
+        <if test="null != query.username  and query.username != ''">
+            and USERNAME = #{query.username}
+        </if>
+
+        ORDER BY tol.ts desc
+    </select>
+
+    <select id="view" parameterType="String" resultType="com.topinfo.basic.platform.log.core.bean.vo.TpOperateLogVO">
+        SELECT
+          tol.LOG_ID
+        , tol.PERSON_ID
+        , tol.MODULE_CODE
+        , tol.OPERTER_TYPE
+        , tol.OPERTER_RID
+        , tol.OPERTER_IP
+        , tol.OPERTER_BROWSER
+        , tol.USERNAME
+        , tol.ASCN_ID
+        , tol.CATEGORY
+        , tol.CITY_CODE
+        , tol.ACTIVED
+        , tol.CREATOR
+        , tol.CREATE_TIME
+        , tol.UPDATOR
+        , tol.UPDATE_TIME
+        , tol.EXTEND01
+        , tol.EXTEND02
+        , tol.EXTEND03
+        FROM tp_operate_log tol
+        WHERE
+        tol.ACTIVED = 1
+        and
+        tol.LOG_ID = #{logId}
+    </select>
+
+</mapper>

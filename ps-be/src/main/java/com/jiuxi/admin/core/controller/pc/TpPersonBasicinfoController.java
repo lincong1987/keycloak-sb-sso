@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -303,6 +304,30 @@ public class TpPersonBasicinfoController {
             tpPersonBasicinfoService.exportExcel(query, jwtpid, response);
         } catch (Exception e) {
             throw new RuntimeException("导出Excel失败", e);
+        }
+    }
+
+    /**
+     * 导入用户信息从Excel
+     */
+    @RequestMapping(value = "/import-excel")
+    public JsonResponse importExcel(@RequestParam("file") MultipartFile file, String jwtpid) {
+        try {
+            return tpPersonBasicinfoService.importExcel(file, jwtpid);
+        } catch (Exception e) {
+            throw new RuntimeException("导入Excel失败", e);
+        }
+    }
+
+    /**
+     * 下载Excel导入模板
+     */
+    @RequestMapping(value = "/download-template")
+    public void downloadTemplate(HttpServletResponse response) {
+        try {
+            tpPersonBasicinfoService.downloadTemplate(response);
+        } catch (Exception e) {
+            throw new RuntimeException("下载模板失败", e);
         }
     }
 

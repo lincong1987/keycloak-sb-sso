@@ -426,6 +426,35 @@ export default {
 			return e
 		})
 	},
+
+	importExcel(formData) {
+		// 导入Excel
+		return app.service.request({
+			url: '/sys/person/import-excel',
+			method: 'post',
+			data: formData,
+			headers: { 'Content-Type': 'multipart/form-data' },
+			timeout: 60000, // 导入可能需要更长时间
+		}).then(e => {
+			return e
+		}).catch(e => {
+			return e
+		})
+	},
+
+	downloadTemplate() {
+		// 下载Excel导入模板
+		return app.service.request({
+			url: '/sys/person/download-template',
+			method: 'get',
+			responseType: 'blob', // 重要：设置为blob以处理文件下载
+			timeout: 30000,
+		}).then(e => {
+			return e
+		}).catch(e => {
+			return e
+		})
+	},
 }
 
 

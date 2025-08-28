@@ -207,9 +207,9 @@
 
                          formatters: {
                         operterType: (val, row) => {
-
+debugger
                             this.$logconstant.operterTypeData.forEach(function (data) {
-                                if (val == data.value){
+                                if (valh == data.value){
                                     val = data.label;
                                     return val;
                                 }

@@ -125,4 +125,14 @@ public interface TpDeptBasicinfoMapper {
      * @date 2024/5/30 10:03
      */
     List<TpDeptBasicinfoVO> listByEntId(String ascnId);
+
+    /**
+     * 根据部门名称查询部门信息
+     *
+     * @param deptName 部门名称
+     * @return TpDeptBasicinfoVO
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    TpDeptBasicinfoVO selectDeptByName(String deptName);
 }

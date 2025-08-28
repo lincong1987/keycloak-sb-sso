@@ -31,6 +31,7 @@ import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.admin.core.service.TpAccountService;
 import com.jiuxi.admin.core.service.TpAttachinfoService;
 import com.jiuxi.admin.core.service.TpPersonBasicinfoService;
+import com.jiuxi.common.bean.JsonResponse;
 import com.jiuxi.common.bean.SessionVO;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.util.CommonDateUtil;
@@ -38,6 +39,7 @@ import com.jiuxi.common.util.CommonUniqueIndexUtil;
 import com.jiuxi.common.util.SnowflakeIdUtil;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
 import com.jiuxi.security.core.holder.SessionHolder;
+import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 // import org.apache.poi.ss.formula.functions.T;
@@ -821,6 +823,287 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
         } catch (Exception e) {
             LOGGER.error("导出Excel失败！query:{}, e: {}", JSONObject.toJSONString(query), ExceptionUtils.getStackTrace(e));
             throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "导出Excel失败！" : e.getMessage());
+        }
+    }
+
+    /**
+     * 导入用户信息从Excel
+     *
+     * @param file   Excel文件
+     * @param jwtpid 操作人id
+     * @return 导入结果
+     * @throws Exception 导入异常
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public JsonResponse importExcel(MultipartFile file, String jwtpid) throws Exception {
+        try {
+            if (file == null || file.isEmpty()) {
+                return JsonResponse.buildFailure("请选择要导入的Excel文件");
+            }
+
+            // 验证文件格式
+            String fileName = file.getOriginalFilename();
+            if (fileName == null || (!fileName.endsWith(".xlsx") && !fileName.endsWith(".xls"))) {
+                return JsonResponse.buildFailure("请上传Excel格式文件(.xlsx或.xls)");
+            }
+
+            // 验证文件大小（限制10MB）
+            if (file.getSize() > 10 * 1024 * 1024) {
+                return JsonResponse.buildFailure("文件大小不能超过10MB");
+            }
+
+            Workbook workbook = null;
+            try {
+                // 读取Excel文件
+                if (fileName.endsWith(".xlsx")) {
+                    workbook = new XSSFWorkbook(file.getInputStream());
+                } else {
+                    workbook = WorkbookFactory.create(file.getInputStream());
+                }
+
+                Sheet sheet = workbook.getSheetAt(0);
+                if (sheet == null) {
+                    return JsonResponse.buildFailure("Excel文件中没有找到工作表");
+                }
+
+                // 验证表头
+                Row headerRow = sheet.getRow(0);
+                if (headerRow == null) {
+                    return JsonResponse.buildFailure("Excel文件格式错误：缺少表头");
+                }
+
+                // 预期的表头
+                String[] expectedHeaders = {"姓名", "手机号", "身份证号", "性别", "邮箱", "办公电话", "部门名称"};
+                
+                // 验证表头是否匹配
+                for (int i = 0; i < expectedHeaders.length; i++) {
+                    Cell cell = headerRow.getCell(i);
+                    if (cell == null || !expectedHeaders[i].equals(getCellValue(cell))) {
+                        return JsonResponse.buildFailure("Excel文件格式错误：表头不匹配。期望格式：" + String.join(", ", expectedHeaders));
+                    }
+                }
+
+                List<String> successList = new ArrayList<>();
+                List<String> errorList = new ArrayList<>();
+                int totalRows = sheet.getLastRowNum();
+                
+                // 从第二行开始读取数据（跳过表头）
+                for (int i = 1; i <= totalRows; i++) {
+                    Row row = sheet.getRow(i);
+                    if (row == null) {
+                        continue;
+                    }
+
+                    try {
+                        // 读取单元格数据
+                        String personName = getCellValue(row.getCell(0));
+                        String phone = getCellValue(row.getCell(1));
+                        String idcard = getCellValue(row.getCell(2));
+                        String sexStr = getCellValue(row.getCell(3));
+                        String email = getCellValue(row.getCell(4));
+                        String office = getCellValue(row.getCell(5));
+                        String deptName = getCellValue(row.getCell(6));
+
+                        // 验证必填字段
+                        if (StrUtil.isBlank(personName)) {
+                            errorList.add("第" + (i + 1) + "行：姓名不能为空");
+                            continue;
+                        }
+                        if (StrUtil.isBlank(phone)) {
+                            errorList.add("第" + (i + 1) + "行：手机号不能为空");
+                            continue;
+                        }
+                        if (StrUtil.isBlank(deptName)) {
+                            errorList.add("第" + (i + 1) + "行：部门名称不能为空");
+                            continue;
+                        }
+
+                        // 验证手机号格式
+                        if (!phone.matches("^1[3-9]\\d{9}$")) {
+                            errorList.add("第" + (i + 1) + "行：手机号格式不正确");
+                            continue;
+                        }
+
+                        // 检查手机号是否已存在
+                        if (existsPhone(phone, null)) {
+                            errorList.add("第" + (i + 1) + "行：手机号" + phone + "已存在");
+                            continue;
+                        }
+
+                        // 根据部门名称查找部门ID
+                        TpDeptBasicinfoVO dept = tpDeptBasicinfoMapper.selectDeptByName(deptName);
+                        if (dept == null) {
+                            errorList.add("第" + (i + 1) + "行：部门'" + deptName + "'不存在");
+                            continue;
+                        }
+
+                        // 转换性别
+                        Integer sex = 0; // 默认保密
+                        if ("男".equals(sexStr)) {
+                            sex = 1;
+                        } else if ("女".equals(sexStr)) {
+                            sex = 2;
+                        }
+
+                        // 创建用户对象
+                        TpPersonBasicinfoVO personVO = new TpPersonBasicinfoVO();
+                        personVO.setPersonName(personName);
+                        personVO.setPhone(phone);
+                        personVO.setIdcard(idcard);
+                        personVO.setSex(sex);
+                        personVO.setEmail(email);
+                        personVO.setOffice(office);
+                        personVO.setDeptId(dept.getDeptId());
+                        personVO.setAscnId(dept.getAscnId());
+
+                        // 添加用户
+                        add(personVO, jwtpid, dept.getCategory());
+                        successList.add("第" + (i + 1) + "行：" + personName + "导入成功");
+
+                    } catch (Exception e) {
+                        LOGGER.error("导入第{}行数据失败: {}", i + 1, ExceptionUtils.getStackTrace(e));
+                        errorList.add("第" + (i + 1) + "行：导入失败 - " + e.getMessage());
+                    }
+                }
+
+                // 构建返回结果
+                StringBuilder resultMsg = new StringBuilder();
+                resultMsg.append("导入完成！");
+                resultMsg.append("成功：").append(successList.size()).append("条，");
+                resultMsg.append("失败：").append(errorList.size()).append("条");
+
+                if (!errorList.isEmpty()) {
+                    resultMsg.append("\n失败详情：\n");
+                    for (String error : errorList) {
+                        resultMsg.append(error).append("\n");
+                    }
+                }
+
+                return JsonResponse.buildSuccess(resultMsg.toString());
+
+            } finally {
+                if (workbook != null) {
+                    workbook.close();
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("导入Excel失败！e: {}", ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "导入Excel失败！" : e.getMessage());
+        }
+    }
+
+    /**
+     * 获取单元格值
+     *
+     * @param cell 单元格
+     * @return 单元格值
+     */
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return new SimpleDateFormat("yyyy-MM-dd").format(cell.getDateCellValue());
+                } else {
+                    return String.valueOf((long) cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
+        }
+    }
+
+    @Override
+    public void downloadTemplate(HttpServletResponse response) throws Exception {
+        try {
+            // 创建工作簿
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("人员信息导入模板");
+
+            // 创建表头
+            String[] headers = {"姓名", "手机号", "身份证号", "性别", "邮箱", "办公电话", "部门名称"};
+            Row headerRow = sheet.createRow(0);
+            
+            // 设置表头样式
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+            
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // 添加示例数据行
+            Row exampleRow = sheet.createRow(1);
+            String[] exampleData = {"张三", "13800138000", "110101199001011234", "男", "zhangsan@example.com", "010-12345678", "技术部"};
+            
+            CellStyle dataStyle = workbook.createCellStyle();
+            dataStyle.setBorderTop(BorderStyle.THIN);
+            dataStyle.setBorderBottom(BorderStyle.THIN);
+            dataStyle.setBorderLeft(BorderStyle.THIN);
+            dataStyle.setBorderRight(BorderStyle.THIN);
+            
+            for (int i = 0; i < exampleData.length; i++) {
+                Cell cell = exampleRow.createCell(i);
+                cell.setCellValue(exampleData[i]);
+                cell.setCellStyle(dataStyle);
+            }
+
+            // 自动调整列宽
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+                // 设置最小列宽
+                if (sheet.getColumnWidth(i) < 3000) {
+                    sheet.setColumnWidth(i, 3000);
+                }
+            }
+
+            // 设置响应头
+            String fileName = "人员信息导入模板_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()) + ".xlsx";
+            
+            // 清除缓存相关头信息
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            response.setHeader("Pragma", "no-cache");
+            response.setDateHeader("Expires", 0);
+            
+            // 设置内容类型和编码
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            
+            // 设置文件下载头信息
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"; filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
+            
+            // 写入响应流并确保完整输出
+            response.getOutputStream().flush();
+            workbook.write(response.getOutputStream());
+            response.getOutputStream().flush();
+            workbook.close();
+            
+        } catch (IOException e) {
+            LOGGER.error("下载Excel模板失败！e: {}", ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, "下载Excel模板失败！");
         }
     }
 }

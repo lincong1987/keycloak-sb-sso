@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.jiuxi.admin.core.mapper.TpDeptBasicinfoMapper">
@@ -261,5 +261,14 @@
             UPDATE_TIME     = #{updateTime}
         where DEPT_ID = #{deptId}
     </update>
+
+    <!-- 根据部门名称查询部门信息 -->
+    <select id="selectDeptByName" parameterType="string" resultType="com.jiuxi.admin.core.bean.vo.TpDeptBasicinfoVO">
+        select DEPT_ID, PDEPT_ID, DEPT_FULL_NAME, DEPT_LEVELCODE, ASCN_ID, LEAF, CATEGORY
+        from tp_dept_basicinfo
+        where (DEPT_FULL_NAME = #{deptName} OR DEPT_SIMPLE_NAME = #{deptName})
+          and ACTIVED = 1
+        limit 1
+    </select>
 
 </mapper>

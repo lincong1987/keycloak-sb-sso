@@ -5,6 +5,8 @@ import com.jiuxi.admin.core.bean.query.TpPersonBasicQuery;
 import com.jiuxi.admin.core.bean.vo.TpPersonBasicinfoVO;
 import com.jiuxi.admin.core.bean.vo.TpPersonExinfoVO;
 import com.jiuxi.admin.core.bean.vo.TpPersonRoleVO;
+import com.jiuxi.common.bean.JsonResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -102,5 +104,23 @@ public interface TpPersonBasicinfoService {
      * @throws Exception 导出异常
      */
     void exportExcel(TpPersonBasicQuery query, String jwtpid, HttpServletResponse response) throws Exception;
+
+    /**
+     * 导入用户信息从Excel
+     *
+     * @param file   Excel文件
+     * @param jwtpid 操作人id
+     * @return 导入结果
+     * @throws Exception 导入异常
+     */
+    JsonResponse importExcel(MultipartFile file, String jwtpid) throws Exception;
+
+    /**
+     * 下载Excel导入模板
+     *
+     * @param response HTTP响应对象
+     * @throws Exception 下载异常
+     */
+    void downloadTemplate(HttpServletResponse response) throws Exception;
 }
 

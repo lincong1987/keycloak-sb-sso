@@ -56,9 +56,14 @@ public class TpTag implements Serializable {
     private String ascnId;
     
     /**
-     * 是否有效
+     * 是否有效：1-有效，0-无效
      */
     private Integer actived;
+    
+    /**
+     * 逻辑删除
+     */
+    private Integer logDelete;
     
     /**
      * 创建人
@@ -159,6 +164,14 @@ public class TpTag implements Serializable {
 
     public void setActived(Integer actived) {
         this.actived = actived;
+    }
+
+    public Integer getLogDelete() {
+        return logDelete;
+    }
+
+    public void setLogDelete(Integer logDelete) {
+        this.logDelete = logDelete;
     }
 
     public String getCreator() {

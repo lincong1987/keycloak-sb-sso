@@ -64,8 +64,8 @@ public class TpTagController {
     /**
      * 新增标签
      */
-    @PostMapping(value = "/add")
-    public JsonResponse add(@Validated(value = AddGroup.class) @RequestBody TpTagVO vo, String jwtpid, String jwtaid) {
+    @RequestMapping(value = "/add")
+    public JsonResponse add(@Validated(value = AddGroup.class) TpTagVO vo, String jwtpid, String jwtaid) {
         int count = tpTagService.add(vo, jwtpid, jwtaid, jwtaid);
         return JsonResponse.buildSuccess(count);
     }

@@ -19,17 +19,30 @@ public class TpTagQuery implements Serializable {
      */
     private String tagName;
 
-
+    /**
+     * 标签描述
+     */
+    private String tagDesc;
 
     /**
      * 标签颜色
      */
-    private String color;
+    private String tagColor;
 
     /**
-     * 是否有效 0:无效 1:有效
+     * 是否有效：1-有效，0-无效
      */
-    private Integer enabled;
+    private Integer actived;
+
+    /**
+     * 逻辑删除：1-已删除，0-未删除
+     */
+    private Integer logDelete;
+
+    /**
+     * 机构ID
+     */
+    private String ascnId;
 
     /**
      * 租户ID
@@ -67,22 +80,44 @@ public class TpTagQuery implements Serializable {
         this.tagName = tagName;
     }
 
-
-
-    public String getColor() {
-        return color;
+    public String getTagDesc() {
+        return tagDesc;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setTagDesc(String tagDesc) {
+        this.tagDesc = tagDesc;
     }
 
-    public Integer getEnabled() {
-        return enabled;
+    public String getTagColor() {
+        return tagColor;
     }
 
-    public void setEnabled(Integer enabled) {
-        this.enabled = enabled;
+    public void setTagColor(String tagColor) {
+        this.tagColor = tagColor;
+    }
+
+    public Integer getActived() {
+        return actived;
+    }
+
+    public void setActived(Integer actived) {
+        this.actived = actived;
+    }
+
+    public Integer getLogDelete() {
+        return logDelete;
+    }
+
+    public void setLogDelete(Integer logDelete) {
+        this.logDelete = logDelete;
+    }
+
+    public String getAscnId() {
+        return ascnId;
+    }
+
+    public void setAscnId(String ascnId) {
+        this.ascnId = ascnId;
     }
 
     public String getTenantId() {

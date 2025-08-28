@@ -58,9 +58,14 @@ public class TpTagVO implements Serializable {
     private String ascnId;
     
     /**
-     * 是否有效
+     * 是否有效：1-有效，0-无效
      */
     private Integer actived;
+    
+    /**
+     * 逻辑删除
+     */
+    private Integer logDelete;
     
     /**
      * 创建人
@@ -74,9 +79,19 @@ public class TpTagVO implements Serializable {
     private String createTime;
     
     /**
+     * 创建人姓名
+     */
+    private String createPersonName;
+    
+    /**
      * 修改人
      */
     private String updator;
+    
+    /**
+     * 修改人姓名
+     */
+    private String updatePersonName;
     
     /**
      * 修改时间
@@ -169,6 +184,14 @@ public class TpTagVO implements Serializable {
         this.actived = actived;
     }
 
+    public Integer getLogDelete() {
+        return logDelete;
+    }
+
+    public void setLogDelete(Integer logDelete) {
+        this.logDelete = logDelete;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -185,12 +208,28 @@ public class TpTagVO implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getCreatePersonName() {
+        return createPersonName;
+    }
+
+    public void setCreatePersonName(String createPersonName) {
+        this.createPersonName = createPersonName;
+    }
+
     public String getUpdator() {
         return updator;
     }
 
     public void setUpdator(String updator) {
         this.updator = updator;
+    }
+
+    public String getUpdatePersonName() {
+        return updatePersonName;
+    }
+
+    public void setUpdatePersonName(String updatePersonName) {
+        this.updatePersonName = updatePersonName;
     }
 
     public String getUpdateTime() {

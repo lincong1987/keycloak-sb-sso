@@ -13,6 +13,7 @@
         <result property="tenantId" column="TENANT_ID"/>
         <result property="ascnId" column="ASCN_ID"/>
         <result property="actived" column="ACTIVED"/>
+        <result property="logDelete" column="LOG_DELETE"/>
         <result property="creator" column="CREATOR"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updator" column="UPDATOR"/>
@@ -33,6 +34,7 @@
             TENANT_ID,
             ASCN_ID,
             ACTIVED,
+            LOG_DELETE,
             CREATOR,
             CREATE_TIME,
             UPDATOR,
@@ -45,35 +47,97 @@
 
     <!-- 分页查询标签列表 -->
     <select id="getPage" parameterType="com.jiuxi.admin.core.bean.query.TpTagQuery" resultType="com.jiuxi.admin.core.bean.vo.TpTagVO">
-        <include refid="baseSql"/>
+        SELECT
+            t.TAG_ID,
+            t.TAG_NAME,
+            t.TAG_DESC,
+            t.TAG_COLOR,
+            t.ORDER_INDEX,
+            t.TENANT_ID,
+            t.ASCN_ID,
+            t.ACTIVED,
+            t.LOG_DELETE,
+            t.CREATOR,
+            t.CREATE_TIME,
+            t.UPDATOR,
+            t.UPDATE_TIME,
+            t.EXTEND01,
+            t.EXTEND02,
+            t.EXTEND03,
+            p.PERSON_NAME as updatePersonName
+        FROM tp_tag t
+        LEFT JOIN tp_person_basicinfo p ON t.UPDATOR = p.PERSON_ID
         <where>
-            ACTIVED = 1
+            1=1
             <if test="query.tagName != null and query.tagName != ''">
-                AND TAG_NAME LIKE CONCAT('%', #{query.tagName}, '%')
+                AND t.TAG_NAME LIKE CONCAT('%', #{query.tagName}, '%')
+            </if>
+            <if test="query.tagDesc != null and query.tagDesc != ''">
+                AND t.TAG_DESC LIKE CONCAT('%', #{query.tagDesc}, '%')
+            </if>
+            <if test="query.tagColor != null and query.tagColor != ''">
+                AND t.TAG_COLOR = #{query.tagColor}
             </if>
             <if test="query.tenantId != null and query.tenantId != ''">
-                AND TENANT_ID = #{query.tenantId}
+                AND t.TENANT_ID = #{query.tenantId}
             </if>
-            <if test="query.orgId != null and query.orgId != ''">
-                AND ASCN_ID = #{query.orgId}
+            <if test="query.ascnId != null and query.ascnId != ''">
+                AND t.ASCN_ID = #{query.ascnId}
+            </if>
+            <if test="query.actived != null">
+                AND t.ACTIVED = #{query.actived}
+            </if>
+            <if test="query.logDelete != null">
+                AND t.LOG_DELETE = #{query.logDelete}
             </if>
         </where>
-        ORDER BY ORDER_INDEX ASC, CREATE_TIME DESC
+        ORDER BY t.ORDER_INDEX ASC, t.CREATE_TIME DESC
     </select>
 
     <!-- 查询标签列表 -->
     <select id="getList" parameterType="com.jiuxi.admin.core.bean.query.TpTagQuery" resultType="com.jiuxi.admin.core.bean.vo.TpTagVO">
-        <include refid="baseSql"/>
+        SELECT
+            t.TAG_ID,
+            t.TAG_NAME,
+            t.TAG_DESC,
+            t.TAG_COLOR,
+            t.ORDER_INDEX,
+            t.TENANT_ID,
+            t.ASCN_ID,
+            t.ACTIVED,
+            t.LOG_DELETE,
+            t.CREATOR,
+            t.CREATE_TIME,
+            t.UPDATOR,
+            t.UPDATE_TIME,
+            t.EXTEND01,
+            t.EXTEND02,
+            t.EXTEND03,
+            p.PERSON_NAME as updatePersonName
+        FROM tp_tag t
+        LEFT JOIN tp_person_basicinfo p ON t.UPDATOR = p.PERSON_ID
         <where>
-            ACTIVED = 1
+            1=1
             <if test="query.tagName != null and query.tagName != ''">
-                AND TAG_NAME LIKE CONCAT('%', #{query.tagName}, '%')
+                AND t.TAG_NAME LIKE CONCAT('%', #{query.tagName}, '%')
+            </if>
+            <if test="query.tagDesc != null and query.tagDesc != ''">
+                AND t.TAG_DESC LIKE CONCAT('%', #{query.tagDesc}, '%')
+            </if>
+            <if test="query.tagColor != null and query.tagColor != ''">
+                AND t.TAG_COLOR = #{query.tagColor}
             </if>
             <if test="query.tenantId != null and query.tenantId != ''">
-                AND TENANT_ID = #{query.tenantId}
+                AND t.TENANT_ID = #{query.tenantId}
             </if>
-            <if test="query.orgId != null and query.orgId != ''">
-                AND ASCN_ID = #{query.orgId}
+            <if test="query.ascnId != null and query.ascnId != ''">
+                AND t.ASCN_ID = #{query.ascnId}
+            </if>
+            <if test="query.actived != null">
+                AND t.ACTIVED = #{query.actived}
+            </if>
+            <if test="query.logDelete != null">
+                AND LOG_DELETE = #{query.logDelete}
             </if>
         </where>
         ORDER BY ORDER_INDEX ASC, CREATE_TIME DESC
@@ -90,6 +154,7 @@
             TENANT_ID,
             ASCN_ID,
             ACTIVED,
+            LOG_DELETE,
             CREATOR,
             CREATE_TIME,
             UPDATOR,
@@ -106,6 +171,7 @@
             #{tenantId},
             #{ascnId},
             #{actived},
+            #{logDelete},
             #{creator},
             #{createTime},
             #{updator},
@@ -124,10 +190,10 @@
             <if test="tagDesc != null">TAG_DESC = #{tagDesc},</if>
             <if test="tagColor != null">TAG_COLOR = #{tagColor},</if>
             <if test="orderIndex != null">ORDER_INDEX = #{orderIndex},</if>
-
             <if test="tenantId != null">TENANT_ID = #{tenantId},</if>
             <if test="ascnId != null">ASCN_ID = #{ascnId},</if>
             <if test="actived != null">ACTIVED = #{actived},</if>
+            <if test="logDelete != null">LOG_DELETE = #{logDelete},</if>
             <if test="updator != null">UPDATOR = #{updator},</if>
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="extend01 != null">EXTEND01 = #{extend01},</if>
@@ -139,14 +205,35 @@
 
     <!-- 查看标签详情 -->
     <select id="view" parameterType="String" resultType="com.jiuxi.admin.core.bean.vo.TpTagVO">
-        <include refid="baseSql"/>
-        WHERE TAG_ID = #{tagId} AND ACTIVED = 1
+        SELECT
+            t.TAG_ID,
+            t.TAG_NAME,
+            t.TAG_DESC,
+            t.TAG_COLOR,
+            t.ORDER_INDEX,
+            t.TENANT_ID,
+            t.ASCN_ID,
+            t.ACTIVED,
+            t.LOG_DELETE,
+            t.CREATOR,
+            t.CREATE_TIME,
+            t.UPDATOR,
+            t.UPDATE_TIME,
+            t.EXTEND01,
+            t.EXTEND02,
+            t.EXTEND03,
+            cp.PERSON_NAME as createPersonName,
+            up.PERSON_NAME as updatePersonName
+        FROM tp_tag t
+        LEFT JOIN tp_person_basicinfo cp ON t.CREATOR = cp.PERSON_ID
+        LEFT JOIN tp_person_basicinfo up ON t.UPDATOR = up.PERSON_ID
+        WHERE t.TAG_ID = #{tagId} AND t.LOG_DELETE = 0
     </select>
 
     <!-- 删除标签（逻辑删除） -->
     <update id="delete" parameterType="com.jiuxi.admin.core.bean.entity.TpTag">
         UPDATE tp_tag
-        SET ACTIVED = 0,
+        SET LOG_DELETE = 1,
             UPDATOR = #{updator},
             UPDATE_TIME = #{updateTime}
         WHERE TAG_ID = #{tagId}
@@ -158,7 +245,7 @@
         WHERE TAG_NAME = #{tagName}
           AND TENANT_ID = #{tenantId}
           AND ASCN_ID = #{orgId}
-          AND ACTIVED = 1
+          AND LOG_DELETE = 0
     </select>
 
 </mapper>

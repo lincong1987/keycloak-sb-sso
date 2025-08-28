@@ -18,6 +18,7 @@ CREATE TABLE `tp_tag` (
     `tenant_id` VARCHAR(19) COMMENT '租户ID',
     `ascn_id` VARCHAR(19) COMMENT '所属机构ID',
     `actived` INTEGER DEFAULT 1 COMMENT '是否有效（1：有效，0：无效）',
+    `log_delete` INTEGER DEFAULT 0 COMMENT '逻辑删除（0：未删除，1：已删除）',
     `creator` VARCHAR(19) NOT NULL COMMENT '创建人',
     `create_time` VARCHAR(14) NOT NULL COMMENT '创建时间',
     `updator` VARCHAR(19) COMMENT '修改人',

@@ -11,14 +11,9 @@
 				</fb-row>
 
 				<fb-row>
-					<fb-col span="12">
-						<fb-form-item label="标签颜色" prop="tagColor">
-							<fb-color-picker v-model="formData.tagColor" placeholder="请输入颜色值，如：#FF5722"></fb-color-picker>
-						</fb-form-item>
-					</fb-col>
-					<fb-col span="12">
-						<fb-form-item label="排序" prop="orderIndex" :rule="[{required: true}]">
-							<fb-input-number v-model="formData.orderIndex" placeholder="请输入排序号" :min="0" :step="1" :precision="1"></fb-input-number>
+					<fb-col span="24">
+						<fb-form-item label="排序" prop="orderIndex" :rule="[{required: false}, {type: 'integer', min: 0}]">
+							<fb-input v-model="formData.orderIndex" placeholder="请输入排序号"  ></fb-input>
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
@@ -35,16 +30,7 @@
 					</fb-col>
 				</fb-row>
 
-				<fb-row>
-					<fb-col span="12">
-						<fb-form-item label="是否有效">
-							<fb-radio-group v-model="formData.actived"
-											:data="[{id: 1, name: '有效'}, {id: 0, name: '无效'}]"
-											:reader="{label:'name', value:'id'}">
-							</fb-radio-group>
-						</fb-form-item>
-					</fb-col>
-				</fb-row>
+
 			</fb-form>
 		</div>
 
@@ -94,6 +80,7 @@ import FbColorPicker from '../../../../fb-ui/packages/components/color-picker/sr
 					orderIndex: 0,
 					tagDesc: '',
 					actived: 1,
+					logDelete: 0, // 默认未删除
 				},
 			}
 		},

@@ -132,6 +132,9 @@ public class TpTagServiceImpl implements TpTagService {
             if (bean.getActived() == null) {
                 bean.setActived(1); // 默认启用
             }
+            if (bean.getLogDelete() == null) {
+                bean.setLogDelete(0); // 默认未删除
+            }
             if (bean.getOrderIndex() == null) {
                 bean.setOrderIndex(0.0); // 默认排序
             }
@@ -222,9 +225,10 @@ public class TpTagServiceImpl implements TpTagService {
             // 1、删除关联关系，tp_person_tag
             tpPersonTagMapper.deleteByTagId(tagId);
             
-            // 2、删除标签信息
+            // 2、逻辑删除标签信息
             TpTag bean = new TpTag();
             bean.setTagId(tagId);
+            bean.setUpdator(operator);
             bean.setUpdateTime(CommonDateUtil.now());
             
             int count = tpTagMapper.delete(bean);

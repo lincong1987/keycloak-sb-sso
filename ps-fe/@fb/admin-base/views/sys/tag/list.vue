@@ -51,17 +51,7 @@
 						</fb-link-group>
 					</template>
 
-					<template v-slot:tagColor="props">
-						<fb-text radius="4px" padding="0px 4px" :bg="props.row.tagColor" color="#fff">
-							{{ props.row.tagName }}
-						</fb-text>
-					</template>
 
-					<template v-slot:isValid="props">
-						<span :class="props.row.isValid === 1 ? 'status-valid' : 'status-invalid'">
-							{{ props.row.isValid === 1 ? '有效' : '无效' }}
-						</span>
-					</template>
 				</fb-simple-table>
 			</template>
 		</fb-page-search>
@@ -71,6 +61,8 @@
 </template>
 
 <script>
+	import dayjs from "dayjs";
+
 	export default {
 		name: 'list',
 		mixins: [],
@@ -83,11 +75,15 @@
 			return {
 				formData: {
 					tagName: '',
+					logDelete: 0, // 只查询未删除的标签
 				},
 
 				formatters: {
-					isValid(val) {
+					actived(val) {
 						return val === 1 ? '有效' : '无效';
+					},
+					updateTime(val) {
+						return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : val;
 					}
 				},
 
@@ -104,30 +100,22 @@
 							sortable: false,
 							width: 150,
 						}, {
-							name: 'tagColor',
-							label: '标签颜色',
-							slot: 'tagColor',
-							sortable: false,
-							width: 100,
-						}, {
 							name: 'tagDesc',
 							label: '标签描述',
 							sortable: false,
-							width: 200,
 						}, {
 							name: 'orderIndex',
 							label: '排序',
 							sortable: false,
 							width: 80,
 						}, {
-							name: 'isValid',
-							label: '状态',
-							slot: 'isValid',
+							name: 'updatePersonName',
+							label: '修改人',
 							sortable: false,
-							width: 80,
+							width: 120,
 						}, {
-							name: 'createTime',
-							label: '创建时间',
+							name: 'updateTime',
+							label: '修改时间',
 							sortable: false,
 							width: 150,
 						},

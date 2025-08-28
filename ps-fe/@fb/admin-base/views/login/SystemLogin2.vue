@@ -323,6 +323,19 @@ export default {
 		goToMain() {
 
 			this.$router.replace(this.$datax.get('GLOBAL_CONFIG').mainPath)
+
+// 日志埋点
+			this.$logger && this.$logger.send({
+				// 模块编码
+				moduleCode: 'login',
+				// 模块名称
+				moduleName: '登录',
+				// 操作类型： login/logout/add/delete/edit/query/pass/unpass, 可以自己定义
+				operateType: 'login',
+				// 操作人id
+				operterId:  app.$datax.get('userInfo').personId,
+			});
+			
 			return
 			const { hijack } = this.$route.meta || app.projectConfig.login
 			// 获取当前登录用户信息
@@ -339,6 +352,7 @@ export default {
 				// 操作人id
 				operterId: userInfo.personId,
 			}
+			this.$logger && this.$logger.send(data);
 
 			if (hijack) {
 				hijack(userInfo)

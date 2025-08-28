@@ -226,7 +226,7 @@ export class WebLogger {
         }
 
         // 日志服务地址 baseURL
-        this.baseURL = app.logService.defaults.baseURL
+        this.baseURL = app.service.defaults.baseURL
 
         if (typeof data.moduleCode === 'undefined') {
             throw new Error('模块编码不能为空！')
@@ -270,7 +270,7 @@ export class WebLogger {
         }
 
         // 日志服务地址 baseURL
-        this.baseURL = app.logService.defaults.baseURL
+        this.baseURL = app.service.defaults.baseURL
 
         if (typeof data.moduleCode === 'undefined') {
             throw new Error('模块编码不能为空！')

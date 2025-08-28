@@ -2,7 +2,8 @@
 const logconstant = {
 
     moduleCodeData: [
-        {value: 'login', label: '登陆'}
+        {value: 'login', label: '登陆'},
+        {value: 'user', label: '用户'},
     ],
 
     appNameData: [
@@ -12,12 +13,21 @@ const logconstant = {
     operterTypeData: [
         {value: 'login', label: '登陆'},
         {value: 'logout', label: '登出'},
-        {value: 'add', label: '新增'},
-        {value: 'delete', label: '删除'},
-        {value: 'edit', label: '修改'},
-        {value: 'query', label: '查询'},
-        {value: 'pass', label: '通过'},
-        {value: 'unpass', label: '未通过'}
+        {value: 'unlocked', label: '解锁'},
+        {value: 'locked', label: '锁定'},
+        //resetpwd
+        {value: 'resetpwd', label: '重置密码'},
+        //disabled_account
+        {value: 'disabled_account', label: '停用账号'},
+        //enabled_account
+        {value: 'enabled_account', label: '启用账号'},
+
+        // {value: 'add', label: '新增'},
+        // {value: 'delete', label: '删除'},
+        // {value: 'edit', label: '修改'},
+        // {value: 'query', label: '查询'},
+        // {value: 'pass', label: '通过'},
+        // {value: 'unpass', label: '未通过'}
     ],
 
     categoryData: [

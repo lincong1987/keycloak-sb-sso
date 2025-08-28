@@ -20,7 +20,12 @@
                                 </fb-tree-select>
                             </fb-form-item>
                         </fb-col>
-                            <fb-col offset="1" span="10">
+                         <fb-col offset="1" span="10">
+                            <fb-form-item label="操作信息">
+                                <fb-input v-model="formData.operterMsg"></fb-input>
+                            </fb-form-item>
+                        </fb-col>
+                            <!-- <fb-col offset="1" span="10">
                             <fb-form-item :content-style="{ }" label="操作时间"
                                           prop="formData.operterTimeStart" style="display: inline-block; width: 56%">
                                 <tp-datepicker  :maxDate="maxDateForStart" clearable
@@ -33,7 +38,7 @@
                                 <tp-datepicker  :minDate="minDateForEnd" clearable
                                                 format="YYYY-MM-DD HH:mm:ss" v-model="formData.operterTimeEnd" value-format="YYYYMMDDHHmmss"></tp-datepicker>
                             </fb-form-item>
-                        </fb-col>
+                        </fb-col> -->
 
                         <fb-col span="4"></fb-col>
                     </fb-row>
@@ -67,7 +72,7 @@
                                 </fb-tree-select>
                             </fb-form-item>
                         </fb-col>
-                        <fb-col offset="1" span="10">
+                        <!-- <fb-col offset="1" span="10">
                             <fb-form-item label="操作结果">
                                 <fb-select v-model="formData.operterResult"
                                            :data="[
@@ -79,20 +84,16 @@
                                 />
                             </fb-form-item>
                         </fb-col>
-                        <fb-col span="4"></fb-col>
+                        <fb-col span="4"></fb-col> -->
                     </fb-row>
-                    <fb-row>
-                        <fb-col offset="1" span="10">
+                    <!-- <fb-row> -->
+                        <!-- <fb-col offset="1" span="10">
                             <fb-form-item label="操作记录id">
                                 <fb-input v-model="formData.operterRid"></fb-input>
                             </fb-form-item>
-                        </fb-col>
-                        <fb-col offset="1" span="10">
-                            <fb-form-item label="操作信息">
-                                <fb-input v-model="formData.operterMsg"></fb-input>
-                            </fb-form-item>
-                        </fb-col>
-                    </fb-row>
+                        </fb-col> -->
+                       
+                    <!-- </fb-row> -->
 <!--                    <fb-row>-->
 <!--                        <fb-col offset="1" span="10">-->
 <!--                            <fb-form-item label="操作人id">-->
@@ -191,8 +192,8 @@
                 // onlineNum: 0,
 
                 formData: {
-                        operterTimeStart: this.formatDate(new Date(new Date().valueOf() - 24 * 60 * 60 * 1000), "YYYY-MM-DD HH:mm:ss"),
-                    operterTimeEnd: this.formatDate(new Date(), "YYYY-MM-DD HH:mm:ss"),
+                    //     operterTimeStart: this.formatDate(new Date(new Date().valueOf() - 24 * 60 * 60 * 1000), "YYYY-MM-DD HH:mm:ss"),
+                    // operterTimeEnd: this.formatDate(new Date(), "YYYY-MM-DD HH:mm:ss"),
                     category: "",
                     appName: "",
                     cityCode: "",
@@ -207,9 +208,13 @@
 
                          formatters: {
                         operterType: (val, row) => {
-debugger
                             this.$logconstant.operterTypeData.forEach(function (data) {
-                                if (valh == data.value){
+                                if (val == data.value){/**
+ * 根据输入数据的值匹配并返回对应的标签。
+ * @param {Object} data - 包含 `value` 和 `label` 属性的对象。
+ * @returns {string} - 如果 `data.value` 与当前值 `val` 匹配，则返回 `data.label`；否则不返回任何内容。
+ */
+
                                     val = data.label;
                                     return val;
                                 }
@@ -280,13 +285,13 @@ debugger
                             width: 200,
                             slot: 'view',
                         },
-                        {
-                            name: 'appName',
-                            label: '系统名称',
-                            sortable: false,
-                            width: 150,
+                        // {
+                        //     name: 'appName',
+                        //     label: '系统名称',
+                        //     sortable: false,
+                        //     width: 150,
 
-                        },
+                        // },
                         {
                             name: 'moduleCode',
                             label: '模块',
@@ -305,18 +310,18 @@ debugger
                         //     sortable: false,
                         //     width: 150,
                         // },
-                        {
-                            name: 'operterRid',
-                            label: '操作记录ID',
-                            sortable: false,
-                            width: 150,
-                        },
-                        {
-                            name: 'operterResult',
-                            label: '操作结果',
-                            sortable: false,
-                            width: 100,
-                        },
+                        // {
+                        //     name: 'operterRid',
+                        //     label: '操作记录ID',
+                        //     sortable: false,
+                        //     width: 150,
+                        // },
+                        // {
+                        //     name: 'operterResult',
+                        //     label: '操作结果',
+                        //     sortable: false,
+                        //     width: 100,
+                        // },
                         {
                             name: 'operterMsg',
                             label: '操作信息',

@@ -44,6 +44,17 @@
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
+				<fb-row>
+					<fb-col span="24">
+						<fb-form-item label="多因子认证">
+							<fb-checkbox-group :value="['1', '2']"
+							disabled
+											   :data="[{label: 'SSO登录', value: '1'}, {label: '密码登录', value: '2'}, {label: '短信登录', value: '3'}]">
+							</fb-checkbox-group>
+						</fb-form-item>
+					</fb-col>
+				</fb-row>
+				
 
 				<!-- <fb-row v-if="deptShowFlag">
 					<fb-col span="24">
@@ -141,12 +152,49 @@
 					weixin: '',
 					dingding: '',
 					threeId: '',
+					multiFactorAuth: [],
 				},
 			}
 		},
 
 		// 方法
 		methods: {
+
+/**
+		 * 记录用户操作日志信息
+		 * @param {string} operateType - 操作类型：login/logout/add/delete/edit/query/pass/unpass等
+		 * @param {string} message - 错误日志信息
+		 */
+		logInfo(operateType, message) {
+			// 获取用户信息
+			let userInfo = app.$datax.get('userInfo')
+
+			// 构建日志数据对象
+			let data = {
+				// 模块编码
+				moduleCode: 'user',
+				// 模块名称
+				moduleName: '用户',
+				// 模块编码
+				moduleCode: 'user',
+				// 模块名称
+				// 模块名称
+				moduleName: '用户',
+				// 操作类型： login/logout/add/delete/edit/query/pass/unpass, 可以自己定义
+				operateType,
+				// 操作人id
+				operterId: userInfo.personId,
+				// 操作人名称
+				operterName: userInfo.personName,
+				// 错误日志信息
+				message
+			}
+
+			debugger
+			// 日志埋点
+			app.$logger.send(data);
+		},
+
 			// 初始化参数
 			init(param) {
 				let personId = param.id;
@@ -201,6 +249,8 @@
 						}
 						this.$refs.TpDialog.show(import('../../../../views/sys/person/org/account-restpwd.vue'), result, "重置密码", options);
 
+						this.logInfo('resetpwd', '重置密码');
+
 					} else {
 						// 服务器返回失败
 						this.$message.error('重置失败')
@@ -218,8 +268,10 @@
 					if (result.code == 1) {
 						if (locked === 0) {
 							this.$message.success('已解锁');
+							this.logInfo('unlocked', '解锁');
 						} else {
 							this.$message.success('已冻结');
+							this.logInfo('locked', '冻结');
 						}
 						this.formData.locked = locked;
 					} else {
@@ -243,8 +295,10 @@
 					if (result.code == 1) {
 						if (enabled === 0) {
 							this.$message.success('已停用');
+							this.logInfo('disabled_account', '停用');
 						} else {
 							this.$message.success('已启用');
+							this.logInfo('enabled_account', '启用');
 						}
 						this.formData.enabled = enabled;
 					} else {

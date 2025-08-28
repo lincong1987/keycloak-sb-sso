@@ -103,7 +103,7 @@ window.app = new Application({
 				message: err.stack
 			}
 			// 日志埋点
-			//app.$current.$logger.send(data);
+			app.$current.$logger.send(data);
 		} catch (e) {
 
 		}

@@ -311,9 +311,9 @@ public class TpPersonBasicinfoController {
      * 导入用户信息从Excel
      */
     @RequestMapping(value = "/import-excel")
-    public JsonResponse importExcel(@RequestParam("file") MultipartFile file, String jwtpid) {
+    public JsonResponse importExcel(@RequestParam("file") MultipartFile file, @RequestParam("deptId") String deptId, String jwtpid) {
         try {
-            return tpPersonBasicinfoService.importExcel(file, jwtpid);
+            return tpPersonBasicinfoService.importExcel(file, deptId, jwtpid);
         } catch (Exception e) {
             throw new RuntimeException("导入Excel失败", e);
         }

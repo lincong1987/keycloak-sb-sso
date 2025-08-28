@@ -109,11 +109,12 @@ public interface TpPersonBasicinfoService {
      * 导入用户信息从Excel
      *
      * @param file   Excel文件
+     * @param deptId 部门ID
      * @param jwtpid 操作人id
      * @return 导入结果
      * @throws Exception 导入异常
      */
-    JsonResponse importExcel(MultipartFile file, String jwtpid) throws Exception;
+    JsonResponse importExcel(MultipartFile file, String deptId, String jwtpid) throws Exception;
 
     /**
      * 下载Excel导入模板

@@ -204,9 +204,14 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
             tpAttachinfoService.band(vo.getFile(), personId, createTime);
 
             // 新增人员
+            LOGGER.info("准备插入用户基本信息，personId：{}, personName：{}, phone：{}", personId, vo.getPersonName(), vo.getPhone());
             int count = tpPersonBasicinfoMapper.save(bean);
+            LOGGER.info("用户基本信息插入结果：{}, 影响行数：{}", count > 0 ? "成功" : "失败", count);
+            
             // 维护部门，人员关系
-            tpPersonDeptMapper.save(personDeptBean);
+            LOGGER.info("准备插入用户部门关系，personId：{}, deptId：{}", personId, vo.getDeptId());
+            int deptCount = tpPersonDeptMapper.save(personDeptBean);
+            LOGGER.info("用户部门关系插入结果：{}, 影响行数：{}", deptCount > 0 ? "成功" : "失败", deptCount);
 
             // 发布事件，推送人员给第三方系统
             if (null != tpPersonBasicinfoEventService) {
@@ -830,6 +835,7 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
      * 导入用户信息从Excel
      *
      * @param file   Excel文件
+     * @param deptId 部门ID
      * @param jwtpid 操作人id
      * @return 导入结果
      * @throws Exception 导入异常
@@ -838,7 +844,7 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JsonResponse importExcel(MultipartFile file, String jwtpid) throws Exception {
+    public JsonResponse importExcel(MultipartFile file, String deptId, String jwtpid) throws Exception {
         try {
             if (file == null || file.isEmpty()) {
                 return JsonResponse.buildFailure("请选择要导入的Excel文件");
@@ -876,7 +882,7 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                 }
 
                 // 预期的表头
-                String[] expectedHeaders = {"姓名", "手机号", "身份证号", "性别", "邮箱", "办公电话", "部门名称"};
+                String[] expectedHeaders = {"姓名", "手机号", "身份证号", "性别", "邮箱"};
                 
                 // 验证表头是否匹配
                 for (int i = 0; i < expectedHeaders.length; i++) {
@@ -904,8 +910,6 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                         String idcard = getCellValue(row.getCell(2));
                         String sexStr = getCellValue(row.getCell(3));
                         String email = getCellValue(row.getCell(4));
-                        String office = getCellValue(row.getCell(5));
-                        String deptName = getCellValue(row.getCell(6));
 
                         // 验证必填字段
                         if (StrUtil.isBlank(personName)) {
@@ -914,10 +918,6 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                         }
                         if (StrUtil.isBlank(phone)) {
                             errorList.add("第" + (i + 1) + "行：手机号不能为空");
-                            continue;
-                        }
-                        if (StrUtil.isBlank(deptName)) {
-                            errorList.add("第" + (i + 1) + "行：部门名称不能为空");
                             continue;
                         }
 
@@ -933,10 +933,10 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                             continue;
                         }
 
-                        // 根据部门名称查找部门ID
-                        TpDeptBasicinfoVO dept = tpDeptBasicinfoMapper.selectDeptByName(deptName);
+                        // 根据传入的部门ID查找部门信息
+                        TpDeptBasicinfoVO dept = tpDeptBasicinfoMapper.selectDeptById(deptId);
                         if (dept == null) {
-                            errorList.add("第" + (i + 1) + "行：部门'" + deptName + "'不存在");
+                            errorList.add("第" + (i + 1) + "行：指定的部门不存在");
                             continue;
                         }
 
@@ -955,12 +955,13 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                         personVO.setIdcard(idcard);
                         personVO.setSex(sex);
                         personVO.setEmail(email);
-                        personVO.setOffice(office);
                         personVO.setDeptId(dept.getDeptId());
                         personVO.setAscnId(dept.getAscnId());
 
                         // 添加用户
-                        add(personVO, jwtpid, dept.getCategory());
+                        LOGGER.info("开始导入第{}行用户：{}, 手机号：{}, 部门ID：{}", i + 1, personName, phone, deptId);
+                        TpPersonBasicinfoVO result = add(personVO, jwtpid, dept.getCategory());
+                        LOGGER.info("第{}行用户导入完成，返回结果：{}", i + 1, result != null ? "成功" : "失败");
                         successList.add("第" + (i + 1) + "行：" + personName + "导入成功");
 
                     } catch (Exception e) {
@@ -1033,7 +1034,7 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
             Sheet sheet = workbook.createSheet("人员信息导入模板");
 
             // 创建表头
-            String[] headers = {"姓名", "手机号", "身份证号", "性别", "邮箱", "办公电话", "部门名称"};
+            String[] headers = {"姓名", "手机号", "身份证号", "性别", "邮箱"};
             Row headerRow = sheet.createRow(0);
             
             // 设置表头样式
@@ -1057,7 +1058,7 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
 
             // 添加示例数据行
             Row exampleRow = sheet.createRow(1);
-            String[] exampleData = {"张三", "13800138000", "110101199001011234", "男", "zhangsan@example.com", "010-12345678", "技术部"};
+            String[] exampleData = {"张三", "13800138000", "110101199001011234", "男", "zhangsan@example.com"};
             
             CellStyle dataStyle = workbook.createCellStyle();
             dataStyle.setBorderTop(BorderStyle.THIN);

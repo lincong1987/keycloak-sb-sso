@@ -29,15 +29,9 @@ public class TpTagQuery implements Serializable {
      */
     private String tagColor;
 
-    /**
-     * 是否有效：1-有效，0-无效
-     */
-    private Integer actived;
 
-    /**
-     * 逻辑删除：1-已删除，0-未删除
-     */
-    private Integer logDelete;
+
+
 
     /**
      * 机构ID
@@ -96,21 +90,9 @@ public class TpTagQuery implements Serializable {
         this.tagColor = tagColor;
     }
 
-    public Integer getActived() {
-        return actived;
-    }
 
-    public void setActived(Integer actived) {
-        this.actived = actived;
-    }
 
-    public Integer getLogDelete() {
-        return logDelete;
-    }
 
-    public void setLogDelete(Integer logDelete) {
-        this.logDelete = logDelete;
-    }
 
     public String getAscnId() {
         return ascnId;

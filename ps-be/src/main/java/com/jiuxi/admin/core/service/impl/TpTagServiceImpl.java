@@ -129,12 +129,6 @@ public class TpTagServiceImpl implements TpTagService {
             bean.setUpdateTime(now);
             
             // 设置默认值
-            if (bean.getActived() == null) {
-                bean.setActived(1); // 默认启用
-            }
-            if (bean.getLogDelete() == null) {
-                bean.setLogDelete(0); // 默认未删除
-            }
             if (bean.getOrderIndex() == null) {
                 bean.setOrderIndex(0.0); // 默认排序
             }

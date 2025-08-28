@@ -12,8 +12,7 @@
         <result property="orderIndex" column="ORDER_INDEX"/>
         <result property="tenantId" column="TENANT_ID"/>
         <result property="ascnId" column="ASCN_ID"/>
-        <result property="actived" column="ACTIVED"/>
-        <result property="logDelete" column="LOG_DELETE"/>
+
         <result property="creator" column="CREATOR"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updator" column="UPDATOR"/>
@@ -33,8 +32,7 @@
             ORDER_INDEX,
             TENANT_ID,
             ASCN_ID,
-            ACTIVED,
-            LOG_DELETE,
+
             CREATOR,
             CREATE_TIME,
             UPDATOR,
@@ -55,8 +53,7 @@
             t.ORDER_INDEX,
             t.TENANT_ID,
             t.ASCN_ID,
-            t.ACTIVED,
-            t.LOG_DELETE,
+
             t.CREATOR,
             t.CREATE_TIME,
             t.UPDATOR,
@@ -84,12 +81,7 @@
             <if test="query.ascnId != null and query.ascnId != ''">
                 AND t.ASCN_ID = #{query.ascnId}
             </if>
-            <if test="query.actived != null">
-                AND t.ACTIVED = #{query.actived}
-            </if>
-            <if test="query.logDelete != null">
-                AND t.LOG_DELETE = #{query.logDelete}
-            </if>
+
         </where>
         ORDER BY t.ORDER_INDEX ASC, t.CREATE_TIME DESC
     </select>
@@ -104,8 +96,7 @@
             t.ORDER_INDEX,
             t.TENANT_ID,
             t.ASCN_ID,
-            t.ACTIVED,
-            t.LOG_DELETE,
+
             t.CREATOR,
             t.CREATE_TIME,
             t.UPDATOR,
@@ -135,9 +126,6 @@
             </if>
             <if test="query.actived != null">
                 AND t.ACTIVED = #{query.actived}
-            </if>
-            <if test="query.logDelete != null">
-                AND LOG_DELETE = #{query.logDelete}
             </if>
         </where>
         ORDER BY ORDER_INDEX ASC, CREATE_TIME DESC
@@ -153,8 +141,7 @@
             ORDER_INDEX,
             TENANT_ID,
             ASCN_ID,
-            ACTIVED,
-            LOG_DELETE,
+
             CREATOR,
             CREATE_TIME,
             UPDATOR,
@@ -170,8 +157,7 @@
             #{orderIndex},
             #{tenantId},
             #{ascnId},
-            #{actived},
-            #{logDelete},
+
             #{creator},
             #{createTime},
             #{updator},
@@ -192,8 +178,7 @@
             <if test="orderIndex != null">ORDER_INDEX = #{orderIndex},</if>
             <if test="tenantId != null">TENANT_ID = #{tenantId},</if>
             <if test="ascnId != null">ASCN_ID = #{ascnId},</if>
-            <if test="actived != null">ACTIVED = #{actived},</if>
-            <if test="logDelete != null">LOG_DELETE = #{logDelete},</if>
+
             <if test="updator != null">UPDATOR = #{updator},</if>
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="extend01 != null">EXTEND01 = #{extend01},</if>
@@ -213,8 +198,7 @@
             t.ORDER_INDEX,
             t.TENANT_ID,
             t.ASCN_ID,
-            t.ACTIVED,
-            t.LOG_DELETE,
+
             t.CREATOR,
             t.CREATE_TIME,
             t.UPDATOR,
@@ -227,17 +211,14 @@
         FROM tp_tag t
         LEFT JOIN tp_person_basicinfo cp ON t.CREATOR = cp.PERSON_ID
         LEFT JOIN tp_person_basicinfo up ON t.UPDATOR = up.PERSON_ID
-        WHERE t.TAG_ID = #{tagId} AND t.LOG_DELETE = 0
+        WHERE t.TAG_ID = #{tagId}
     </select>
 
-    <!-- 删除标签（逻辑删除） -->
-    <update id="delete" parameterType="com.jiuxi.admin.core.bean.entity.TpTag">
-        UPDATE tp_tag
-        SET LOG_DELETE = 1,
-            UPDATOR = #{updator},
-            UPDATE_TIME = #{updateTime}
+    <!-- 删除标签（物理删除） -->
+    <delete id="delete" parameterType="com.jiuxi.admin.core.bean.entity.TpTag">
+        DELETE FROM tp_tag
         WHERE TAG_ID = #{tagId}
-    </update>
+    </delete>
 
     <!-- 根据标签名称查询标签 -->
     <select id="selectByTagName" resultType="com.jiuxi.admin.core.bean.entity.TpTag">
@@ -245,7 +226,6 @@
         WHERE TAG_NAME = #{tagName}
           AND TENANT_ID = #{tenantId}
           AND ASCN_ID = #{orgId}
-          AND LOG_DELETE = 0
     </select>
 
 </mapper>

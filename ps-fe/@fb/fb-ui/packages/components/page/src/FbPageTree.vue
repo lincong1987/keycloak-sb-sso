@@ -1,5 +1,8 @@
 <template>
-	<div :class="getClass">
+	<fb-flex :class="getClass"  >
+
+ 
+
 		<fb-row :gutter="gutter" :vertical-gutter="gutter">
 
 			<fb-col :span="spans[0]" v-if="$slots.tree" :class="`${prefix}-page-tree__tree-panel`">
@@ -31,7 +34,7 @@
 			<slot name="footer-center"></slot>
 			<slot name="footer-right"></slot>
 		</div>
-	</div>
+	</fb-flex>
 </template>
 
 <script>

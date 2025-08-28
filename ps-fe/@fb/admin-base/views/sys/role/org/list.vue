@@ -122,6 +122,7 @@
 							sortable: false,
 						},
 						{
+							freeze:"right",
 							name: '',
 							label: '操作',
 							sortable: false,

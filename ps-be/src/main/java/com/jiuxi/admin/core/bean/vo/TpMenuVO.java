@@ -1,5 +1,6 @@
 package com.jiuxi.admin.core.bean.vo;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jiuxi.common.serializer.UrlJsonSerializer;
 import com.jiuxi.core.core.validator.group.AddGroup;
@@ -298,6 +299,19 @@ public class TpMenuVO implements Serializable {
 
     public void setChecked(Boolean checked) {
         this.checked = checked;
+    }
+    
+    /**
+     * 处理字符串参数的setter方法
+     * 用于处理前端传递'null'字符串的情况
+     */
+    @JsonSetter("checked")
+    public void setChecked(String checked) {
+        if ("null".equals(checked) || checked == null || checked.trim().isEmpty()) {
+            this.checked = null;
+        } else {
+            this.checked = Boolean.valueOf(checked);
+        }
     }
 
     public String getMenuSourceName() {

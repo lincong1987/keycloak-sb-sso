@@ -10,10 +10,14 @@ import com.jiuxi.core.core.annotation.IgnoreAuthorization;
 import com.jiuxi.core.core.validator.group.AddGroup;
 import com.jiuxi.core.core.validator.group.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.beans.PropertyEditorSupport;
 import java.util.List;
 
 /**
@@ -30,6 +34,26 @@ public class TpMenuController {
 
     @Autowired
     private TpMenuService tpMenuService;
+    
+    @Autowired
+    private CacheManager cacheManager;
+
+    /**
+     * 自定义参数绑定，处理Boolean类型的'null'字符串
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Boolean.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if ("null".equals(text) || text == null || text.trim().isEmpty()) {
+                    setValue(null);
+                } else {
+                    setValue(Boolean.valueOf(text));
+                }
+            }
+        });
+    }
 
     /**
      * 查询所有菜单-菜单管理页面使用
@@ -93,6 +117,20 @@ public class TpMenuController {
         tpMenuService.delete(menuId, jwtpid);
 
         return JsonResponse.buildSuccess();
+    }
+    
+    /**
+     * 清除菜单缓存
+     */
+    @RequestMapping("/clear-cache")
+    public JsonResponse clearCache() {
+        try {
+            // 清除菜单服务的所有缓存
+            cacheManager.getCache("platform.{TpMenuService}$[86400]").clear();
+            return JsonResponse.buildSuccess("菜单缓存清除成功");
+        } catch (Exception e) {
+            return JsonResponse.buildFailure("菜单缓存清除失败: " + e.getMessage());
+        }
     }
 
 }

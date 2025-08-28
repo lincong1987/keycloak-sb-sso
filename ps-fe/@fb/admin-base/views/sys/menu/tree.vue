@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<fb-page-tree title="菜单树">
+	<fb-flex>
+		<fb-page-tree title="菜单|权限树">
 			<template slot="tree">
 				<fb-tree
 					style="overflow: auto"
@@ -104,11 +104,27 @@
 						</fb-col>
 					</fb-row>
 
+
+					<fb-row>
+						<fb-col span="20">
+							<fb-property-item label="菜单PID">
+								{{formData.menuPid}}
+							</fb-property-item>
+						</fb-col>
+					</fb-row>
+					<fb-row>
+						<fb-col span="20">
+							<fb-property-item label="菜单ID">
+								{{formData.menuId}}
+							</fb-property-item>
+						</fb-col>
+					</fb-row>
+
 				</fb-property>
 			</template>
 		</fb-page-tree>
 		<tp-dialog ref="TpDialog" @closeTpDialog="closeDialog"></tp-dialog>
-	</div>
+	</fb-flex>
 </template>
 
 <script>
@@ -167,7 +183,9 @@
 		methods: {
 			// 初始化树数据
 			initMenuTreeData(menuId, selectMenuId) {
-				this.service.tree({menuId: menuId}).then((result) => {
+				// 添加时间戳参数强制刷新，避免缓存问题
+				const timestamp = new Date().getTime();
+				this.service.tree({menuId: menuId, _t: timestamp}).then((result) => {
 					if (result.code == 1) {
 						this.menuData = result.data;
 						// 默认选中根节点

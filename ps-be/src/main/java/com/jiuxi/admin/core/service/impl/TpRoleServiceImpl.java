@@ -407,21 +407,27 @@ public class TpRoleServiceImpl implements TpRoleService {
             tpRoleMenuMapper.delete(roleId, "");
 
             String[] menuIdArr = StringUtils.split(menuIds, ",");
-            int len = menuIdArr.length;
+            // 去除重复的菜单ID，避免主键重复错误
+            Set<String> uniqueMenuIds = new LinkedHashSet<>(Arrays.asList(menuIdArr));
+            int len = uniqueMenuIds.size();
+            
             TpRoleMenu bean = new TpRoleMenu();
             bean.setRoleId(roleId);
             // 设置权限
             if (len > 0) {
-                for (int i = 0; i < len; i++) {
-                    bean.setMenuId(menuIdArr[i]);
-                    tpRoleMenuMapper.save(bean);
+                for (String menuId : uniqueMenuIds) {
+                    // 跳过空字符串或null值
+                    if (StrUtil.isNotBlank(menuId)) {
+                        bean.setMenuId(menuId);
+                        tpRoleMenuMapper.save(bean);
+                    }
                 }
             }
 
             return len;
         } catch (Exception e) {
-            LOGGER.error("用户挂职部门失败！roleId:{}, menuIds:{}, 错误: {}", roleId, menuIds, ExceptionUtils.getStackTrace(e));
-            throw new TopinfoRuntimeException(-1, "用户挂职部门失败！");
+            LOGGER.error("角色授权失败！roleId:{}, menuIds:{}, 错误: {}", roleId, menuIds, ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, "角色授权失败！");
         }
     }
 }

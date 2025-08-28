@@ -2,9 +2,28 @@
 	<div class="tp-dialog">
 		<div class="tp-dialog-top">
 			<fb-form ref="fbform" :label-width="140" v-if="this.inited">
+ 
+					<fb-row>
+					<fb-col span="20">
+						<fb-form-item label="菜单类型" prop="menuType" :rule="[{required: true}]">
+							<fb-tooltip slot="label-extra" placement="top">
+								<fb-container slot="content" width="260px">'菜单分类节点的菜单不会展示给用户，且保存后不能修改为其它菜单类型'</fb-container>
+								<fb-icon name="information"/>
+							</fb-tooltip>
+							<fb-select v-model="formData.menuType"
+									   :service="$svc.sys.dict.select"
+									   :param="{'pdicCode': 'SYS19'}"
+									   @on-data-load="handleDataLoad"
+									   :disabled="formData.menuType == 'SYS1907' && formData.menuId != ''"
+									   placeholder="请选择"
+									   clearable/>
+						</fb-form-item>
+					</fb-col>
+				</fb-row>
+
 				<fb-row>
 					<fb-col span="20">
-						<fb-form-item label="菜单名称" prop="menuName" :rule="[{required: true}]">
+						<fb-form-item :label="`菜单名称`" prop="menuName" :rule="[{required: true}]">
 							<fb-input v-model="formData.menuName"
 									  placeholder="请输入菜单名称">
 							</fb-input>
@@ -24,23 +43,7 @@
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
-				<fb-row>
-					<fb-col span="20">
-						<fb-form-item label="菜单类型" prop="menuType" :rule="[{required: true}]">
-							<fb-tooltip slot="label-extra" placement="top">
-								<fb-container slot="content" width="260px">'菜单分类节点的菜单不会展示给用户，且保存后不能修改为其它菜单类型'</fb-container>
-								<fb-icon name="information"/>
-							</fb-tooltip>
-							<fb-select v-model="formData.menuType"
-									   :service="$svc.sys.dict.select"
-									   :param="{'pdicCode': 'SYS19'}"
-									   @on-data-load="handleDataLoad"
-									   :disabled="formData.menuType == 'SYS1907' && formData.menuId != ''"
-									   placeholder="请选择"
-									   clearable/>
-						</fb-form-item>
-					</fb-col>
-				</fb-row>
+			
 				<fb-row v-show="showMenuUri()">
 					<fb-col span="20">
 						<fb-form-item label="菜单url" prop="menuUri">

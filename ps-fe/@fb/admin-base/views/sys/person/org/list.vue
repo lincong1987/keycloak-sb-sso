@@ -122,6 +122,9 @@
 							<!-- 角色授权按钮 -->
 							<fb-button @on-click="handleAuth(props.row)" v-permission="'SYS_ORG_PERSON_AUTHADD'"
 									   editor size="s">授权</fb-button>
+							<!-- 标签管理按钮 v-permission="'SYS_ORG_PERSON_TAG'"-->
+							<fb-button @on-click="handleTag(props.row)" 
+									   editor size="s">标签</fb-button>
 							<!-- 兼职管理按钮：仅主部门人员可设置兼职 -->
 							<fb-button @on-click="handleParttimejob(props.row)" v-permission="'SYS_ORG_PERSON_PARTTIMEADD'" v-if="props.row.defaultDept == 1"
 									   editor size="s">兼职</fb-button>
@@ -422,6 +425,14 @@
 			handleAuth(row) {
 				let param = {"id": row.personId, "deptId": row.deptId, "passKey": row.passKey};
 				this.$refs.TpDialog.show(import('../../../../views/sys/person/org/auth.vue'), param, "授权");
+			},
+			/**
+			 * 用户标签管理
+			 * @param {Object} row - 要设置标签的人员数据
+			 */
+			handleTag(row) {
+				let param = {"id": row.personId, "deptId": row.deptId, "passKey": row.passKey};
+				this.$refs.TpDialog.show(import('../../../../views/sys/person/org/tag.vue'), param, "标签");
 			},
 			/**
 			 * 兼职部门管理

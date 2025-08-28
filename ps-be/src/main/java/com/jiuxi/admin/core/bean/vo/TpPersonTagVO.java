@@ -29,9 +29,24 @@ public class TpPersonTagVO implements Serializable {
     private String tagName;
     
     /**
+     * 标签描述
+     */
+    private String tagDesc;
+    
+    /**
      * 标签颜色
      */
     private String tagColor;
+    
+    /**
+     * 排序号
+     */
+    private Double orderIndex;
+    
+    /**
+     * 部门ID
+     */
+    private String deptId;
     
     /**
      * 创建人
@@ -75,6 +90,14 @@ public class TpPersonTagVO implements Serializable {
         this.tagColor = tagColor;
     }
 
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -89,5 +112,21 @@ public class TpPersonTagVO implements Serializable {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getTagDesc() {
+        return tagDesc;
+    }
+
+    public void setTagDesc(String tagDesc) {
+        this.tagDesc = tagDesc;
+    }
+
+    public Double getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(Double orderIndex) {
+        this.orderIndex = orderIndex;
     }
 }

@@ -29,6 +29,11 @@ public class TpPersonTag implements Serializable {
     private String tagId;
     
     /**
+     * 部门ID
+     */
+    private String deptId;
+    
+    /**
      * 创建人
      */
     private String creator;
@@ -52,6 +57,14 @@ public class TpPersonTag implements Serializable {
 
     public void setTagId(String tagId) {
         this.tagId = tagId;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
     }
 
     public String getCreator() {

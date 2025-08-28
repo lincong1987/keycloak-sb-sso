@@ -13,7 +13,7 @@
 					<fb-list :pager-align="'center'" :pager-max-length="3" :pager-simple="true" :service="service.list"
 						ref="list">
 						<fb-list-item :style="{ background: formData.entId === item.entId ? '#B8E6FF' : '' }" slot="item"
-							slot-scope="{item, index}">
+							slot-scope="{item}">
 							<fb-list-item-meta>
 								<fb-container pl="4px" slot="title">
 									<fb-link :click="() => doClick(item)" :label="`${item.entFullName}`"

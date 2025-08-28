@@ -957,16 +957,28 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                         personVO.setEmail(email);
                         personVO.setDeptId(dept.getDeptId());
                         personVO.setAscnId(dept.getAscnId());
+                        // 导入时不设置附件
+                        personVO.setFile(null);
 
                         // 添加用户
                         LOGGER.info("开始导入第{}行用户：{}, 手机号：{}, 部门ID：{}", i + 1, personName, phone, deptId);
-                        TpPersonBasicinfoVO result = add(personVO, jwtpid, dept.getCategory());
+                        // 确保category不为null，默认为0
+                        Integer category = dept.getCategory() != null ? dept.getCategory() : 0;
+                        TpPersonBasicinfoVO result = add(personVO, jwtpid, category);
                         LOGGER.info("第{}行用户导入完成，返回结果：{}", i + 1, result != null ? "成功" : "失败");
                         successList.add("第" + (i + 1) + "行：" + personName + "导入成功");
 
                     } catch (Exception e) {
                         LOGGER.error("导入第{}行数据失败: {}", i + 1, ExceptionUtils.getStackTrace(e));
-                        errorList.add("第" + (i + 1) + "行：导入失败 - " + e.getMessage());
+                        String errorMsg = "导入失败";
+                        if (StrUtil.isNotBlank(e.getMessage())) {
+                            errorMsg += " - " + e.getMessage();
+                        } else if (e instanceof NullPointerException) {
+                            errorMsg += " - 数据为空或格式错误";
+                        } else {
+                            errorMsg += " - 系统异常";
+                        }
+                        errorList.add("第" + (i + 1) + "行：" + errorMsg);
                     }
                 }
 

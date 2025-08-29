@@ -111,6 +111,16 @@ public class TpOperateLogVO {
      */
     private String extend03;
 
+    /**
+     * 用户代理
+     */
+    private String userAgent;
+
+    /**
+     * 来源
+     */
+    private String source;
+
     public String getLogId() {
         return logId;
     }
@@ -269,5 +279,21 @@ public class TpOperateLogVO {
 
     public void setExtend03(String extend03) {
         this.extend03 = extend03;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

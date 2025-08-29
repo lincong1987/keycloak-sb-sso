@@ -161,9 +161,24 @@ public class TpOperateLogController {
     public JsonResponse add(TpOperateLogVO tpOperateLog, String jwtpid) {
         try {
             String logId = tpOperateLogService.add(tpOperateLog, jwtpid);
-            return JsonResponse.buildSuccess(logId);
+            return JsonResponse.buildSuccess("新增成功", logId);
         } catch (Exception e) {
-            return JsonResponse.buildFailure("新增操作日志失败：" + e.getMessage());
+            return JsonResponse.buildFailure("新增失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 导出操作日志到Excel
+     * @param query 查询条件
+     * @param jwtpid JWT中的人员ID
+     * @param response HTTP响应
+     */
+    @RequestMapping("/export-excel")
+    public void exportExcel(@RequestBody TpOperateLogQuery query, String jwtpid, HttpServletResponse response) {
+        try {
+            tpOperateLogService.exportExcel(query, jwtpid, response);
+        } catch (Exception e) {
+            throw new RuntimeException("导出Excel失败", e);
         }
     }
 

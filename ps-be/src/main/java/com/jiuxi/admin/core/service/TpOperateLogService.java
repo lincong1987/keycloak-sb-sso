@@ -99,4 +99,13 @@ public interface TpOperateLogService {
      * @param extend03 扩展字段3
      */
     void collection(String moduleCode, String operterType, String operterRid, String username, String category, String token, String ip, String userAgent, String extend01, String extend02, String extend03);
+
+    /**
+     * 导出操作日志到Excel
+     * @param query 查询条件
+     * @param jwtpid JWT中的人员ID
+     * @param response HTTP响应对象
+     * @throws Exception 导出异常
+     */
+    void exportExcel(TpOperateLogQuery query, String jwtpid, HttpServletResponse response) throws Exception;
 }

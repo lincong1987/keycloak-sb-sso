@@ -41,4 +41,24 @@ export default {
 			return res
 		})
 	},
+
+	/**
+	 * 导出操作日志到Excel
+	 * @param {Object} formData 查询条件
+	 * @returns {Promise} 导出结果
+	 */
+	exportExcel(formData) {
+		return app.service.request({
+			url: '/platform/logger/export-excel',
+			method: 'post',
+			data: formData,
+			headers: { 'Content-Type': 'application/json', 'Token': app.$datax.get('token') },
+			responseType: 'blob', // 重要：设置为blob以处理文件下载
+			timeout: 30000, // 导出可能需要更长时间
+		}).then(e => {
+			return e
+		}).catch(e => {
+			return e
+		})
+	}
 }

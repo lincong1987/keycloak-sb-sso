@@ -124,6 +124,7 @@
             </template>
 
             <template slot="buttons">
+                <fb-button type="primary" icon="download" @on-click="handleExport">导出</fb-button>
             </template>
 
             <template slot="actions">
@@ -413,6 +414,47 @@
                 }
 
                 this.$refs.TpDialog.show(import('@fb/log-center-ui/src/views/sys/tpoperatelog/view.vue'), param, "查看", options);
+            },
+            // 导出功能实现
+            handleExport() {
+              //  this.$message.loading('正在导出数据，请稍候...', 0);
+                
+                // 获取当前查询条件
+                const queryConditions = {
+                    ...this.formData
+                };
+                
+                // 调用导出服务
+                app.$svc.sys.tpoperatelog.exportExcel(queryConditions).then(response => {
+                  //  this.$message.destroy();
+                    
+                    if (response.status === 200) {
+                        // 创建下载链接
+                        const blob = new Blob([response.data], {
+                            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                        });
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        
+                        // 设置文件名
+                        const fileName = `操作日志_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+                        link.download = fileName;
+                        
+                        // 触发下载
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                        
+                        this.$message.success('导出成功！');
+                    } else {
+                        this.$message.error('导出失败，请重试');
+                    }
+                }).catch(error => {
+                    console.error('导出失败：', error);
+                    this.$message.error('导出失败：' + (error.message || '未知错误'));
+                });
             },
         }
     }

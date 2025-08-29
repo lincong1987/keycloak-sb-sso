@@ -39,6 +39,9 @@ export * from './divider/src/FbDivider.d'
 // Dot 组件类型定义
 export * from './dot/src/FbDot.d'
 
+// Dropdown 组件类型定义
+export * from './dropdown/src/FbDropdown.d'
+
 // Drawer 组件类型定义
 export * from './drawer/src/FbDrawer.d'
 
@@ -47,6 +50,12 @@ export * from './empty/src/FbEmpty.d'
 
 // Flex 组件类型定义
 export * from './flex/src/FbFlex.d'
+
+// Flop 组件类型定义
+export * from './flop/src/FbFlop.d'
+
+// Flopper 组件类型定义
+export * from './flopper/src/FbFlopper.d'
 
 // Form 组件类型定义
 export * from './form/src/FbForm.d'
@@ -60,8 +69,17 @@ export * from './header/src/FbHeader.d'
 // Icon 组件类型定义
 export * from './icon/src/FbIcon.d'
 
+// IconSelect 组件类型定义
+export * from './icon-select/src/FbIconSelect.d'
+
+// ImageViewer 组件类型定义
+export * from './image-viewer/src/FbImageViewer.d'
+
 // Input 组件类型定义
 export * from './input/src/FbInput.d'
+
+// InputNumber 组件类型定义
+export * from './input-number/src/FbInputNumber.d'
 
 // Radio 组件类型定义
 export * from './radio/src/FbRadio.d'
@@ -96,6 +114,9 @@ export * from './cardx-breath/src/FbCardxBreath.d'
 // Cascader 组件类型定义
 export * from './cascader/src/FbCascader.d'
 
+// CascaderPanel 组件类型定义
+export * from './cascader-panel/src/FbCascaderPanel.d'
+
 // CheckboxGroup 组件类型定义
 export * from './checkbox-group/src/FbCheckboxGroup.d'
 
@@ -104,6 +125,9 @@ export * from './collapse/src/FbCollapse.d'
 
 // CollapseItem 组件类型定义
 export * from './collapse/src/FbCollapseItem.d'
+
+// CollapseTransition 组件类型定义
+export * from './collapse-transition/src/FbCollapseTransition.d'
 
 // ColorPicker 组件类型定义
 export * from './color-picker/src/FbColorPicker.d'
@@ -116,6 +140,12 @@ export * from './datepicker/src/FbDatepicker.d'
 
 // DragVerify 组件类型定义
 export * from './drag-verify/src/FbDragVerify.d'
+
+// DragVerifyImg 组件类型定义
+export * from './drag-verify-img/src/FbDragVerifyImg.d'
+
+// DragVerifyRotateImg 组件类型定义
+export * from './drag-verify-rotate-img/src/FbDragVerifyRotateImg.d'
 
 // 默认导出所有类型
 export { default as FbAlert } from './alert/src/FbAlert.d'
@@ -131,14 +161,20 @@ export { default as FbContainer } from './container/src/FbContainer.d'
 export { default as FbDialog } from './dialog/src/FbDialog.d'
 export { default as FbDivider } from './divider/src/FbDivider.d'
 export { default as FbDot } from './dot/src/FbDot.d'
+export { default as FbDropdown } from './dropdown/src/FbDropdown.d'
 export { default as FbDrawer } from './drawer/src/FbDrawer.d'
 export { default as FbEmpty } from './empty/src/FbEmpty.d'
 export { default as FbFlex } from './flex/src/FbFlex.d'
+export { default as FbFlop } from './flop/src/FbFlop.d'
+export { default as FbFlopper } from './flopper/src/FbFlopper.d'
 export { default as FbForm } from './form/src/FbForm.d'
 export { default as FbFormItem } from './form-item/src/FbFormItem.d'
 export { default as FbHeader } from './header/src/FbHeader.d'
 export { default as FbIcon } from './icon/src/FbIcon.d'
+export { default as FbIconSelect } from './icon-select/src/FbIconSelect.d'
+export { default as FbImageViewer } from './image-viewer/src/FbImageViewer.d'
 export { default as FbInput } from './input/src/FbInput.d'
+export { default as FbInputNumber } from './input-number/src/FbInputNumber.d'
 export { default as FbRadio } from './radio/src/FbRadio.d'
 export { default as FbRow } from './row/src/FbRow.d'
 export { default as FbText } from './text/src/FbText.d'
@@ -150,10 +186,14 @@ export { default as FbAvatarBox } from './avatar-box/src/FbAvatarBox.d'
 export { default as FbCardx } from './cardx/src/FbCardx.d'
 export { default as FbCardxBreath } from './cardx-breath/src/FbCardxBreath.d'
 export { default as FbCascader } from './cascader/src/FbCascader.d'
+export { default as FbCascaderPanel } from './cascader-panel/src/FbCascaderPanel.d'
 export { default as FbCheckboxGroup } from './checkbox-group/src/FbCheckboxGroup.d'
 export { default as FbCollapse } from './collapse/src/FbCollapse.d'
 export { default as FbCollapseItem } from './collapse/src/FbCollapseItem.d'
+export { default as FbCollapseTransition } from './collapse-transition/src/FbCollapseTransition.d'
 export { default as FbColorPicker } from './color-picker/src/FbColorPicker.d'
 export { default as FbComponent } from './component/src/FbComponent.d'
 export { default as FbDatepicker } from './datepicker/src/FbDatepicker.d'
 export { default as FbDragVerify } from './drag-verify/src/FbDragVerify.d'
+export { default as FbDragVerifyImg } from './drag-verify-img/src/FbDragVerifyImg.d'
+export { default as FbDragVerifyRotateImg } from './drag-verify-rotate-img/src/FbDragVerifyRotateImg.d'

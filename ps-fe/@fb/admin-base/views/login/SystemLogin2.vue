@@ -340,7 +340,7 @@ export default {
 				// 				return
 				// 判断密码是否需要强制修改
 				if (json.data && json.data.restPwd === "1") {
-					// 强制修改密码
+					// 强制修改密码（原有逻辑保持不变）
 					let token = this.$datax.get('token');
 					this.$datax.remove('token');
 					// 防止用户不修改密码直接刷新浏览器，所以这里将登陆系统的token删除，重新缓存一个临时token
@@ -351,10 +351,33 @@ export default {
 					loginForm.userpwd = null;
 
 				} else if (json.data && json.data.restPwd === "2") {
-					// 密码即将过期，显示提醒但允许正常登录
-					this.$message.warning('您的密码即将过期，建议尽快修改密码！');
-					// 继续正常登录流程
-					this.handleNormalLogin(json);
+					// 密码即将过期，显示提醒询问是否修改
+					this.$confirm('您的密码即将过期，是否现在修改密码？', '密码过期提醒', {
+						confirmButtonText: '是',
+						cancelButtonText: '否',
+						type: 'warning'
+					}).then(() => {
+						// 用户选择修改密码，进入密码修改界面
+						let token = this.$datax.get('token');
+						this.$datax.remove('token');
+						this.$datax.set('temporary', token)
+						this.$store.commit('login/setDragImgStatus', 'fail')
+						this.cardCode = 4;
+						loginForm.userpwd = null;
+					}).catch(() => {
+						// 用户选择不修改，继续正常登录
+						this.handleNormalLogin(json);
+					});
+
+				} else if (json.data && json.data.restPwd === "3") {
+					// 在强制修改期内，直接引导用户进入密码修改界面
+					this.$message.info('为了您的账户安全，请修改密码后继续使用系统');
+					let token = this.$datax.get('token');
+					this.$datax.remove('token');
+					this.$datax.set('temporary', token)
+					this.$store.commit('login/setDragImgStatus', 'fail')
+					this.cardCode = 4;
+					loginForm.userpwd = null;
 				} else {
 					if (json.data && json.data.deptVOList && json.data.deptVOList.length > 1) {
 						this.$store.commit('login/setDragImgStatus', 'success')

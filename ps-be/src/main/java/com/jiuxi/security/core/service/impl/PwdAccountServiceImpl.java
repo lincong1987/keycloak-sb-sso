@@ -268,9 +268,9 @@ public class PwdAccountServiceImpl implements AccountService {
     private void checkPasswordExpiry(AccountVO accountVO) {
         String lastPasswordChangeTime = accountVO.getLastPasswordChangeTime();
         if (StrUtil.isBlank(lastPasswordChangeTime)) {
-            // 如果没有密码修改时间记录，认为密码已过期，需要修改
-            accountVO.setRestPwd("1");
-            return;
+            // 如果没有密码修改时间记录，认为密码已过期，直接锁定账户
+            LOGGER.error("用户密码已过期，账户被锁定，用户名:{}", accountVO.getUserName());
+            throw new TopinfoRuntimeException(-1, "密码已过期，账户已被锁定，请联系管理员重置密码");
         }
 
         try {
@@ -289,19 +289,26 @@ public class PwdAccountServiceImpl implements AccountService {
             LocalDateTime reminderTime = expiryTime.minusDays(reminderDays);
 
             if (now.isAfter(expiryTime)) {
-                // 密码已过期，强制修改
-                accountVO.setRestPwd("1");
-                LOGGER.warn("用户密码已过期，需要强制修改密码，用户名:{}, 密码修改时间:{}", accountVO.getUserName(), lastPasswordChangeTime);
+                // 1. 超过有效期，直接锁定账户
+                LOGGER.error("用户密码已过期，账户被锁定，用户名:{}, 密码修改时间:{}", accountVO.getUserName(), lastPasswordChangeTime);
+                throw new TopinfoRuntimeException(-1, "密码已过期，账户已被锁定，请联系管理员重置密码");
             } else if (now.isAfter(reminderTime)) {
-                // 密码即将过期，设置提醒标识
+                // 2. 在提醒期内，强制引导用户修改密码
                 long daysUntilExpiry = Duration.between(now, expiryTime).toDays();
-                accountVO.setRestPwd("2"); // 使用"2"表示提醒状态
-                LOGGER.info("用户密码即将过期，剩余{}天，用户名:{}", daysUntilExpiry, accountVO.getUserName());
+                accountVO.setRestPwd("3"); // 使用"3"表示强制修改状态
+                LOGGER.info("用户密码即将过期，剩余{}天，强制引导修改密码，用户名:{}", daysUntilExpiry, accountVO.getUserName());
+            } else {
+                // 3. 在安全期内，正常登录，不设置任何提醒
+                LOGGER.info("用户密码在安全期内，正常登录，用户名:{}", accountVO.getUserName());
+                // 不设置restPwd，保持为null，表示正常状态
             }
+        } catch (TopinfoRuntimeException e) {
+            // 重新抛出业务异常
+            throw e;
         } catch (Exception e) {
             LOGGER.error("检查密码有效期时发生异常，用户名:{}, 异常信息:{}", accountVO.getUserName(), e.getMessage(), e);
-            // 发生异常时，为了安全起见，要求用户修改密码
-            accountVO.setRestPwd("1");
+            // 发生异常时，为了安全起见，锁定账户
+            throw new TopinfoRuntimeException(-1, "密码有效期检查异常，账户已被锁定，请联系管理员");
         }
     }
 }

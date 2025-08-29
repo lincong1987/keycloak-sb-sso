@@ -1,5 +1,6 @@
 package com.jiuxi.security.core.config;
 
+import com.jiuxi.admin.core.interceptor.IpAccessControlInterceptor;
 import com.jiuxi.security.autoconfig.SecurityConfigurationProperties;
 import com.jiuxi.security.core.interceptor.AnalysisTokenHandlerInterceptor;
 import com.jiuxi.security.core.interceptor.AuthenticationHandlerInterceptor;
@@ -90,10 +91,16 @@ public class SecurityWebMvcConfigurer implements WebMvcConfigurer {
     private TokenHandlerMethodArgumentResolver tokenHandlerMethodArgumentResolver;
 
     /**
-     * Token  Argument 解析器
+     * 许可证拦截器
      */
     @Autowired
     private SecurityLicenceHandlerInterceptor securityLicenceHandlerInterceptor;
+
+    /**
+     * IP访问控制拦截器
+     */
+    @Autowired
+    private IpAccessControlInterceptor ipAccessControlInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -101,26 +108,33 @@ public class SecurityWebMvcConfigurer implements WebMvcConfigurer {
         // 配置文件中排除的请求
         String[] excludePath = properties.getExcludePath();
 
-        // 添加认证拦截器
+        // 1、添加IP访问控制拦截器（最高优先级）
+        registry.addInterceptor(ipAccessControlInterceptor)
+                // 拦截所有
+                .addPathPatterns("/**")
+                // 排除静态资源和错误页面
+                .excludePathPatterns("/static/**", "/error/**", "/platform/captcha/**");
+
+        // 2、添加认证拦截器
         registry.addInterceptor(authenticationHandlerInterceptor)
                 // 拦截所有
                 .addPathPatterns("/**")
                 // 排除不需要拦截的请求
                 .excludePathPatterns(excludePath);
 
-        // 2、解析token拦截器
+        // 3、解析token拦截器
         registry.addInterceptor(analysisTokenHandlerInterceptor)
                 // 拦截所有
                 .addPathPatterns("/**");
 
-        // 添加鉴权拦截器
+        // 4、添加鉴权拦截器
         registry.addInterceptor(authorizationHandlerInterceptor)
                 // 拦截所有
                 .addPathPatterns("/**")
                 // 排除不需要拦截的请求
                 .excludePathPatterns(excludePath);
 
-        // 添加许可证拦截器
+        // 5、添加许可证拦截器
         registry.addInterceptor(securityLicenceHandlerInterceptor)
                 // 拦截所有
                 .addPathPatterns("/**")

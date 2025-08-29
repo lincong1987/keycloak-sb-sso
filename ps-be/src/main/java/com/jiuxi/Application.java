@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
  * @Date: 2025-08-18
  * @Copyright: 2025 www.tuxun.net Inc. All rights reserved.
  */
-@SpringBootApplication(scanBasePackages = {"com.jiuxi", "com.jiuxi.security.sso"})
+@SpringBootApplication(scanBasePackages = {"com.jiuxi", "com.jiuxi.security.sso", "com.ps"})
 public class Application {
 
     public static void main(String[] args) {

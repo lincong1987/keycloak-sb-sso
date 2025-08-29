@@ -7,8 +7,10 @@ import com.jiuxi.admin.core.bean.query.TpSystemConfigQuery;
 import com.jiuxi.admin.core.bean.vo.TpSystemConfigVO;
 import com.jiuxi.admin.core.mapper.TpSystemConfigMapper;
 import com.jiuxi.admin.core.service.TpSystemConfigService;
+import com.ps.common.config.ConfigChangeEvent;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +35,9 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
 
     @Autowired
     private TpSystemConfigMapper configMapper;
+    
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public String getConfigValue(String configKey) {
@@ -110,6 +115,9 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
         }
 
         TpSystemConfig config = configMapper.selectById(configKey);
+        String oldValue = null;
+        String operation;
+        
         if (config == null) {
             // 新增配置
             config = new TpSystemConfig();
@@ -119,14 +127,26 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
             config.setCreateTime(LocalDateTime.now());
             config.setUpdateTime(LocalDateTime.now());
             configMapper.insert(config);
+            operation = "ADD";
         } else {
             // 更新配置
+            oldValue = config.getConfigValue();
             config.setConfigValue(configValue);
             if (StringUtils.hasText(description)) {
                 config.setDescription(description);
             }
             config.setUpdateTime(LocalDateTime.now());
             configMapper.updateById(config);
+            operation = "UPDATE";
+        }
+        
+        // 发布配置变更事件
+        try {
+            ConfigChangeEvent event = new ConfigChangeEvent(this, configKey, oldValue, configValue, operation);
+            eventPublisher.publishEvent(event);
+        } catch (Exception e) {
+            // 记录日志但不影响主流程
+            System.err.println("发布配置变更事件失败: " + e.getMessage());
         }
     }
 
@@ -160,7 +180,21 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
     @Override
     public void deleteConfig(String configKey) {
         if (StringUtils.hasText(configKey)) {
+            // 获取删除前的配置值
+            TpSystemConfig config = configMapper.selectById(configKey);
+            String oldValue = config != null ? config.getConfigValue() : null;
+            
+            // 执行删除
             configMapper.deleteById(configKey);
+            
+            // 发布配置变更事件
+            try {
+                ConfigChangeEvent event = new ConfigChangeEvent(this, configKey, oldValue, null, "DELETE");
+                eventPublisher.publishEvent(event);
+            } catch (Exception e) {
+                // 记录日志但不影响主流程
+                System.err.println("发布配置变更事件失败: " + e.getMessage());
+            }
         }
     }
 }

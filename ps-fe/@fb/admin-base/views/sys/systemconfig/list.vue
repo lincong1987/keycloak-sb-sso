@@ -29,7 +29,7 @@
             <template slot="table">
                 <fb-simple-table ref="table" :service="table.service.search" :param="formData" :pk="table.primaryKey"
                     :columns="table.columns" :multiple="false" :formatters="table.formatters"
-                    :scroll="{ x: 1200, y: 372, autoHeight: true }" auto-load>
+                    :scroll="{ x: 1000, y: 372, autoHeight: true }" auto-load>
 
                     <template v-slot:actions="props">
                         <fb-space>
@@ -92,19 +92,18 @@ export default {
                     {
                         label: '配置描述',
                         name: 'description',
-                        width: 250,
                         ellipsis: true
                     },
-                    {
-                        label: '创建时间',
-                        name: 'createTime',
-                        width: 160
-                    },
-                    {
-                        label: '更新时间',
-                        name: 'updateTime',
-                        width: 160
-                    },
+                    // {
+                    //     label: '创建时间',
+                    //     name: 'createTime',
+                    //     width: 160
+                    // },
+                    // {
+                    //     label: '更新时间',
+                    //     name: 'updateTime',
+                    //     width: 160
+                    // },
                     {
                         label: '操作',
                         name: 'actions',

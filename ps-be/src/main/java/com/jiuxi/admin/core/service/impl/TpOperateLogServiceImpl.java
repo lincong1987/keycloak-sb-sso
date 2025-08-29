@@ -170,7 +170,7 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
 
             // 创建标题行
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"用户名", "模块", "操作类型", "操作时间", "IP地址", "用户代理", "来源", "类别"};
+            String[] headers = {"用户名", "模块", "操作类型", "操作时间"};
             
             // 设置标题样式
             CellStyle headerStyle = workbook.createCellStyle();
@@ -196,10 +196,6 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
                 row.createCell(1).setCellValue(StrUtil.isNotBlank(log.getModuleCode()) ? log.getModuleCode() : "");
                 row.createCell(2).setCellValue(StrUtil.isNotBlank(log.getOperterType()) ? log.getOperterType() : "");
                 row.createCell(3).setCellValue(log.getOperterTime() != null ? dateFormat.format(log.getOperterTime()) : "");
-                row.createCell(4).setCellValue(StrUtil.isNotBlank(log.getOperterIp()) ? log.getOperterIp() : "");
-                row.createCell(5).setCellValue(StrUtil.isNotBlank(log.getUserAgent()) ? log.getUserAgent() : "");
-                row.createCell(6).setCellValue(StrUtil.isNotBlank(log.getSource()) ? log.getSource() : "");
-                row.createCell(7).setCellValue(StrUtil.isNotBlank(log.getCategory()) ? log.getCategory() : "");
             }
 
             // 自动调整列宽

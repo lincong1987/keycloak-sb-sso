@@ -90,6 +90,33 @@ export * from './avatar-box/src/FbAvatarBox.d'
 // Cardx 组件类型定义
 export * from './cardx/src/FbCardx.d'
 
+// CardxBreath 组件类型定义
+export * from './cardx-breath/src/FbCardxBreath.d'
+
+// Cascader 组件类型定义
+export * from './cascader/src/FbCascader.d'
+
+// CheckboxGroup 组件类型定义
+export * from './checkbox-group/src/FbCheckboxGroup.d'
+
+// Collapse 组件类型定义
+export * from './collapse/src/FbCollapse.d'
+
+// CollapseItem 组件类型定义
+export * from './collapse/src/FbCollapseItem.d'
+
+// ColorPicker 组件类型定义
+export * from './color-picker/src/FbColorPicker.d'
+
+// Component 组件类型定义
+export * from './component/src/FbComponent.d'
+
+// Datepicker 组件类型定义
+export * from './datepicker/src/FbDatepicker.d'
+
+// DragVerify 组件类型定义
+export * from './drag-verify/src/FbDragVerify.d'
+
 // 默认导出所有类型
 export { default as FbAlert } from './alert/src/FbAlert.d'
 export { default as FbAvatar } from './avatar/src/FbAvatar.d'
@@ -121,3 +148,12 @@ export { default as FbSpace } from './space/src/FbSpace.d'
 export { default as FbBackTop } from './back-top/src/FbBackTop.d'
 export { default as FbAvatarBox } from './avatar-box/src/FbAvatarBox.d'
 export { default as FbCardx } from './cardx/src/FbCardx.d'
+export { default as FbCardxBreath } from './cardx-breath/src/FbCardxBreath.d'
+export { default as FbCascader } from './cascader/src/FbCascader.d'
+export { default as FbCheckboxGroup } from './checkbox-group/src/FbCheckboxGroup.d'
+export { default as FbCollapse } from './collapse/src/FbCollapse.d'
+export { default as FbCollapseItem } from './collapse/src/FbCollapseItem.d'
+export { default as FbColorPicker } from './color-picker/src/FbColorPicker.d'
+export { default as FbComponent } from './component/src/FbComponent.d'
+export { default as FbDatepicker } from './datepicker/src/FbDatepicker.d'
+export { default as FbDragVerify } from './drag-verify/src/FbDragVerify.d'

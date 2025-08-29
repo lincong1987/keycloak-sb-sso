@@ -765,6 +765,10 @@ export default {
 		display: flex;
 		align-items: center;
 
+		img {
+			height: 32px;
+		}
+
 		//&:before {
 		//    content:         "";
 		//    display:         block;

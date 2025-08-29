@@ -126,21 +126,21 @@ export default {
         },
         // 新增
         handleAdd() {
-             let param = {mode:'add' };
-				let options = {"height": 350};
+            let param = { mode: 'add' };
+            let options = { "height": 350 };
 
-				this.$refs.TpDialog.show(import('./add.vue'), param, "新增", options);
+            this.$refs.TpDialog.show(import('./add.vue'), param, "新增", options);
         },
         // 修改
         handleEdit(row) {
-        
 
 
-            let param = {"configKey": row.configKey, "passKey": row.passKey,mode:'edit' };
-				let options = {"height": 350};
 
-				this.$refs.TpDialog.show(import('./add.vue'), param, "修改", options);
-		
+            let param = { "configKey": row.configKey, "passKey": row.passKey, mode: 'edit' };
+            let options = { "height": 350 };
+
+            this.$refs.TpDialog.show(import('./add.vue'), param, "修改", options);
+
         },
         // 查看
         handleView(row) {

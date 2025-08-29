@@ -1,6 +1,8 @@
 package com.jiuxi.admin.core.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiuxi.admin.core.bean.entity.TpMenuHistory;
+import com.jiuxi.admin.core.bean.query.TpMenuHistoryQuery;
 import com.jiuxi.admin.core.bean.vo.TpMenuVO;
 
 import java.util.List;
@@ -64,6 +66,14 @@ public interface TpMenuHistoryService {
     List<TpMenuHistory> getHistoryByOperationType(String operationType);
 
     /**
+     * 根据历史记录ID查询详情
+     *
+     * @param historyId 历史记录ID
+     * @return 历史记录详情
+     */
+    TpMenuHistory getHistoryById(String historyId);
+
+    /**
      * 根据时间范围查询历史记录
      *
      * @param startTime 开始时间
@@ -73,14 +83,22 @@ public interface TpMenuHistoryService {
     List<TpMenuHistory> getHistoryByTimeRange(String startTime, String endTime);
 
     /**
-     * 查询所有历史记录
+     * 获取所有历史记录
      *
      * @return 历史记录列表
      */
     List<TpMenuHistory> getAllHistory();
 
     /**
-     * 获取完整菜单树数据（JSON格式）
+     * 分页查询历史记录
+     *
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    IPage<TpMenuHistory> queryPage(TpMenuHistoryQuery query);
+
+    /**
+     * 获取完整菜单树的JSON字符串
      *
      * @return 菜单树JSON字符串
      */

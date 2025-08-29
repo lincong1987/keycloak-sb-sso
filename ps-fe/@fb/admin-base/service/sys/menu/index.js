@@ -80,4 +80,13 @@ export default {
 		return app.service.get('/sys/menu/delete', {params: formData})
 	},
 
+	// 菜单历史记录相关接口
+	historyList(formData) {
+		return app.service.get('/sys/menu/history/list', {params: formData})
+	},
+
+	historyView(formData) {
+		return app.service.get('/sys/menu/history/view', {params: formData})
+	},
+
 }

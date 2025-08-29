@@ -1,9 +1,21 @@
 /*!
  * alignContent
  * (c) 2024 lincong1987
+ * 
+ * 提供 align-content 相关的 Vue 组件属性和样式计算功能
+ * 用于设置 Flexbox 容器中行的对齐方式
  */
 
-
+/**
+ * alignContent 组件属性定义
+ * @property {string} [alignContent] - 设置 align-content 样式属性，可选值: 'center' | 'flex-start' | 'flex-end' | 'space-around' | 'space-between' | 'stretch'
+ * @property {boolean} [acCenter=false] - 设置 align-content 为 'center'
+ * @property {boolean} [acSpaceBetween=false] - 设置 align-content 为 'space-between'
+ * @property {boolean} [acSpaceAround=false] - 设置 align-content 为 'space-around'
+ * @property {boolean} [acSpaceEvenly=false] - 设置 align-content 为 'space-evenly'
+ * @property {boolean} [acStart=false] - 设置 align-content 为 'flex-start'
+ * @property {boolean} [acEnd=false] - 设置 align-content 为 'flex-end'
+ */
 export const props = {
 
 	// alignContent = ['center','flex-start','flex-end','space-around','space-between','stretch']
@@ -37,6 +49,11 @@ export const props = {
 	},
 }
 
+/**
+ * alignContent 样式计算函数
+ * 根据组件属性计算对应的 CSS align-content 样式
+ * @returns {Object} 包含 alignContent 样式属性的对象
+ */
 export const style = function () {
 
 	let style = {}
@@ -67,6 +84,11 @@ export const style = function () {
 	return style
 }
 
+/**
+ * alignContent 模块默认导出
+ * @property {Object} props - 组件属性定义
+ * @property {Function} style - 样式计算函数
+ */
 export default {
 	props,
 	style

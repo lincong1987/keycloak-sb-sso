@@ -2,7 +2,10 @@ package com.jiuxi.admin.core.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiuxi.admin.core.bean.entity.TpMenuHistory;
+import com.jiuxi.admin.core.bean.query.TpMenuHistoryQuery;
 import com.jiuxi.admin.core.bean.vo.TpMenuVO;
 import com.jiuxi.admin.core.mapper.TpMenuHistoryMapper;
 import com.jiuxi.admin.core.mapper.TpMenuMapper;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @ClassName: TpMenuHistoryServiceImpl
@@ -220,6 +224,52 @@ public class TpMenuHistoryServiceImpl implements TpMenuHistoryService {
         } catch (Exception e) {
             LOGGER.error("查询所有历史记录失败，错误：{}", e.getMessage(), e);
             throw new TopinfoRuntimeException(-1, "查询所有历史记录失败");
+        }
+    }
+
+    /**
+     * 分页查询历史记录
+     *
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    @Override
+    public IPage<TpMenuHistory> queryPage(TpMenuHistoryQuery query) {
+        try {
+            Integer pageNum = Optional.ofNullable(query.getCurrent()).orElse(1);
+            Integer pageSize = Optional.ofNullable(query.getSize()).orElse(10);
+            
+            LOGGER.info("分页查询历史记录: pageNum={}, pageSize={}, query={}", pageNum, pageSize, query);
+            
+            Page<TpMenuHistory> page = new Page<>(pageNum, pageSize);
+            IPage<TpMenuHistory> iPage = tpMenuHistoryMapper.getPage(page, query);
+            
+            LOGGER.info("分页查询结果: total={}, current={}, size={}, records={}", 
+                iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords().size());
+            
+            return iPage;
+        } catch (Exception e) {
+            LOGGER.error("分页查询历史记录失败: query:{}, 错误: {}", query, e.getMessage(), e);
+            throw new TopinfoRuntimeException(-1, "分页查询历史记录失败");
+        }
+    }
+
+    /**
+     * 根据历史记录ID查询详情
+     *
+     * @param historyId 历史记录ID
+     * @return 历史记录详情
+     */
+    @Override
+    public TpMenuHistory getHistoryById(String historyId) {
+        try {
+            if (StrUtil.isBlank(historyId)) {
+                throw new TopinfoRuntimeException(-1, "历史记录ID不能为空");
+            }
+            return tpMenuHistoryMapper.selectById(historyId);
+        } catch (Exception e) {
+            LOGGER.error("根据ID查询历史记录失败，historyId: {}", historyId, e);
+            throw new TopinfoRuntimeException(-1, "查询历史记录失败: " + e.getMessage());
         }
     }
 

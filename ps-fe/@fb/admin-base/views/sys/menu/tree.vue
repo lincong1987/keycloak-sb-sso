@@ -314,7 +314,7 @@ export default {
 				return;
 			}
 			var param = { "menuId": this.menuParam.menuId, "menuName": this.formData.menuName };
-			this.$refs.TpDialog.show(import('../../../views/sys/person/org/history.vue'), param, "菜单历史记录");
+			this.$refs.TpDialog.show(import('./history.vue'), param, "菜单历史记录");
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package com.jiuxi.admin.core.controller.pc;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiuxi.admin.core.bean.entity.TpMenuHistory;
+import com.jiuxi.admin.core.bean.query.TpMenuHistoryQuery;
 import com.jiuxi.admin.core.service.TpMenuHistoryService;
 import com.jiuxi.common.bean.JsonResponse;
 import com.jiuxi.core.core.annotation.Authorization;
@@ -85,5 +87,33 @@ public class TpMenuHistoryController {
     public JsonResponse listAll() {
         List<TpMenuHistory> historyList = tpMenuHistoryService.getAllHistory();
         return JsonResponse.buildSuccess(historyList);
+    }
+
+    /**
+     * 分页查询历史记录列表
+     *
+     * @param query 查询条件
+     * @return 分页历史记录列表
+     */
+    @RequestMapping("/list")
+    public JsonResponse list(TpMenuHistoryQuery query) {
+        IPage<TpMenuHistory> page = tpMenuHistoryService.queryPage(query);
+        return JsonResponse.buildSuccess(page);
+    }
+
+    /**
+     * 根据历史记录ID查看详情
+     *
+     * @param historyId 历史记录ID
+     * @return 历史记录详情
+     */
+    @RequestMapping("/view")
+    public JsonResponse view(@RequestParam String historyId) {
+        TpMenuHistory history = tpMenuHistoryService.getHistoryById(historyId);
+        if (history != null) {
+            return JsonResponse.buildSuccess(history);
+        } else {
+            return JsonResponse.buildFailure("历史记录不存在");
+        }
     }
 }

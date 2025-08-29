@@ -35,6 +35,7 @@ public class CJsonController {
     /**
      * 列表
      */
+    @SuppressWarnings("deprecation")
     @RequestMapping("/list")
     public JsonResponse list(HttpServletRequest request, String jwtaid, String jwtdid, String jwtCityCode) {
         JSONObject query = new JSONObject();

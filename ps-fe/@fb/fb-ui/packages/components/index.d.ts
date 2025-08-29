@@ -200,6 +200,12 @@ export * from './drag-verify-img/src/FbDragVerifyImg.d'
 // DragVerifyRotateImg 组件类型定义
 export * from './drag-verify-rotate-img/src/FbDragVerifyRotateImg.d'
 
+// Select 组件类型定义
+export * from './select/src/FbSelect.d'
+export * from './select/src/FbSelectOption.d'
+export * from './select/src/FbSelectOptionGroup.d'
+export * from './select/src/FbSuggestSelect.d'
+
 // Number 组件类型定义
 export * from './number/src/FbNumber.d'
 
@@ -222,6 +228,136 @@ export * from './pdf-viewer/src/FbPdfViewer.d'
 
 // PopupHeader 组件类型定义
 export * from './popup/popup-header/src/FbPopupHeader.d'
+
+// PopupPicker 组件类型定义
+export * from './popup/popup-picker/src/FbPopupPicker.d'
+
+// PopupSelect 组件类型定义
+export * from './popup/popup-select/src/FbPopupSelect.d'
+
+// Progress 组件类型定义
+export * from './progress/src/FbProgress.d'
+
+// ProgressBox 组件类型定义
+export * from './progress-box/src/FbProgressBox.d'
+
+// Properties 组件类型定义
+export * from './properties/src/FbProperties.d'
+export * from './properties/src/FbPropertiesItem.d'
+
+// Property 组件类型定义
+export * from './property/src/FbProperty.d'
+export * from './property/src/FbPropertyItem.d'
+
+// RadioGroup 组件类型定义
+export * from './radio-group/src/FbRadioGroup.d'
+
+// RankList 组件类型定义
+export * from './rank-list/src/FbRankList.d'
+export * from './rank-list/src/FbRankListItem.d'
+
+// Rate 组件类型定义
+export * from './rate/src/FbRate.d'
+
+// RateBox 组件类型定义
+export * from './rate-box/src/FbRateBox.d'
+
+// Result 组件类型定义
+export * from './result/src/FbResult.d'
+
+// Sign 组件类型定义
+export * from './sign/src/FbSign.d'
+export * from './sign/src/FbSignButton.d'
+
+// Slider 组件类型定义
+export * from './slider/src/FbSlider.d'
+export * from './slider/src/FbSliderButton.d'
+export * from './slider/src/marker.d'
+
+// SliderTimeline 组件类型定义
+export * from './slider-timeline/src/FbSliderTimeline.d'
+
+// Space 组件类型定义
+export * from './space/src/FbSpace.d'
+
+// Spin 组件类型定义
+export * from './spin/src/FbSpin.d'
+
+// State 组件类型定义
+export * from './state/src/FbState.d'
+
+// Steps 组件类型定义
+export * from './steps/src/FbSteps.d'
+export * from './steps/src/FbStep.d'
+
+// Suggest 组件类型定义
+export * from './suggest/src/FbSuggest.d'
+
+// Switch 组件类型定义
+export * from './switch/src/FbSwitch.d'
+
+// SwitchAccordion 组件类型定义
+export * from './switch-accordion/src/FbSwitchAccordion.d'
+export * from './switch-accordion/src/FbSwitchAccordionGroup.d'
+
+// Tab 组件类型定义
+export * from './tab/src/FbTab.d'
+export * from './tab/src/FbTabs.d'
+
+// Table 组件类型定义
+export * from './table/src/FbSimpleTable.d'
+export * from './table/src/FbSimpleTableColumn.d'
+
+// TableLayout 组件类型定义
+export * from './table-layout/src/FbTableLayout.d'
+export * from './table-layout/src/FbTableLayoutCell.d'
+
+// TableSelect 组件类型定义
+export * from './table-select/src/FbTableSelect.d'
+
+// TreeSelect 组件类型定义
+export * from './tree-select/src/FbTreeSelect.d'
+
+// Upload 组件类型定义
+export * from './upload/src/FbUpload.d'
+
+// Tag 组件类型定义
+export * from './tag/src/FbTag.d'
+export * from './tag/src/FbTags.d'
+
+// Text 组件类型定义
+export * from './text/src/FbText.d'
+
+// Textarea 组件类型定义
+export * from './textarea/src/FbTextarea.d'
+
+// Timeline 组件类型定义
+export * from './timeline/src/FbTimeline.d'
+export * from './timeline/src/FbTimelineItem.d'
+
+// Timepicker 组件类型定义
+export * from './timepicker/src/FbTimepicker.d'
+export * from './timepicker/src/FbTimeSelect.d'
+export * from './timepicker/src/FbTimeItem.d'
+
+// Timer 组件类型定义
+export * from './timer/src/FbTimer.d'
+
+// Toast 组件类型定义
+export * from './toast/src/FbToast.d'
+export * from './toast/src/FbToastWrapper.d'
+
+// Toolbar 组件类型定义
+export * from './toolbar/src/FbToolbar.d'
+
+// Transfer 组件类型定义
+export * from './transfer/src/FbTransfer.d'
+
+// Tooltip 组件类型定义
+export * from './tooltip/src/FbTooltip.d'
+
+// Watermark 组件类型定义
+export * from './watermark/src/FbWatermark.d'
 
 // 默认导出所有类型
 export { default as FbAlert } from './alert/src/FbAlert.d'
@@ -283,7 +419,7 @@ export { default as FbRow } from './row/src/FbRow.d'
 export { default as FbText } from './text/src/FbText.d'
 export { default as FbTextarea } from './textarea/src/FbTextarea.d'
 export { default as FbTree } from './tree/src/FbTree.d'
-export { default as FbSpace } from './space/src/FbSpace.d'
+export { default as FbTreeSelect } from './tree-select/src/FbTreeSelect.d'
 export { default as FbBackTop } from './back-top/src/FbBackTop.d'
 export { default as FbAvatarBox } from './avatar-box/src/FbAvatarBox.d'
 export { default as FbCardx } from './cardx/src/FbCardx.d'
@@ -309,3 +445,31 @@ export { default as FbPageHeader } from './page-header/src/FbPageHeader.d'
 export { default as FbPager } from './pager/src/FbPager.d'
 export { default as FbPdfViewer } from './pdf-viewer/src/FbPdfViewer.d'
 export { default as FbPopupHeader } from './popup/popup-header/src/FbPopupHeader.d'
+export { default as FbPopupPicker } from './popup/popup-picker/src/FbPopupPicker.d'
+export { default as FbPopupSelect } from './popup/popup-select/src/FbPopupSelect.d'
+export { default as FbProgress } from './progress/src/FbProgress.d'
+export { default as FbProgressBox } from './progress-box/src/FbProgressBox.d'
+export { default as FbProperties } from './properties/src/FbProperties.d'
+export { default as FbPropertiesItem } from './properties/src/FbPropertiesItem.d'
+export { default as FbProperty } from './property/src/FbProperty.d'
+export { default as FbPropertyItem } from './property/src/FbPropertyItem.d'
+export { default as FbRadioGroup } from './radio-group/src/FbRadioGroup.d'
+export { default as FbRankList } from './rank-list/src/FbRankList.d'
+export { default as FbRankListItem } from './rank-list/src/FbRankListItem.d'
+export { default as FbRate } from './rate/src/FbRate.d'
+export { default as FbRateBox } from './rate-box/src/FbRateBox.d'
+export { default as FbResult } from './result/src/FbResult.d'
+export { default as FbSelect } from './select/src/FbSelect.d'
+export { default as FbSelectOption } from './select/src/FbSelectOption.d'
+export { default as FbSelectOptionGroup } from './select/src/FbSelectOptionGroup.d'
+export { default as FbSuggestSelect } from './select/src/FbSuggestSelect.d'
+export { default as FbSign } from './sign/src/FbSign.d'
+export { default as FbSignButton } from './sign/src/FbSignButton.d'
+export { default as FbSlider } from './slider/src/FbSlider.d'
+export { default as FbSliderButton } from './slider/src/FbSliderButton.d'
+export { default as FbSliderMarker } from './slider/src/marker.d'
+export { default as FbSliderTimeline } from './slider-timeline/src/FbSliderTimeline.d'
+export { default as FbSpace } from './space/src/FbSpace.d'
+export { default as FbTransfer } from './transfer/src/FbTransfer.d'
+export { default as FbTooltip } from './tooltip/src/FbTooltip.d'
+export { default as FbWatermark } from './watermark/src/FbWatermark.d'

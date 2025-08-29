@@ -1,6 +1,9 @@
 package com.jiuxi.admin.core.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiuxi.admin.core.bean.entity.TpMenuHistory;
+import com.jiuxi.admin.core.bean.query.TpMenuHistoryQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -58,9 +61,26 @@ public interface TpMenuHistoryMapper {
     List<TpMenuHistory> selectByTimeRange(@Param("startTime") String startTime, @Param("endTime") String endTime);
 
     /**
-     * 查询所有历史记录（分页）
+     * 查询所有历史记录
      *
      * @return 历史记录列表
      */
     List<TpMenuHistory> selectAll();
+
+    /**
+     * 分页查询历史记录
+     *
+     * @param page 分页对象
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    IPage<TpMenuHistory> getPage(Page<TpMenuHistory> page, @Param("query") TpMenuHistoryQuery query);
+
+    /**
+     * 根据历史记录ID查询详情
+     *
+     * @param historyId 历史记录ID
+     * @return 历史记录详情
+     */
+    TpMenuHistory selectById(@Param("historyId") String historyId);
 }

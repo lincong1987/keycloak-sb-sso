@@ -59,12 +59,14 @@ public class JsonResponse<T> implements Serializable {
     }
 
     /**
+     * @param logId 
+     * @param string 
      * @return
      * @Description: 构建一个成功的JsonResponse对象
      * @Author:杨攀
      * @Since: 2020年3月10日上午10:41:30
      */
-    public static <T> JsonResponse<T> buildSuccess() {
+    public static <T> JsonResponse<T> buildSuccess(String string, String logId) {
         JsonResponse<T> response = new JsonResponse<>();
         response.setCode(ErrorCode.SUCCESS.getCode());
         return response;
@@ -216,5 +218,13 @@ public class JsonResponse<T> implements Serializable {
 
     public void setExpand(Object expand) {
         this.expand = expand;
+    }
+
+
+    public static JsonResponse buildSuccess() {
+        JsonResponse response = new JsonResponse();
+        response.setCode(ErrorCode.SUCCESS.getCode());
+        response.setMessage(ErrorCode.SUCCESS.getMsg());
+        return response;
     }
 }

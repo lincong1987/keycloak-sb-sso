@@ -259,6 +259,8 @@
 							if (typeof result.data.userpwd !== 'undefined') {
 								this.userPwd = result.data.userpwd
 							}
+							// 检查密码过期状态
+							this.checkPasswordExpiry(result.data);
 						} else {
 							// 新增
 							this.deptShowFlag = false;
@@ -272,6 +274,41 @@
 					// 服务器返回失败
 					console.log(err);
 				})
+			},
+
+			// 检查密码过期状态
+			checkPasswordExpiry(accountData) {
+				if (!accountData.lastPasswordChangeTime) {
+					return;
+				}
+
+				// 获取系统配置
+				Promise.all([
+					this.$svc.sys.config.getConfigValue('password.validity.months'),
+					this.$svc.sys.config.getConfigValue('password.expiry.reminder.days')
+				]).then(([validityResult, reminderResult]) => {
+					const validityMonths = validityResult.data ? parseInt(validityResult.data) : 3;
+					const reminderDays = reminderResult.data ? parseInt(reminderResult.data) : 7;
+
+					// 计算密码过期时间
+					const lastChangeTime = new Date(accountData.lastPasswordChangeTime);
+					const expiryTime = new Date(lastChangeTime);
+					expiryTime.setMonth(expiryTime.getMonth() + validityMonths);
+
+					const now = new Date();
+					const timeDiff = expiryTime.getTime() - now.getTime();
+					const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+					if (daysDiff <= 0) {
+						// 密码已过期
+						this.$message.error(`该账号密码已过期，请立即重置密码！`);
+					} else if (daysDiff <= reminderDays) {
+						// 密码即将过期
+						this.$message.warning(`该账号密码将在${daysDiff}天后过期，建议尽快重置密码！`);
+					}
+				}).catch(err => {
+					console.warn('获取密码配置失败:', err);
+				});
 			},
 
 		}

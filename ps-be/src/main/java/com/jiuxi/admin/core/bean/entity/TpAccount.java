@@ -83,6 +83,10 @@ public class TpAccount implements Serializable {
      */
     private String updateTime;
     /**
+     * 上次密码修改时间
+     */
+    private String lastPasswordChangeTime;
+    /**
      * 扩展字段01
      */
     private String extend01;
@@ -221,6 +225,14 @@ public class TpAccount implements Serializable {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getLastPasswordChangeTime() {
+        return lastPasswordChangeTime;
+    }
+
+    public void setLastPasswordChangeTime(String lastPasswordChangeTime) {
+        this.lastPasswordChangeTime = lastPasswordChangeTime;
     }
 
     public String getExtend01() {

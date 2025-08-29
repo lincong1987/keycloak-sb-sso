@@ -350,6 +350,11 @@ export default {
 					// 将密码框清空
 					loginForm.userpwd = null;
 
+				} else if (json.data && json.data.restPwd === "2") {
+					// 密码即将过期，显示提醒但允许正常登录
+					this.$message.warning('您的密码即将过期，建议尽快修改密码！');
+					// 继续正常登录流程
+					this.handleNormalLogin(json);
 				} else {
 					if (json.data && json.data.deptVOList && json.data.deptVOList.length > 1) {
 						this.$store.commit('login/setDragImgStatus', 'success')
@@ -516,6 +521,38 @@ export default {
 		},
 		toForceUpdatePwd() {
 			this.cardCode = 4
+		},
+		// 处理正常登录流程
+		handleNormalLogin(json) {
+			if (json.data && json.data.deptVOList && json.data.deptVOList.length > 1) {
+				this.$store.commit('login/setDragImgStatus', 'success')
+				this.$datax.set('token', json.data.token)
+				// 在多个部门下
+				this.departmentList = json.data.deptVOList
+				// 切换部门，选择部门登陆
+				this.seletDepartment = true
+			} else {
+				this.$store.commit('login/setDragImgStatus', 'success')
+				this.$datax.set('token', json.data.token)
+				this.$datax.set('user', json.data)
+				this.$store.dispatch('admin/setToken', json.data.token)
+
+				// 获取登陆人用户信息
+				this.$svc.platform.getUserInfo().then(res => {
+					this.$datax.set('userInfo', (res && res.data) || {})
+					// 跳转页面
+					let that = this;
+					if (!this.seletDepartment) {
+						that.goToMain();
+
+						// 启动刷新token
+						startRefreshToken();
+
+						// this.$router.replace('/register')
+						that.reportLogin();
+					}
+				});
+			}
 		},
 		// 强制修改密码逻辑
 		doUpdatePwd(param) {

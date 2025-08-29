@@ -143,7 +143,7 @@
                 </fb-simple-table>
 
                 <fb-flex>
-                    <fbec-pie-base ref="ec_1" theme="fbecLight" style="height: 200px; width: 200px"></fbec-pie-base>
+                    <fbec-pie-base ref="ec_1" theme="fbecLight" style="height: 300px; width: 100%"></fbec-pie-base>
                 </fb-flex>
  
             </template>

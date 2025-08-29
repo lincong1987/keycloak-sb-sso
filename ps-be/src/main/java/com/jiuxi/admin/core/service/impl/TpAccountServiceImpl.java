@@ -409,6 +409,7 @@ public class TpAccountServiceImpl implements TpAccountService {
         bean.setPersonId(list.get(0).getPersonId());
         bean.setUserpwd(SmUtils.digestHexSM3(userpwd));
         bean.setUpdateTime(CommonDateUtil.now());
+        bean.setLastPasswordChangeTime(CommonDateUtil.now());
 
         int count = tpAccountMapper.updateByPersonId(bean);
 
@@ -480,7 +481,9 @@ public class TpAccountServiceImpl implements TpAccountService {
             // 转换成数据库对象
             bean.setPersonId(personId);
             bean.setUserpwd(SmUtils.digestHexSM3(userpwd));
+            bean.setExtend01("0"); // 重置密码修改标识
             bean.setUpdateTime(CommonDateUtil.now());
+            bean.setLastPasswordChangeTime(CommonDateUtil.now());
 
             int count = tpAccountMapper.updateByPersonId(bean);
 
@@ -547,6 +550,7 @@ public class TpAccountServiceImpl implements TpAccountService {
             bean.setUserpwd(SmUtils.digestHexSM3(userpwd));
             bean.setExtend01("0");
             bean.setUpdateTime(CommonDateUtil.now());
+            bean.setLastPasswordChangeTime(CommonDateUtil.now());
 
             int count = tpAccountMapper.updateByPersonId(bean);
 
@@ -585,6 +589,7 @@ public class TpAccountServiceImpl implements TpAccountService {
             bean.setUserpwd(pwd);
             bean.setExtend01("1");
             bean.setUpdateTime(CommonDateUtil.now());
+            bean.setLastPasswordChangeTime(CommonDateUtil.now());
 
             int count = tpAccountMapper.update(bean);
 

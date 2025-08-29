@@ -2,6 +2,7 @@ package com.jiuxi.security.core.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.jiuxi.admin.core.service.TpSystemConfigService;
 import com.jiuxi.common.util.CommonDateUtil;
 import com.jiuxi.common.util.SmUtils;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
@@ -48,6 +49,9 @@ public class PwdAccountServiceImpl implements AccountService {
     @Autowired
     private LoginApplicationService accountExinfoDBService;
 
+    @Autowired(required = false)
+    private TpSystemConfigService tpSystemConfigService;
+
     @PostConstruct
     public void init() {
         loginApplicationEventCollection.addEvent(accountExinfoDBService);
@@ -64,7 +68,7 @@ public class PwdAccountServiceImpl implements AccountService {
      */
     protected final String LOCKED = "1";
 
-    private static final String loginSql = "SELECT account_id, tenant_id, person_id, userpwd, locked, EXTEND01 as restPwd, expired_time FROM tp_account WHERE username = ?  AND enabled = '1' AND actived = '1' LIMIT 1";
+    private static final String loginSql = "SELECT account_id, tenant_id, person_id, userpwd, locked, EXTEND01 as restPwd, expired_time, last_password_change_time FROM tp_account WHERE username = ?  AND enabled = '1' AND actived = '1' LIMIT 1";
 
     private static final String personSql = "select CATEGORY from tp_person_basicinfo where PERSON_ID = ?";
 
@@ -172,6 +176,9 @@ public class PwdAccountServiceImpl implements AccountService {
         AccountVO accountVO = list.get(0);
         // 校验账号是否过期
         this.checkExpiredTime(accountVO);
+        
+        // 校验密码是否过期
+        this.checkPasswordExpiry(accountVO);
 
         // 校验是否冻结
         if (LOCKED.equals(accountVO.getLocked())) {
@@ -247,6 +254,54 @@ public class PwdAccountServiceImpl implements AccountService {
         if (date.compareTo(expiredTime) > 0) {
             LOGGER.error("登录失败，用户已过期:accountVO：{}", JSONObject.toJSONString(accountVO));
             throw new TopinfoRuntimeException(-1, "登录失败，用户信息已过期");
+        }
+    }
+
+    /**
+     * 校验密码是否过期，如果过期则在AccountVO中设置提醒信息
+     *
+     * @param accountVO
+     * @return void
+     * @author AI Assistant
+     * @date 2025/1/30
+     */
+    private void checkPasswordExpiry(AccountVO accountVO) {
+        String lastPasswordChangeTime = accountVO.getLastPasswordChangeTime();
+        if (StrUtil.isBlank(lastPasswordChangeTime)) {
+            // 如果没有密码修改时间记录，认为密码已过期，需要修改
+            accountVO.setRestPwd("1");
+            return;
+        }
+
+        try {
+            // 获取密码有效期配置（月数）
+            String validityMonthsStr = tpSystemConfigService.getConfigValue("password.validity.months");
+            int validityMonths = StrUtil.isBlank(validityMonthsStr) ? 3 : Integer.parseInt(validityMonthsStr);
+
+            // 获取密码过期提醒天数配置
+            String reminderDaysStr = tpSystemConfigService.getConfigValue("password.expiry.reminder.days");
+            int reminderDays = StrUtil.isBlank(reminderDaysStr) ? 7 : Integer.parseInt(reminderDaysStr);
+
+            // 解析上次密码修改时间
+            LocalDateTime lastChangeTime = LocalDateTime.parse(lastPasswordChangeTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime expiryTime = lastChangeTime.plusMonths(validityMonths);
+            LocalDateTime reminderTime = expiryTime.minusDays(reminderDays);
+
+            if (now.isAfter(expiryTime)) {
+                // 密码已过期，强制修改
+                accountVO.setRestPwd("1");
+                LOGGER.warn("用户密码已过期，需要强制修改密码，用户名:{}, 密码修改时间:{}", accountVO.getUserName(), lastPasswordChangeTime);
+            } else if (now.isAfter(reminderTime)) {
+                // 密码即将过期，设置提醒标识
+                long daysUntilExpiry = Duration.between(now, expiryTime).toDays();
+                accountVO.setRestPwd("2"); // 使用"2"表示提醒状态
+                LOGGER.info("用户密码即将过期，剩余{}天，用户名:{}", daysUntilExpiry, accountVO.getUserName());
+            }
+        } catch (Exception e) {
+            LOGGER.error("检查密码有效期时发生异常，用户名:{}, 异常信息:{}", accountVO.getUserName(), e.getMessage(), e);
+            // 发生异常时，为了安全起见，要求用户修改密码
+            accountVO.setRestPwd("1");
         }
     }
 }

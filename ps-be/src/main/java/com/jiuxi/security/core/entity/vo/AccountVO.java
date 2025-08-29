@@ -108,6 +108,11 @@ public class AccountVO extends BaseVO  implements Serializable {
     private String expiredTime;
 
     /**
+     * 上次密码修改时间
+     */
+    private String lastPasswordChangeTime;
+
+    /**
      * 兼职部门的时候，部门列表
      */
     private List<DeptVO> deptVOList;
@@ -254,5 +259,13 @@ public class AccountVO extends BaseVO  implements Serializable {
 
     public void setRestPwd(String restPwd) {
         this.restPwd = restPwd;
+    }
+
+    public String getLastPasswordChangeTime() {
+        return lastPasswordChangeTime;
+    }
+
+    public void setLastPasswordChangeTime(String lastPasswordChangeTime) {
+        this.lastPasswordChangeTime = lastPasswordChangeTime;
     }
 }

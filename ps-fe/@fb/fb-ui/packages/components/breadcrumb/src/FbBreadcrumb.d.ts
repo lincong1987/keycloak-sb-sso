@@ -1,45 +1,6 @@
 import { Vue, VueConstructor } from 'vue/types/vue'
 import { VNode } from 'vue'
 
-// 定义面包屑项的类型
-export interface BreadcrumbItem {
-  /** 标签 */
-  label?: string
-  
-  /** 路由路径 */
-  to?: string | object
-  
-  /** 链接地址 */
-  href?: string
-  
-  /** 图标 */
-  icon?: string
-  
-  /** 分隔符 */
-  separator?: string
-  
-  /** 是否替换当前路由 */
-  replace?: boolean
-  
-  /** 打开方式 */
-  target?: string
-  
-  /** 标题 */
-  title?: string
-  
-  /** 尺寸 */
-  size?: string
-  
-  /** 颜色 */
-  color?: string
-  
-  /** 下划线 */
-  underline?: string
-  
-  /** 是否追加 */
-  append?: boolean
-}
-
 // 定义 FbBreadcrumb 组件的 Props 类型
 export interface FbBreadcrumbProps {
   /** 尺寸 */
@@ -49,10 +10,10 @@ export interface FbBreadcrumbProps {
   separator?: string
   
   /** 数据 */
-  data?: BreadcrumbItem[]
+  data?: Array<any>
   
   /** 路由 */
-  routes?: object[]
+  routes?: Array<any>
   
   /** 颜色 */
   color?: string
@@ -69,9 +30,12 @@ export interface FbBreadcrumbData {
   /** 组件前缀 */
   prefix: string
   
-  /** 内部数据 */
-  myData: BreadcrumbItem[]
+  /** 数据 */
+  myData: Array<any>
 }
+
+// 定义 FbBreadcrumb 组件的 Computed 属性类型
+// 暂无计算属性
 
 // 定义 FbBreadcrumb 组件的 Slots 类型
 export interface FbBreadcrumbSlots {

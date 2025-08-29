@@ -9,72 +9,81 @@ export interface FbButtonProps {
   /** 复制的文本 */
   copy?: string
   
-  /** 按钮的 name 属性 */
+  /** 按钮名称 */
   name?: string
   
-  /** 按钮类型 */
-  type?: 'default' | 'link' | string
+  /** 类型 */
+  type?: string
   
-  /** 按钮尺寸 */
-  size?: 's' | 'm' | 'l' | string
+  /** 尺寸 */
+  size?: string
   
-  /** 是否 100% 宽度 */
+  /** 是否100%宽度 */
   long?: boolean
   
-  /** hover 状态 */
+  /** 是否悬停状态 */
   hover?: boolean
   
   /** 按钮元素的类型 */
-  elType?: 'button' | 'submit' | 'reset' | 'menu'
+  elType?: string
   
-  /** 是否显示加载状态 */
+  /** 是否加载中 */
   loading?: boolean
   
-  /** 是否为危险按钮 */
+  /** 是否危险按钮 */
   danger?: boolean
   
-  /** 是否为编辑器按钮 */
+  /** 是否编辑器按钮 */
   editor?: boolean
   
-  /** 是否为警告按钮 */
+  /** 是否警告按钮 */
   warning?: boolean
   
-  /** 是否为成功按钮 */
+  /** 是否成功按钮 */
   success?: boolean
   
   /** 是否禁用 */
   disabled?: boolean
   
-  /** 是否为清爽按钮 */
+  /** 是否清爽按钮 */
   plain?: boolean
   
   /** 是否自动获取焦点 */
   autofocus?: boolean
   
-  /** 是否为圆角按钮 */
+  /** 是否圆角 */
   round?: boolean
   
-  /** 是否为圆形按钮 */
+  /** 是否圆形按钮 */
   circle?: boolean
   
   /** 图标名称 */
   icon?: string
   
-  /** 追加图标名称 */
+  /** 后置图标 */
   appendIcon?: string
 }
 
 // 定义 FbButton 组件的 Data 属性类型
 export interface FbButtonData {
-  /** 鼠标按下状态 */
+  /** 组件前缀 */
+  prefix: string
+  
+  /** 是否鼠标按下 */
   mousedown: boolean
   
-  /** 复制动画状态 */
+  /** 是否复制中 */
   copying: boolean
   
-  /** 内部图标 */
+  /** 图标 */
   myIcon: string
+  
+  /** 定时器 */
+  timer: any
 }
+
+// 定义 FbButton 组件的 Computed 属性类型
+// 暂无计算属性
 
 // 定义 FbButton 组件的 Slots 类型
 export interface FbButtonSlots {
@@ -86,10 +95,10 @@ export interface FbButtonSlots {
 export interface FbButton extends Vue, FbButtonProps, FbButtonData {
   $slots: FbButtonSlots
   
-  /** 处理点击事件 */
+  /** 点击事件处理 */
   handleClick(event: Event): void
   
-  /** 执行复制操作 */
+  /** 执行复制 */
   doCopy(): void
   
   /** 显示复制动画 */

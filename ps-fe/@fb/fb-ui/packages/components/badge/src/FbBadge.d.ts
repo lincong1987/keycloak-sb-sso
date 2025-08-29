@@ -12,17 +12,17 @@ export interface FbBadgeProps {
   /** 展示的数字型号 */
   countSize?: string
   
-  /** 是否展示小圆点 */
+  /** 展示的小圆点 */
   dot?: boolean
   
   /** 小圆点大小 */
   dotSize?: number | string
   
-  /** 垂直对齐方式 */
+  /** 垂直对齐 */
   vertical?: string
   
   /** 设置状态点的位置偏移，格式为 [x, y] */
-  offset?: [number, number]
+  offset?: Array<any>
   
   /** 展示封顶的数字值 */
   overflowCount?: number | string

@@ -6,10 +6,10 @@ export interface FbIconProps {
   /** 图标名称 */
   name?: string
   
-  /** 图标尺寸 */
+  /** 尺寸 */
   size?: string | number
   
-  /** 图标颜色 */
+  /** 颜色 */
   color?: string
   
   /** 是否旋转 */
@@ -21,10 +21,10 @@ export interface FbIconProps {
   /** 字体粗细 */
   weight?: string | number
   
-  /** 右边距 */
+  /** 右外边距 */
   mr?: string | number
   
-  /** 左边距 */
+  /** 左外边距 */
   ml?: string | number
   
   /** 垂直对齐 */
@@ -33,12 +33,13 @@ export interface FbIconProps {
 
 // 定义 FbIcon 组件的 Data 属性类型
 export interface FbIconData {
-  // 组件前缀
+  /** 组件前缀 */
+  prefix: string
 }
 
 // 定义 FbIcon 组件的 Computed 属性类型
 export interface FbIconComputed {
-  /** 计算后的图标尺寸样式 */
+  /** 图标尺寸 */
   mySize: string
 }
 
@@ -55,16 +56,16 @@ export interface FbIcon extends Vue, FbIconProps, FbIconData, FbIconComputed {
   /** 移除图标前缀 */
   removeIconPrefix(val: string): string
   
-  /** 判断是否包含 px */
+  /** 是否包含px */
   hasPx(val: string | number): boolean
   
-  /** 处理点击事件 */
+  /** 点击事件处理 */
   handleClick(event: Event): void
   
-  /** 处理鼠标进入事件 */
+  /** 鼠标进入事件处理 */
   handleMouseEnter(event: Event): void
   
-  /** 处理鼠标离开事件 */
+  /** 鼠标离开事件处理 */
   handleMouseLeave(event: Event): void
 }
 

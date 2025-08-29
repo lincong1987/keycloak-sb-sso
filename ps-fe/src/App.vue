@@ -21,6 +21,9 @@ export default {
 
     document.getElementById("appLoading").style.display = "none"
 
+    // 动态设置浏览器标题
+    this.loadBrowserTitle()
+
     // 检查URL参数中是否有SSO token
     this.handleSSOToken()
 
@@ -71,6 +74,32 @@ export default {
           this.$datax.set('token', '')
           this.$router.replace(this.$datax.GLOBAL_CONFIG.loginPath)
         })
+      }
+    },
+    
+    // 动态加载浏览器标题
+    async loadBrowserTitle() {
+      try {
+        // 创建超时Promise
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('请求超时')), 5000)
+        })
+        
+        // 获取浏览器标题配置
+        const titlePromise = this.$svc.sys.config.getConfigValue('browser.title')
+        
+        // 使用Promise.race实现超时控制
+        const result = await Promise.race([titlePromise, timeoutPromise])
+        
+        // 更新浏览器标题
+        if (result && result.data) {
+          document.title = result.data
+        }
+        
+      } catch (error) {
+        console.warn('加载浏览器标题配置失败，使用默认标题:', error)
+        // 使用默认标题
+        document.title = app.projectConfig.title || 'JPX3.0 管理系统'
       }
     }
   }

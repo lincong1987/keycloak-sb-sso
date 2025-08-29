@@ -3,10 +3,10 @@ import { VNode } from 'vue'
 
 // 定义 FbCheckbox 组件的 Props 类型
 export interface FbCheckboxProps {
-  /** 选中状态的值 */
+  /** 选中状态值 */
   value?: string | number | boolean
   
-  /** 复选框标签 */
+  /** 标签文本 */
   label?: string | number | boolean
   
   /** 是否禁用 */
@@ -16,7 +16,7 @@ export interface FbCheckboxProps {
   readonly?: boolean
   
   /** 节点数据 */
-  node?: object | null
+  node?: object
   
   /** 索引 */
   index?: number
@@ -36,16 +36,19 @@ export interface FbCheckboxData {
   /** 是否选中 */
   checked: boolean | string | number
   
-  /** 是否属于组 */
+  /** 是否为组 */
   group: boolean
+  
+  /** 复选框组 */
+  fbCheckboxGroup: any
 }
 
 // 定义 FbCheckbox 组件的 Computed 属性类型
 export interface FbCheckboxComputed {
-  /** 计算后的类名 */
+  /** 类名 */
   getClass: string[]
   
-  /** 计算后的元素类名 */
+  /** 元素类名 */
   getElClass: string[]
 }
 
@@ -55,36 +58,18 @@ export interface FbCheckboxSlots {
   default: VNode[]
   
   /** 复选框插槽 */
-  checkbox: (props: { 
-    name: string; 
-    label: string | number | boolean; 
-    value: string | number | boolean; 
-    disabled: boolean; 
-    readonly: boolean; 
-    checked: boolean | string | number; 
-    index: number; 
-    node: object | null 
-  }) => VNode[]
+  checkbox: VNode[]
   
   /** 标签插槽 */
-  label: (props: { 
-    name: string; 
-    label: string | number | boolean; 
-    value: string | number | boolean; 
-    disabled: boolean; 
-    readonly: boolean; 
-    checked: boolean | string | number; 
-    index: number; 
-    node: object | null 
-  }) => VNode[]
+  label: VNode[]
 }
 
 // 定义 FbCheckbox 组件实例类型
 export interface FbCheckbox extends Vue, FbCheckboxProps, FbCheckboxData, FbCheckboxComputed {
   $slots: FbCheckboxSlots
   
-  /** 处理点击事件 */
-  handleClick(event: Event): void
+  /** 点击事件处理 */
+  handleClick(e: Event): void
 }
 
 // 定义 FbCheckbox 组件构造函数类型

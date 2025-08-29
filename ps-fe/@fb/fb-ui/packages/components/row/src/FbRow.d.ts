@@ -3,22 +3,22 @@ import { VNode } from 'vue'
 
 // 定义 FbRow 组件的 Props 类型
 export interface FbRowProps {
-  /** 水平间距 */
+  /** 栅格间隔 */
   gutter?: number | string
   
-  /** 垂直间距 */
+  /** 垂直栅格间隔 */
   verticalGutter?: number | string
   
-  /** 是否使用 flex 布局 */
+  /** 是否启用 flex 布局 */
   flex?: boolean
   
-  /** flex 时横向对齐方式 */
-  justify?: 'start' | 'end' | 'center' | 'space-between' | 'space-around'
+  /** flex 布局下的水平排列方式 */
+  justify?: string
   
-  /** flex 时纵向对齐方式 */
-  align?: 'top' | 'middle' | 'bottom'
+  /** flex 布局下的垂直排列方式 */
+  align?: string
   
-  /** 行的主键 */
+  /** 行主键 */
   rowPk?: string | number
 }
 
@@ -27,10 +27,10 @@ export interface FbRowData {
   /** 组件前缀 */
   prefix: string
   
-  /** 内部水平间距 */
+  /** 水平间距 */
   myGutter: number | string
   
-  /** 内部垂直间距 */
+  /** 垂直间距 */
   myVerticalGutter: number | string
 }
 

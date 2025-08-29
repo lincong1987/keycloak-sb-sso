@@ -33,6 +33,11 @@ export default {
 		return app.service.get('/sys/config/list', { params: queryData })
 	},
 
+	// 根据ID获取单个配置
+	get(id) {
+		return app.service.get('/sys/config/get', { params: { id } })
+	},
+
 	// 添加配置
 	add(formData) {
 		return app.service.request({

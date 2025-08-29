@@ -3,10 +3,10 @@ import { VNode } from 'vue'
 
 // 定义 FbRadio 组件的 Props 类型
 export interface FbRadioProps {
-  /** 选中状态的值 */
+  /** 选中状态值 */
   value?: string | number | boolean
   
-  /** 单选框标签 */
+  /** 标签文本 */
   label?: string | number | boolean
   
   /** 是否禁用 */
@@ -30,19 +30,22 @@ export interface FbRadioData {
   /** 是否选中 */
   checked: boolean | string | number
   
-  /** 内部值 */
+  /** 值 */
   myValue: string | number | boolean
   
-  /** 是否属于组 */
+  /** 是否为组 */
   group: boolean
+  
+  /** 单选框组 */
+  fbRadioGroup: any
 }
 
 // 定义 FbRadio 组件的 Computed 属性类型
 export interface FbRadioComputed {
-  /** 计算后的类名 */
+  /** 类名 */
   getClass: string[]
   
-  /** 计算后的元素类名 */
+  /** 元素类名 */
   getElClass: string[]
 }
 
@@ -56,8 +59,8 @@ export interface FbRadioSlots {
 export interface FbRadio extends Vue, FbRadioProps, FbRadioData, FbRadioComputed {
   $slots: FbRadioSlots
   
-  /** 处理点击事件 */
-  handleClick(event: Event): void
+  /** 点击事件处理 */
+  handleClick(e: Event): void
 }
 
 // 定义 FbRadio 组件构造函数类型

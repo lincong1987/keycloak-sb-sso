@@ -10,7 +10,8 @@ CREATE TABLE `tp_system_config` (
 
 -- 初始化基础配置数据
 INSERT INTO `tp_system_config` (`config_key`, `config_value`, `description`) VALUES
-('system.name', 'JPX3.0', '系统名称（浏览器标题）'),
+('system.name', 'JPX3.0', '系统名称'),
+('browser.title', 'JPX3.0 管理系统', '浏览器标题'),
 ('login.title', 'JPX3.0', '登录页标题'),
 ('login.logo', '/static/images/logo.svg', '登录页Logo地址'),
 ('login.copyright', 'JPX3.0 © 2025-2025 JPX3.0', '登录页版权信息'),

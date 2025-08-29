@@ -55,8 +55,13 @@ export default {
 		})
 	},
 
+	// 获取配置详情
+	get(configKey) {
+		return app.service.get('/sys/config/view', { params: { configKey } })
+	},
+
 	// 删除配置
-	delete(id) {
-		return app.service.get('/sys/config/delete', { params: { id } })
+	delete(configKey) {
+		return app.service.get('/sys/config/delete', { params: { configKey } })
 	}
 }

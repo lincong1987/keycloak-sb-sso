@@ -4,7 +4,7 @@ import { VNode } from 'vue'
 // 定义 FbAlert 组件的 Props 类型
 export interface FbAlertProps {
   /** 类型 */
-  type?: 'primary' | 'alert' | 'info' | 'confirm' | 'success' | 'error' | 'danger' | 'warning' | 'loading'
+  type?: string
   
   /** 消息 */
   message?: string | number
@@ -12,7 +12,7 @@ export interface FbAlertProps {
   /** 描述 */
   description?: string | number
   
-  /** 是否可以关闭 */
+  /** 是否可关闭 */
   closable?: boolean
   
   /** 是否显示 */
@@ -27,22 +27,25 @@ export interface FbAlertProps {
 
 // 定义 FbAlert 组件的 Data 属性类型
 export interface FbAlertData {
-  /** 图标映射 */
-  icons: Record<string, string>
+  /** 组件前缀 */
+  prefix: string
   
-  /** 内部显示状态 */
+  /** 图标映射 */
+  icons: object
+  
+  /** 是否显示 */
   myShow: boolean
 }
 
 // 定义 FbAlert 组件的 Computed 属性类型
 export interface FbAlertComputed {
-  /** 组件类名 */
+  /** 类名 */
   getClass: string[]
   
-  /** 当前类型对应的图标 */
+  /** 类型图标 */
   myType: string
   
-  /** 最终使用的图标 */
+  /** 图标 */
   myIcon: string
   
   /** 是否有描述 */
@@ -51,16 +54,13 @@ export interface FbAlertComputed {
 
 // 定义 FbAlert 组件的 Slots 类型
 export interface FbAlertSlots {
-  /** 默认插槽 */
-  default: VNode[]
-  
   /** 消息插槽 */
   message: VNode[]
   
   /** 描述插槽 */
   description: VNode[]
   
-  /** 操作区域插槽 */
+  /** 操作插槽 */
   actions: VNode[]
 }
 

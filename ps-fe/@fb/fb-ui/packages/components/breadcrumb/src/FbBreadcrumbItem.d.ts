@@ -6,22 +6,22 @@ export interface FbBreadcrumbItemProps {
   /** 尺寸 */
   size?: string
   
-  /** 分隔符 */
+  /** 分割符 */
   separator?: string
   
   /** 链接地址 */
   href?: string
   
-  /** 路由路径 */
+  /** 路由地址 */
   to?: string | object
   
-  /** 是否替换当前路由 */
+  /** 是否替换 */
   replace?: boolean
   
   /** 是否追加 */
   append?: boolean
   
-  /** 打开方式 */
+  /** 目标 */
   target?: string
   
   /** 图标 */
@@ -45,11 +45,14 @@ export interface FbBreadcrumbItemData {
   /** 组件前缀 */
   prefix: string
   
-  /** 内部分隔符 */
+  /** 分割符 */
   mySeparator: string
   
-  /** 内部下划线 */
+  /** 下划线 */
   myUnderline: string
+  
+  /** 面包屑组件 */
+  breadcrumb: any
 }
 
 // 定义 FbBreadcrumbItem 组件的 Computed 属性类型
@@ -63,7 +66,7 @@ export interface FbBreadcrumbItemSlots {
   /** 默认插槽 */
   default: VNode[]
   
-  /** 分隔符插槽 */
+  /** 分割符插槽 */
   separator: VNode[]
 }
 

@@ -3,16 +3,16 @@ import { VNode } from 'vue'
 
 // 定义 FbCol 组件的 Props 类型
 export interface FbColProps {
-  /** 栅格占据的列数，可选值为 1-24 */
+  /** 栅格占据的列数 */
   span?: string | number
   
-  /** 栅格向右偏移的格数，可选值为 1-24 */
+  /** 栅格左侧的间隔格数 */
   offset?: string | number
   
-  /** flex 时每个 col 的排序值，从小到大排列 */
+  /** 栅格的排序 */
   order?: string | number
   
-  /** flex 填充规则 */
+  /** flex 布局属性 */
   flex?: string | number
   
   /** 小屏幕下的栅格占据的列数 */
@@ -38,6 +38,9 @@ export interface FbColData {
   
   /** 垂直间距 */
   myVerticalGutter: number
+  
+  /** 行组件 */
+  fbRow: any
 }
 
 // 定义 FbCol 组件的 Computed 属性类型

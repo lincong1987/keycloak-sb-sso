@@ -3,40 +3,31 @@ import { VNode } from 'vue'
 
 // 定义 FbText 组件的 Props 类型
 export interface FbTextProps {
-  /** 文本大小 */
-  size?: string | number
-  
-  /** 文本类型 */
-  type?: string
-  
-  /** 渐变背景 */
-  gradient?: string
-  
-  /** 显示模式 */
+  /** 显示方式 */
   display?: string
   
-  /** 内联样式 */
+  /** 是否为内联元素 */
   inline?: boolean
   
-  /** 定位方式 */
+  /** 定位 */
   position?: string
   
-  /** 文本颜色 */
+  /** 颜色 */
   color?: string
   
-  /** 背景 */
+  /** 背景色 */
   background?: string
   
-  /** 文本对齐方式 */
+  /** 文本对齐 */
   textAlign?: string
   
-  /** 布局方式 */
-  layout?: string
+  /** 布局 */
+  layout?: object
   
   /** 字体粗细 */
   fontWeight?: string | number
   
-  /** 是否显示省略号 */
+  /** 是否省略 */
   ellipsis?: boolean
   
   /** 字体族 */
@@ -60,10 +51,10 @@ export interface FbTextProps {
   /** 内边距 */
   padding?: string | number
   
-  /** 过滤器 */
+  /** 滤镜 */
   filter?: string
   
-  /** 排序 */
+  /** 顺序 */
   order?: number
   
   /** 边框 */
@@ -78,30 +69,40 @@ export interface FbTextProps {
   /** 垂直对齐 */
   verticalAlign?: string
   
-  /** 弹性布局 */
+  /** 弹性 */
   flex?: string | number
   
-  /** 盒阴影 */
+  /** 盒子阴影 */
   boxShadow?: string
   
-  /** 自身对齐方式 */
+  /** 自身对齐 */
   justifySelf?: string
   
-  /** 鼠标指针样式 */
+  /** 鼠标样式 */
   cursor?: string
+  
+  /** 文本大小 */
+  size?: string | number
+  
+  /** 文本类型 */
+  type?: string
+  
+  /** 渐变 */
+  gradient?: string
 }
 
 // 定义 FbText 组件的 Data 属性类型
 export interface FbTextData {
-  // 组件前缀
+  /** 组件前缀 */
+  prefix: string
 }
 
 // 定义 FbText 组件的 Computed 属性类型
 export interface FbTextComputed {
-  /** 计算后的类名 */
+  /** 类名 */
   getClass: string[]
   
-  /** 计算后的样式 */
+  /** 样式 */
   getStyle: object
 }
 

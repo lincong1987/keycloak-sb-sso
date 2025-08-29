@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jiuxi.admin.core.mapper.TpMenuHistoryMapper">
+
+    <!-- 结果映射 -->
+    <resultMap type="com.jiuxi.admin.core.bean.entity.TpMenuHistory" id="tpMenuHistoryMap">
+        <result property="historyId" column="HISTORY_ID"/>
+        <result property="menuId" column="MENU_ID"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="operationType" column="OPERATION_TYPE"/>
+        <result property="nodeDataBefore" column="NODE_DATA_BEFORE"/>
+        <result property="nodeDataAfter" column="NODE_DATA_AFTER"/>
+        <result property="fullTreeBefore" column="FULL_TREE_BEFORE"/>
+        <result property="fullTreeAfter" column="FULL_TREE_AFTER"/>
+        <result property="operatorId" column="OPERATOR_ID"/>
+        <result property="operatorName" column="OPERATOR_NAME"/>
+        <result property="operationTime" column="OPERATION_TIME"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="creator" column="CREATOR"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="updator" column="UPDATOR"/>
+    </resultMap>
+
+    <!-- 插入历史记录 -->
+    <insert id="save" parameterType="com.jiuxi.admin.core.bean.entity.TpMenuHistory">
+        INSERT INTO tp_menu_history
+            (HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER, 
+             FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME, 
+             CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR)
+        VALUES
+            (#{historyId}, #{menuId}, #{menuName}, #{operationType}, #{nodeDataBefore}, #{nodeDataAfter},
+             #{fullTreeBefore}, #{fullTreeAfter}, #{operatorId}, #{operatorName}, #{operationTime},
+             #{createTime}, #{creator}, #{updateTime}, #{updator})
+    </insert>
+
+    <!-- 根据菜单ID查询历史记录 -->
+    <select id="selectByMenuId" parameterType="String" resultMap="tpMenuHistoryMap">
+        SELECT HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
+               FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
+               CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        FROM tp_menu_history
+        WHERE MENU_ID = #{menuId}
+        ORDER BY OPERATION_TIME DESC
+    </select>
+
+    <!-- 根据操作人ID查询历史记录 -->
+    <select id="selectByOperatorId" parameterType="String" resultMap="tpMenuHistoryMap">
+        SELECT HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
+               FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
+               CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        FROM tp_menu_history
+        WHERE OPERATOR_ID = #{operatorId}
+        ORDER BY OPERATION_TIME DESC
+    </select>
+
+    <!-- 根据操作类型查询历史记录 -->
+    <select id="selectByOperationType" parameterType="String" resultMap="tpMenuHistoryMap">
+        SELECT HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
+               FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
+               CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        FROM tp_menu_history
+        WHERE OPERATION_TYPE = #{operationType}
+        ORDER BY OPERATION_TIME DESC
+    </select>
+
+    <!-- 根据时间范围查询历史记录 -->
+    <select id="selectByTimeRange" resultMap="tpMenuHistoryMap">
+        SELECT HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
+               FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
+               CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        FROM tp_menu_history
+        WHERE OPERATION_TIME BETWEEN #{startTime} AND #{endTime}
+        ORDER BY OPERATION_TIME DESC
+    </select>
+
+    <!-- 查询所有历史记录 -->
+    <select id="selectAll" resultMap="tpMenuHistoryMap">
+        SELECT HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
+               FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
+               CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        FROM tp_menu_history
+        ORDER BY OPERATION_TIME DESC
+    </select>
+
+</mapper>

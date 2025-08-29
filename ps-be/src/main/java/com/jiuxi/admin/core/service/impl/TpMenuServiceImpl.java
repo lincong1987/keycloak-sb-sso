@@ -10,6 +10,7 @@ import com.jiuxi.admin.core.bean.vo.TpMenuVO;
 import com.jiuxi.admin.core.enums.MenuTypeEnum;
 import com.jiuxi.admin.core.mapper.TpMenuMapper;
 import com.jiuxi.admin.core.service.TpMenuService;
+import com.jiuxi.admin.core.service.TpMenuHistoryService;
 import com.jiuxi.common.bean.TreeNode;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.util.CommonDateUtil;
@@ -46,6 +47,9 @@ public class TpMenuServiceImpl implements TpMenuService {
 
     @Autowired
     private TpMenuMapper tpMenuMapper;
+
+    @Autowired
+    private TpMenuHistoryService tpMenuHistoryService;
 
     /**
      * 菜单树
@@ -251,6 +255,14 @@ public class TpMenuServiceImpl implements TpMenuService {
             // 修改时间
             bean.setUpdateTime(now);
             tpMenuMapper.save(bean);
+            
+            // 记录新增历史
+            try {
+                tpMenuHistoryService.recordAddHistory(vo, pid);
+            } catch (Exception e) {
+                LOGGER.warn("记录菜单新增历史失败，但不影响主流程，菜单ID：{}, 错误：{}", vo.getMenuId(), e.getMessage());
+            }
+            
             return vo;
         } catch (TopinfoRuntimeException e) {
             LOGGER.error("新增菜单失败, message: {}, vo：{}, 错误：{}", e.getMessage(), JSONObject.toJSONString(vo), ExceptionUtils.getStackTrace(e));
@@ -335,6 +347,9 @@ public class TpMenuServiceImpl implements TpMenuService {
         try {
             // 校验
             this.validateUpdate(vo);
+            
+            // 获取修改前的数据
+            TpMenuVO beforeMenuVO = this.view(vo.getMenuId());
 
             TpMenu bean = new TpMenu();
             // 转换成数据库对象
@@ -343,6 +358,14 @@ public class TpMenuServiceImpl implements TpMenuService {
             bean.setUpdateTime(CommonDateUtil.now());
 
             tpMenuMapper.update(bean);
+            
+            // 记录修改历史
+            try {
+                tpMenuHistoryService.recordUpdateHistory(beforeMenuVO, vo, pid);
+            } catch (Exception e) {
+                LOGGER.warn("记录菜单修改历史失败，但不影响主流程，菜单ID：{}, 错误：{}", vo.getMenuId(), e.getMessage());
+            }
+            
             return vo;
         } catch (TopinfoRuntimeException e) {
             LOGGER.error("菜单信息修改失败, message: {}, vo：{}, 错误：{}", e.getMessage(), JSONObject.toJSONString(vo), ExceptionUtils.getStackTrace(e));
@@ -415,6 +438,9 @@ public class TpMenuServiceImpl implements TpMenuService {
             if (countChildren > 0) {
                 throw new TopinfoRuntimeException(-1, "请先删除子菜单！");
             }
+            
+            // 获取删除前的数据
+            TpMenuVO beforeMenuVO = this.view(menuId);
 
             TpMenu bean = new TpMenu();
             bean.setMenuId(menuId);
@@ -423,6 +449,14 @@ public class TpMenuServiceImpl implements TpMenuService {
             bean.setUpdateTime(CommonDateUtil.now());
 
             int count = tpMenuMapper.deleteByMenuId(bean);
+            
+            // 记录删除历史
+            try {
+                tpMenuHistoryService.recordDeleteHistory(beforeMenuVO, pid);
+            } catch (Exception e) {
+                LOGGER.warn("记录菜单删除历史失败，但不影响主流程，菜单ID：{}, 错误：{}", menuId, e.getMessage());
+            }
+            
             return count;
         } catch (Exception e) {
             LOGGER.error("删除角色信息失败！menuId:{}, 错误:{}", menuId, ExceptionUtils.getStackTrace(e));

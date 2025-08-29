@@ -19,11 +19,12 @@ public class JsonResponse<T> implements Serializable {
     private static final long serialVersionUID = 8188545500009772620L;
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonResponse.class);
-
     /**
      * 返回状态编码
      */
+    @SuppressWarnings("unused")
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonResponse.class);
+
     private int code;
 
     /**
@@ -53,8 +54,8 @@ public class JsonResponse<T> implements Serializable {
      * @Description: 构建一个空的JsonResponse对象
      * @return: JsonResponse
      */
-    public static JsonResponse build() {
-        return new JsonResponse();
+    public static <T> JsonResponse<T> build() {
+        return new JsonResponse<T>();
     }
 
     /**
@@ -63,8 +64,8 @@ public class JsonResponse<T> implements Serializable {
      * @Author:杨攀
      * @Since: 2020年3月10日上午10:41:30
      */
-    public static JsonResponse buildSuccess() {
-        JsonResponse response = new JsonResponse();
+    public static <T> JsonResponse<T> buildSuccess() {
+        JsonResponse<T> response = new JsonResponse<>();
         response.setCode(ErrorCode.SUCCESS.getCode());
         return response;
     }
@@ -76,7 +77,7 @@ public class JsonResponse<T> implements Serializable {
      * @Since: 2020年3月10日上午10:41:30
      */
     public static <T> JsonResponse<T> buildSuccess(T data) {
-        JsonResponse response = new JsonResponse<T>();
+        JsonResponse<T> response = new JsonResponse<>();
         response.setCode(ErrorCode.SUCCESS.getCode());
         response.setMessage(ErrorCode.SUCCESS.getMsg());
         response.setData(data);
@@ -136,12 +137,10 @@ public class JsonResponse<T> implements Serializable {
      * @Since: 2020年3月10日上午10:42:11
      */
     public static <T> JsonResponse<T> build(int code, String message, T data) {
-
-        JsonResponse response = new JsonResponse<T>();
+        JsonResponse<T> response = new JsonResponse<>();
         response.setCode(code);
         response.setMessage(message);
         response.setData(data);
-
         return response;
     }
 
@@ -155,9 +154,8 @@ public class JsonResponse<T> implements Serializable {
      * @Author:杨攀
      * @Since: 2020年3月10日上午10:42:11
      */
-    public static <T>  JsonResponse<T>  build(int code, String message, T data, Object expandl) {
-
-        JsonResponse response = new JsonResponse<T> ();
+    public static <T> JsonResponse<T> build(int code, String message, T data, Object expandl) {
+        JsonResponse<T> response = new JsonResponse<>();
         response.setCode(code);
         response.setMessage(message);
         response.setData(data);

@@ -66,7 +66,8 @@ public class AdminLicenceCacheServiceImpl implements AdminLicenceCacheService {
         adminSerialNumberCache = CacheUtil.newFIFOCache(1);
 
         // 校验
-        this.syncCheck();
+       // this.syncCheck();
+       LOGGER.info("----------禁用许可证校验 this.syncCheck----------------------");
     }
 
     /**

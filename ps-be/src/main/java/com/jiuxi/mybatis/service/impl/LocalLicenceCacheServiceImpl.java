@@ -135,6 +135,11 @@ public class LocalLicenceCacheServiceImpl implements LocalLicenceCacheService {
      */
     private boolean jcBindMacxkz() {
 
+        LOGGER.info("------------------------关闭许可证校验------------------------");
+
+
+        return true;
+/*
         // 先查询缓存中 序列号 对应的 许可证信息
         // 获取本地mac地址
         String systemSerialNumber = this.generatorSystemSerialNumber();
@@ -177,8 +182,8 @@ public class LocalLicenceCacheServiceImpl implements LocalLicenceCacheService {
         }
 
         TpConstant.securityLicenceMap.put(systemSerialNumber, true);
-
-        return true;
+ 
+        return true; */
     }
 
     /**

@@ -140,7 +140,7 @@
                         :formatters="table.formatters"
                         :columns="table.columns"
                         :multiple="false"
-                        :scroll="{x:1100, y: 372, autoHeight: true}"
+                        :scroll="{x:1100, y: 372,  }"
                         auto-load>
                     
                     <template v-slot:view="props">
@@ -149,6 +149,11 @@
                         </fb-link-group>
                     </template>
                 </fb-simple-table>
+
+                <fb-flex>
+                    <fbec-pie-base ref="ec_1"  ></fbec-pie-base>
+                    </fb-flex>
+
             </template>
         </fb-page-search>
         <tp-dialog ref="TpDialog"></tp-dialog>
@@ -159,6 +164,7 @@
 <script>
     import Page from '@fb/log-center-ui/src/util/Page'
     import dayjs from "dayjs";
+    import {FbecPieBase} from '@fb/fb-third'
 
     export default {
         mixins: [

@@ -8,7 +8,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "serve": "rsbuild dev --env-mode dev",
-
+"dev": "rsbuild dev --env-mode dev",
     "serve-dev": "rsbuild dev --env-mode dev",
     "serve-local": "rsbuild dev",
     "build": "rsbuild build",

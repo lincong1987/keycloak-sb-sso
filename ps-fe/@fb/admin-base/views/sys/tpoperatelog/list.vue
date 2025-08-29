@@ -145,7 +145,7 @@
                 <fb-flex>
                     <fbec-pie-base ref="ec_1" theme="fbecLight" style="height: 200px; width: 200px"></fbec-pie-base>
                 </fb-flex>
-
+ 
             </template>
         </fb-page-search>
         <tp-dialog ref="TpDialog"></tp-dialog>

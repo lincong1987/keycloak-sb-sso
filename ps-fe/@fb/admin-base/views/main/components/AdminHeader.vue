@@ -1,7 +1,18 @@
 <template>
 	<div class="fb-admin-header" :style="getLayoutHeaderStyle">
-		<div class="fb-admin-header__logo" style="font-size:24px;">
-			{{ logoTitle }} 
+		<!-- 配置加载状态 -->
+		<div v-if="configLoading" class="fb-admin-header__logo config-loading" style="font-size:24px;">
+			<fb-icon name="loading" size="16"></fb-icon> 加载中...
+		</div>
+		<!-- 配置错误状态 -->
+		<div v-else-if="configError" class="fb-admin-header__logo config-error" style="font-size:24px;">
+			<fb-icon name="warning" size="16"></fb-icon> 配置加载失败
+			<fb-button size="xs" type="link" @on-click="loadSystemConfig">重试</fb-button>
+		</div>
+		<!-- 正常显示 -->
+		<div v-else class="fb-admin-header__logo" style="font-size:24px;">
+			<img v-if="logoUrl" :src="logoUrl" alt="Logo" class="logo-image" />
+			{{ logoTitle }}
 		</div>
 		<nav class="fb-admin-header__nav fb-admin-header__nav" :style="getNavStyle"
 
@@ -234,7 +245,7 @@ export default {
 	},
 
 	data() {
-		let logoTitle = app.projectConfig.logoTitle
+		let logoTitle = app.projectConfig.logoTitle || '系统管理'
 
 		if(window._publicConfig && window._publicConfig.logoTitle) {
 			logoTitle = window._publicConfig.logoTitle
@@ -242,6 +253,9 @@ export default {
 
 		return {
 			logoTitle,
+			logoUrl: '',
+			configLoading: false,
+			configError: false,
 			showFullMenus: false,
 			noticePopShow: false,
 			adminPopShow: false,
@@ -496,6 +510,47 @@ export default {
 				}
 			})
 		},
+		// 动态加载系统配置
+		async loadSystemConfig() {
+			this.configLoading = true
+			this.configError = false
+			
+			try {
+				// 创建超时Promise
+				const timeoutPromise = new Promise((_, reject) => {
+					setTimeout(() => reject(new Error('请求超时')), 10000)
+				})
+				
+				// 并行获取配置
+				const configPromises = [
+					this.$svc.sys.config.getConfigValue('admin.title'),
+					this.$svc.sys.config.getConfigValue('admin.logo')
+				]
+				
+				// 使用Promise.race实现超时控制
+				const results = await Promise.race([
+					Promise.all(configPromises),
+					timeoutPromise
+				])
+				
+				const [titleResult, logoResult] = results
+				
+				// 更新配置数据
+				if (titleResult && titleResult.data) {
+					this.logoTitle = titleResult.data
+				}
+				
+				if (logoResult && logoResult.data) {
+					this.logoUrl = logoResult.data
+				}
+				
+			} catch (error) {
+				console.warn('加载系统配置失败，使用默认配置:', error)
+				this.configError = true
+			} finally {
+				this.configLoading = false
+			}
+		},
 		getUserDeptList() {
 			// this.$svc.common.list().then((result) => {
 			// 	if (result.code === 1 && result.data) {
@@ -669,6 +724,7 @@ export default {
 		this.initTopMenuChange()
 		this.init()
 		this.updateStyle(this.$datax.get('theme') || this.theme)
+		this.loadSystemConfig()
 		// setTimeout(() => {
 		// 	//this.getWorkCount()
 		// }, 100)
@@ -1056,5 +1112,28 @@ export default {
 
 .jpx-card--border {
 	border: none;
+		// 配置加载和错误状态样式
+		.config-loading {
+			color: #999 !important;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		
+		.config-error {
+			color: #ff6b6b !important;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		
+		// LOGO图片样式
+		.logo-image {
+			height: 32px;
+			width: auto;
+			margin-right: 12px;
+			vertical-align: middle;
+			object-fit: contain;
+		}
 }
 </style>

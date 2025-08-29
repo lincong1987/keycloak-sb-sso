@@ -1,11 +1,26 @@
 <template>
 	<!--  只进行登录相关操作 - 为后续拆分做准备 -->
 	<div class="login-wrapper">
-
-		<div class="login-logo">
-			<span class="logo"></span>
-			{{ loginLogoTitle }}
+		<!-- 加载状态 -->
+		<div v-if="configLoading" class="config-loading">
+			<fb-spin size="large" tip="正在加载系统配置..."></fb-spin>
 		</div>
+		
+		<!-- 错误状态 -->
+		<div v-else-if="configError" class="config-error">
+			<fb-result status="error" title="服务不可用" sub-title="无法获取系统配置信息，请稍后重试">
+				<template #extra>
+					<fb-button type="primary" @click="loadSystemConfig">重新加载</fb-button>
+				</template>
+			</fb-result>
+		</div>
+		
+		<!-- 正常登录界面 -->
+		<template v-else>
+			<div class="login-logo">
+				<span class="logo" :style="logoStyle"></span>
+				{{ loginLogoTitle }}
+			</div>
 
 		<div class="login-content">
 			<div class="content">
@@ -32,11 +47,12 @@
 			</div>
 		</div>
 
-		<div class="login-footer">
-			<p v-html="$xss(copyright)"></p>
-		</div>
+			<div class="login-footer">
+				<p v-html="$xss(copyright)"></p>
+			</div>
 
-		<tp-dialog ref="TpDialog"></tp-dialog>
+			<tp-dialog ref="TpDialog"></tp-dialog>
+		</template>
 	</div>
 </template>
 
@@ -65,31 +81,50 @@ export default {
 	},
 
 	data() {
-		let loginLogoTitle = app.projectConfig.login.title || app.projectConfig.loginLogoTitle
-		let copyright = this.$route.meta.copyright || app.projectConfig.router.copyright || `Copyright © 2001-${app.$dayjs().format('YYYY')} JPX.保留所有权利`
+		// 默认配置值
+		let defaultLoginLogoTitle = app.projectConfig.login.title || app.projectConfig.loginLogoTitle
+		let defaultCopyright = this.$route.meta.copyright || app.projectConfig.router.copyright || `Copyright © 2001-${app.$dayjs().format('YYYY')} JPX.保留所有权利`
 		let loginPath = this.$route.meta.rootPath || app.projectConfig.router.loginPath
+		
+		// 从window._publicConfig获取配置（兼容旧版本）
 		if (window._publicConfig) {
 			if (window._publicConfig.loginLogoTitle) {
-				loginLogoTitle = window._publicConfig.loginLogoTitle
+				defaultLoginLogoTitle = window._publicConfig.loginLogoTitle
 			}
 			if (window._publicConfig.copyright) {
-				copyright = window._publicConfig.copyright
+				defaultCopyright = window._publicConfig.copyright
 			}
 			if (window._publicConfig.loginPath) {
 				loginPath = window._publicConfig.loginPath
 			}
 		}
 
-
 		return {
-			loginLogoTitle,
-			copyright,
+			// 配置加载状态
+			configLoading: true,
+			configError: false,
+			
+			// 动态配置数据
+			loginLogoTitle: defaultLoginLogoTitle,
+			copyright: defaultCopyright,
+			logoUrl: window._publicConfig?.loginLogo || '/static/images/logo.svg',
+			
+			// 其他状态
 			loginPath,
 			// 0 = 登录  1 = 注册  2 = 忘记密码  3 = App下载  4 = 强制修改密码
 			cardCode: -1,
 			inLoginProcess: false, // 登录 loading
 			seletDepartment: false,
 			departmentList: [],
+		}
+	},
+
+	computed: {
+		// 动态logo样式
+		logoStyle() {
+			return {
+				backgroundImage: `url("${this.logoUrl}")`
+			}
 		}
 	},
 
@@ -104,9 +139,72 @@ export default {
 
 	mounted() {
 		this.initCardCode()
+		// 加载系统配置
+		this.loadSystemConfig()
 	},
 
 	methods: {
+		// 加载系统配置
+		async loadSystemConfig() {
+			try {
+				this.configLoading = true
+				this.configError = false
+				
+				// 获取登录页面相关配置
+				const configKeys = ['login.title', 'login.logo', 'system.copyright']
+				const promises = configKeys.map(key => 
+					this.$svc.sys.config.getConfigValue(key)
+						.then(res => ({ key, value: res.data, success: true }))
+						.catch(err => ({ key, error: err, success: false }))
+				)
+				
+				// 设置超时时间
+				const timeoutPromise = new Promise((_, reject) => {
+					setTimeout(() => reject(new Error('请求超时')), 10000)
+				})
+				
+				const results = await Promise.race([
+					Promise.all(promises),
+					timeoutPromise
+				])
+				
+				// 处理配置结果
+				let hasError = false
+				results.forEach(result => {
+					if (result.success && result.value) {
+						switch (result.key) {
+							case 'login.title':
+								this.loginLogoTitle = result.value
+								break
+							case 'login.logo':
+								this.logoUrl = result.value
+								break
+							case 'system.copyright':
+								this.copyright = result.value
+								break
+						}
+					} else if (!result.success) {
+						console.warn(`获取配置 ${result.key} 失败:`, result.error)
+						hasError = true
+					}
+				})
+				
+				// 如果所有配置都失败，显示错误状态
+				if (results.every(r => !r.success)) {
+					this.configError = true
+				} else {
+					// 部分成功或全部成功，显示登录界面
+					this.configError = false
+				}
+				
+			} catch (error) {
+				console.error('加载系统配置失败:', error)
+				this.configError = true
+			} finally {
+				this.configLoading = false
+			}
+		},
+		
 		// 判断初始化 路由 是否展示登录卡片
 		initCardCode() {
 			let { path } = this.$route
@@ -461,4 +559,44 @@ export default {
 // @import ".";
 
 @import "../../assets/styles/login/login2.less";
+
+// 配置加载状态样式
+.config-loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	
+	.fb-spin {
+		color: white;
+	}
+}
+
+// 配置错误状态样式
+.config-error {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 20px;
+	
+	.fb-result {
+		background: rgba(255, 255, 255, 0.95);
+		border-radius: 8px;
+		padding: 40px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+		max-width: 500px;
+		width: 100%;
+	}
+}
+
+// logo动态样式支持
+.login-logo .logo {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
 </style>

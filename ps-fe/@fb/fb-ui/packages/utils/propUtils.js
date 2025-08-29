@@ -1,5 +1,5 @@
 /*!
- * propUtils
+ * propUtils - Vue 组件属性工具函数集
  * (c) 2020 lincong1987
  */
 
@@ -12,8 +12,25 @@ import {
 	parseInt,
 } from 'lodash-es'
 
+/**
+ * @namespace PropUtils
+ * @desc Vue 组件属性工具函数集合
+ */
+
 const nestRE = /^(attrs|props|on|nativeOn|class|style|hook)$/
 
+/**
+ * @desc 合并 JSX 属性
+ * @param {Array} objs - 要合并的属性对象数组
+ * @returns {Object} 返回合并后的属性对象
+ * @example
+ * // 合并 JSX 属性
+ * const mergedProps = mergeJSXProps([
+ *   { class: 'btn' },
+ *   { style: { color: 'red' } },
+ *   { onClick: handleClick }
+ * ]);
+ */
 export function mergeJSXProps (objs) {
 	return objs.reduce(function (a, b) {
 		var aa, bb, key, nestedKey, temp
@@ -56,6 +73,18 @@ export function mergeJSXProps (objs) {
 	}, {})
 }
 
+/**
+ * @desc 合并函数
+ * @param {Function} a - 第一个函数
+ * @param {Function} b - 第二个函数
+ * @returns {Function} 返回合并后的函数
+ * @example
+ * // 合并两个函数
+ * const fn1 = () => console.log('fn1');
+ * const fn2 = () => console.log('fn2');
+ * const mergedFn = mergeFn(fn1, fn2);
+ * mergedFn(); // 会依次执行 fn1 和 fn2
+ */
 export function mergeFn (a, b) {
 	return function () {
 		a && a.apply(this, arguments)
@@ -64,18 +93,19 @@ export function mergeFn (a, b) {
 }
 
 /**
- * 智能获取尺寸
- * @param {String|Number} size 可以是 0 10 10px 10% x xl
- * 如果是 x xl 这样的要传入 sizeMap = {x: 30, xl: '100px'}
- * 在组件的props里最好这样定义
- * props :{
- *     width: {
-				type: [String, Number],
-				default: 256,
-			}
- * }
- * @param {Object} sizeMap 尺寸码表 {x: 30, xl: '100px'}
- * @returns {number|string|undefined|*}
+ * @desc 智能获取尺寸
+ * @param {String|Number} size - 尺寸值
+ * @param {Object} sizeMap - 尺寸码表
+ * @returns {Number|String|undefined} 返回处理后的尺寸值
+ * @example
+ * // 获取像素尺寸
+ * getSizeStyle(10); // '10px'
+ * getSizeStyle('10px'); // '10px'
+ * getSizeStyle('50%'); // '50%'
+ * 
+ * // 使用尺寸码表
+ * getSizeStyle('large', { large: 100 }); // '100px'
+ * getSizeStyle('small', { small: '50px' }); // '50px'
  */
 export function getSizeStyle (size, sizeMap = {}) {
 

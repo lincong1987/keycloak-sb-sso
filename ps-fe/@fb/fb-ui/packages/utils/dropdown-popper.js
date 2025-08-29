@@ -7,6 +7,12 @@ import {generateId} from './utils'
 import {prefix} from '../../src/config'
 import Vue from 'vue'
 
+/**
+ * @namespace DropdownPopper
+ * @desc 下拉弹出层组件
+ * @description 基于 Popper 的下拉弹出层组件
+ */
+
 export default {
 	name: 'FbDropDown',
 
@@ -14,28 +20,79 @@ export default {
 
 	props: {
 
+		/**
+		 * @member {Number} openDelay
+		 * @desc 打开延迟时间（毫秒）
+		 * @default 0
+		 */
 		openDelay: {
 			type: Number,
 			default: 0,
 		},
+		
+		/**
+		 * @member {Boolean} manual
+		 * @desc 是否手动控制显示
+		 * @default false
+		 */
 		manual: Boolean,
+		
+		/**
+		 * @member {String} effect
+		 * @desc 弹出层效果主题
+		 * @default 'dark'
+		 */
 		effect: {
 			type: String,
 			default: 'dark',
 		},
+		
+		/**
+		 * @member {Number} arrowOffset
+		 * @desc 箭头偏移量
+		 * @default 0
+		 */
 		arrowOffset: {
 			type: Number,
 			default: 0,
 		},
+		
+		/**
+		 * @member {String} popperClass
+		 * @desc 弹出层自定义类名
+		 */
 		popperClass: String,
+		
+		/**
+		 * @member {String} content
+		 * @desc 弹出层内容
+		 */
 		content: String,
+		
+		/**
+		 * @member {Boolean} visibleArrow
+		 * @desc 是否显示箭头
+		 * @default false
+		 */
 		visibleArrow: {
 			default: false,
 		},
+		
+		/**
+		 * @member {String} transition
+		 * @desc 过渡动画名称
+		 * @default 'fade'
+		 */
 		transition: {
 			type: String,
 			default: 'fade',
 		},
+		
+		/**
+		 * @member {Object} popperOptions
+		 * @desc Popper.js 配置选项
+		 * @default { boundariesPadding: 10, gpuAcceleration: false }
+		 */
 		popperOptions: {
 			default() {
 				return {
@@ -44,18 +101,42 @@ export default {
 				}
 			},
 		},
+		
+		/**
+		 * @member {Boolean} enterable
+		 * @desc 鼠标是否可进入弹出层
+		 * @default true
+		 */
 		enterable: {
 			type: Boolean,
 			default: true,
 		},
+		
+		/**
+		 * @member {Number} hideAfter
+		 * @desc 自动隐藏延迟时间（毫秒）
+		 * @default 0
+		 */
 		hideAfter: {
 			type: Number,
 			default: 0,
 		},
+		
+		/**
+		 * @member {Number} tabindex
+		 * @desc 元素 tabindex 属性
+		 * @default 0
+		 */
 		tabindex: {
 			type: Number,
 			default: 0,
 		},
+		
+		/**
+		 * @member {String|Object|Array} tipStyle
+		 * @desc 弹出层样式
+		 * @default [{ border: 'none', padding: 0, margin: 0, background: 'transparent' }]
+		 */
 		tipStyle: {
 			type: [String, Object, Array],
 			default() {
@@ -67,6 +148,12 @@ export default {
 				}]
 			},
 		},
+		
+		/**
+		 * @member {String} focusClass
+		 * @desc 聚焦时的类名
+		 * @default ''
+		 */
 		focusClass: {
 			type: String,
 			default: '',
@@ -75,12 +162,35 @@ export default {
 
 	data() {
 		return {
+			/**
+			 * @member {String} dropdownId
+			 * @desc 下拉菜单 ID
+			 */
 			dropdownId: `${prefix}-dropdown-${generateId()}`,
+			
+			/**
+			 * @member {Number} timeoutPending
+			 * @desc 延迟定时器 ID
+			 */
 			timeoutPending: null,
+			
+			/**
+			 * @member {Boolean} focusing
+			 * @desc 是否聚焦状态
+			 */
 			focusing: false,
+			
+			/**
+			 * @member {Boolean} expectedState
+			 * @desc 期望的显示状态
+			 */
 			expectedState: true,
 		}
 	},
+	
+	/**
+	 * @desc 组件创建前钩子
+	 */
 	beforeCreate() {
 		if (this.$isServer) return
 
@@ -94,6 +204,9 @@ export default {
 		this.debounceClose = debounce(() => this.handleClosePopper(), 200)
 	},
 
+	/**
+	 * @desc 渲染函数
+	 */
 	render(h) {
 		if (this.popperVM) {
 			this.popperVM.node = h(
@@ -138,6 +251,9 @@ export default {
 		return firstElement
 	},
 
+	/**
+	 * @desc 组件挂载后钩子
+	 */
 	mounted() {
 
 		this.referenceElm = this.$el
@@ -154,6 +270,10 @@ export default {
 			})
 		}
 	},
+	
+	/**
+	 * @desc 组件监听器
+	 */
 	watch: {
 		focusing(val) {
 			if (val) {
@@ -166,16 +286,36 @@ export default {
 			console.log('expectedState', val)
 		},
 	},
+	
 	methods: {
+		/**
+		 * @desc 显示下拉菜单
+		 * @example
+		 * // 显示下拉菜单
+		 * dropdown.show();
+		 */
 		show() {
 			this.setExpectedState(true)
 			this.handleShowPopper()
 		},
 
+		/**
+		 * @desc 隐藏下拉菜单
+		 * @example
+		 * // 隐藏下拉菜单
+		 * dropdown.hide();
+		 */
 		hide() {
 			this.setExpectedState(false)
 			this.debounceClose()
 		},
+		
+		/**
+		 * @desc 切换下拉菜单显示状态
+		 * @example
+		 * // 切换下拉菜单显示状态
+		 * dropdown.toggle();
+		 */
 		toggle() {
 			if (this.getExpectedState() === false) {
 				this.hide()
@@ -184,18 +324,47 @@ export default {
 				this.show()
 			}
 		},
+		
+		/**
+		 * @desc 处理聚焦事件
+		 * @example
+		 * // 处理聚焦事件
+		 * dropdown.handleFocus();
+		 */
 		handleFocus() {
 			this.focusing = true
 			this.show()
 		},
+		
+		/**
+		 * @desc 处理失焦事件
+		 * @example
+		 * // 处理失焦事件
+		 * dropdown.handleBlur();
+		 */
 		handleBlur() {
 			this.focusing = false
 			this.hide()
 		},
+		
+		/**
+		 * @desc 移除聚焦状态
+		 * @example
+		 * // 移除聚焦状态
+		 * dropdown.removeFocusing();
+		 */
 		removeFocusing() {
 			this.focusing = false
 		},
 
+		/**
+		 * @desc 添加下拉菜单类名
+		 * @param {String} prev - 原始类名
+		 * @returns {String} 返回处理后的类名
+		 * @example
+		 * // 添加下拉菜单类名
+		 * const className = dropdown.addDropdownClass('original-class');
+		 */
 		addDropdownClass(prev) {
 			if (!prev) {
 				return `${prefix}-dropdown`
@@ -205,6 +374,12 @@ export default {
 			}
 		},
 
+		/**
+		 * @desc 处理显示下拉菜单
+		 * @example
+		 * // 处理显示下拉菜单
+		 * dropdown.handleShowPopper();
+		 */
 		handleShowPopper() {
 			if (!this.expectedState || this.manual) return
 			clearTimeout(this.timeout)
@@ -219,6 +394,12 @@ export default {
 			}
 		},
 
+		/**
+		 * @desc 处理关闭下拉菜单
+		 * @example
+		 * // 处理关闭下拉菜单
+		 * dropdown.handleClosePopper();
+		 */
 		handleClosePopper() {
 			if (this.enterable && this.expectedState || this.manual) return
 			clearTimeout(this.timeout)
@@ -229,6 +410,13 @@ export default {
 			this.showPopper = false
 		},
 
+		/**
+		 * @desc 设置期望的显示状态
+		 * @param {Boolean} expectedState - 期望的显示状态
+		 * @example
+		 * // 设置期望的显示状态为 true
+		 * dropdown.setExpectedState(true);
+		 */
 		setExpectedState(expectedState) {
 			if (expectedState === false) {
 				clearTimeout(this.timeoutPending)
@@ -236,10 +424,24 @@ export default {
 			this.expectedState = expectedState
 		},
 
+		/**
+		 * @desc 获取期望的显示状态
+		 * @returns {Boolean} 返回期望的显示状态
+		 * @example
+		 * // 获取期望的显示状态
+		 * const state = dropdown.getExpectedState();
+		 */
 		getExpectedState() {
 			return this.expectedState
 		},
 
+		/**
+		 * @desc 获取第一个元素
+		 * @returns {VNode|null} 返回第一个 VNode 元素或 null
+		 * @example
+		 * // 获取第一个元素
+		 * const element = dropdown.getFirstElement();
+		 */
 		getFirstElement() {
 			const slots = this.$slots.default
 			if (!Array.isArray(slots)) return null
@@ -254,10 +456,16 @@ export default {
 		},
 	},
 
+	/**
+	 * @desc 组件销毁前钩子
+	 */
 	beforeDestroy() {
 		this.popperVM && this.popperVM.$destroy()
 	},
 
+	/**
+	 * @desc 组件销毁后钩子
+	 */
 	destroyed() {
 		const reference = this.referenceElm
 		if (reference.nodeType === 1) {

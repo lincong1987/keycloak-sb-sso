@@ -121,4 +121,18 @@ public class TpMenuHistoryQuery {
     public Integer getPageSize() {
         return size != null ? size : 10;
     }
+
+    @Override
+    public String toString() {
+        return "TpMenuHistoryQuery{" +
+                "menuId='" + menuId + '\'' +
+                ", operationType='" + operationType + '\'' +
+                ", operatorId='" + operatorId + '\'' +
+                ", operatorName='" + operatorName + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", current=" + current +
+                ", size=" + size +
+                '}';
+    }
 }

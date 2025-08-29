@@ -76,6 +76,11 @@ public class OrgTreeChangeHistoryVO implements Serializable {
      */
     private Long deptId;
 
+    /**
+     * 组织/部门名称
+     */
+    private String orgName;
+
     public Long getId() {
         return id;
     }
@@ -170,5 +175,13 @@ public class OrgTreeChangeHistoryVO implements Serializable {
 
     public void setAfterFullTree(String afterFullTree) {
         this.afterFullTree = afterFullTree;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 }

@@ -1,6 +1,16 @@
 import Vue from 'vue';
 import { on } from './dom';
 
+/**
+ * clickoutside - 点击元素外部指令
+ * @description Vue 自定义指令，用于检测用户是否点击了元素外部区域
+ */
+
+/**
+ * @namespace ClickOutside
+ * @desc 点击元素外部处理工具
+ */
+
 const nodeList = [];
 const ctx = '@@clickoutsideContext';
 
@@ -13,6 +23,13 @@ let seed = 0;
   nodeList.forEach(node => node[ctx].documentHandler(e, startClick));
 });
 
+/**
+ * @desc 创建文档点击处理函数
+ * @param {Element} el - 指令绑定的元素
+ * @param {Object} binding - 指令绑定对象
+ * @param {Object} vnode - Vue 虚拟节点
+ * @returns {Function} 返回文档点击处理函数
+ */
 function createDocumentHandler(el, binding, vnode) {
   return function(mouseup = {}, mousedown = {}) {
     if (!vnode ||
@@ -37,14 +54,20 @@ function createDocumentHandler(el, binding, vnode) {
 }
 
 /**
- * v-clickoutside
- * @desc 点击元素外面才会触发的事件
+ * v-clickoutside - 点击元素外面才会触发的事件
+ * @desc Vue 自定义指令，当用户点击元素外部时触发指定方法
  * @example
  * ```vue
- * <div v-element-clickoutside="handleClose">
+ * <div v-clickoutside="handleClose">
  * ```
  */
 export default {
+  /**
+   * @desc 指令绑定时调用
+   * @param {Element} el - 指令绑定的元素
+   * @param {Object} binding - 指令绑定对象
+   * @param {Object} vnode - Vue 虚拟节点
+   */
   bind(el, binding, vnode) {
     nodeList.push(el);
     const id = seed++;
@@ -56,12 +79,22 @@ export default {
     };
   },
 
+  /**
+   * @desc 指令更新时调用
+   * @param {Element} el - 指令绑定的元素
+   * @param {Object} binding - 指令绑定对象
+   * @param {Object} vnode - Vue 虚拟节点
+   */
   update(el, binding, vnode) {
     el[ctx].documentHandler = createDocumentHandler(el, binding, vnode);
     el[ctx].methodName = binding.expression;
     el[ctx].bindingFn = binding.value;
   },
 
+  /**
+   * @desc 指令解绑时调用
+   * @param {Element} el - 指令绑定的元素
+   */
   unbind(el) {
     let len = nodeList.length;
 

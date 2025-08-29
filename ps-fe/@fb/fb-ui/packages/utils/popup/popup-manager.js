@@ -5,6 +5,10 @@ let hasModal = false;
 let hasInitZIndex = false;
 let zIndex;
 
+/**
+ * @desc 获取遮罩层元素
+ * @returns {HTMLElement|undefined} 返回遮罩层元素或 undefined
+ */
 const getModal = function() {
   if (Vue.prototype.$isServer) return;
   let modalDom = PopupManager.modalDom;
@@ -30,19 +34,53 @@ const getModal = function() {
 
 const instances = {};
 
+/**
+ * @namespace PopupManager
+ * @desc 弹出层管理器
+ * @description 管理弹出层实例和遮罩层的工具
+ */
+
 const PopupManager = {
+  /**
+   * @member {Boolean} modalFade
+   * @desc 遮罩层是否淡入淡出
+   * @default true
+   */
   modalFade: true,
 
+  /**
+   * @desc 获取弹出层实例
+   * @param {String} id - 实例 ID
+   * @returns {Object} 返回弹出层实例
+   * @example
+   * // 获取弹出层实例
+   * const instance = PopupManager.getInstance('popup-1');
+   */
   getInstance: function(id) {
     return instances[id];
   },
 
+  /**
+   * @desc 注册弹出层实例
+   * @param {String} id - 实例 ID
+   * @param {Object} instance - 弹出层实例
+   * @example
+   * // 注册弹出层实例
+   * PopupManager.register('popup-1', popupInstance);
+   */
   register: function(id, instance) {
     if (id && instance) {
       instances[id] = instance;
     }
   },
 
+  /**
+   * @desc 注销弹出层实例
+   * @param {String} id - 实例 ID
+   * @example
+   * // 注销弹出层实例
+   * PopupManager.deregister('popup-1');
+   */
   deregister: function(id) {
     if (id) {
       instances[id] = null;
@@ -50,12 +88,29 @@ const PopupManager = {
     }
   },
 
+  /**
+   * @desc 获取下一个 z-index 值
+   * @returns {Number} 返回下一个 z-index 值
+   * @example
+   * // 获取下一个 z-index 值
+   * const zIndex = PopupManager.nextZIndex();
+   */
   nextZIndex: function() {
     return PopupManager.zIndex++;
   },
 
+  /**
+   * @member {Array} modalStack
+   * @desc 遮罩层堆栈
+   */
   modalStack: [],
 
+  /**
+   * @desc 处理遮罩层点击事件
+   * @example
+   * // 处理遮罩层点击事件
+   * PopupManager.doOnModalClick();
+   */
   doOnModalClick: function() {
     const topItem = PopupManager.modalStack[PopupManager.modalStack.length - 1];
     if (!topItem) return;
@@ -66,6 +121,17 @@ const PopupManager = {
     }
   },
 
+  /**
+   * @desc 打开遮罩层
+   * @param {String} id - 实例 ID
+   * @param {Number} zIndex - z-index 值
+   * @param {HTMLElement} dom - DOM 元素
+   * @param {String} modalClass - 遮罩层类名
+   * @param {Boolean} modalFade - 是否淡入淡出
+   * @example
+   * // 打开遮罩层
+   * PopupManager.openModal('popup-1', 2000, element, 'custom-class', true);
+   */
   openModal: function(id, zIndex, dom, modalClass, modalFade) {
     if (Vue.prototype.$isServer) return;
     if (!id || zIndex === undefined) return;
@@ -109,6 +175,13 @@ const PopupManager = {
     this.modalStack.push({ id: id, zIndex: zIndex, modalClass: modalClass });
   },
 
+  /**
+   * @desc 关闭遮罩层
+   * @param {String} id - 实例 ID
+   * @example
+   * // 关闭遮罩层
+   * PopupManager.closeModal('popup-1');
+   */
   closeModal: function(id) {
     const modalStack = this.modalStack;
     const modalDom = getModal();
@@ -165,6 +238,10 @@ Object.defineProperty(PopupManager, 'zIndex', {
   }
 });
 
+/**
+ * @desc 获取顶层弹出层
+ * @returns {Object|undefined} 返回顶层弹出层实例或 undefined
+ */
 const getTopPopup = function() {
   if (Vue.prototype.$isServer) return;
   if (PopupManager.modalStack.length > 0) {

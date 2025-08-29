@@ -8,47 +8,120 @@ let idSeed = 1;
 
 let scrollBarWidth;
 
+/**
+ * @namespace Popup
+ * @desc 弹出层组件
+ * @description 提供弹出层功能的 Vue 组件
+ */
+
 export default {
   props: {
+    /**
+     * @member {Boolean} visible
+     * @desc 弹出层是否可见
+     * @default false
+     */
     visible: {
       type: Boolean,
       default: false
     },
+    
+    /**
+     * @member {Number} openDelay
+     * @desc 打开延迟时间（毫秒）
+     */
     openDelay: {},
+    
+    /**
+     * @member {Number} closeDelay
+     * @desc 关闭延迟时间（毫秒）
+     */
     closeDelay: {},
+    
+    /**
+     * @member {Number} zIndex
+     * @desc z-index 层级
+     */
     zIndex: {},
+    
+    /**
+     * @member {Boolean} modal
+     * @desc 是否显示遮罩层
+     * @default false
+     */
     modal: {
       type: Boolean,
       default: false
     },
+    
+    /**
+     * @member {Boolean} modalFade
+     * @desc 遮罩层是否淡入淡出
+     * @default true
+     */
     modalFade: {
       type: Boolean,
       default: true
     },
+    
+    /**
+     * @member {String} modalClass
+     * @desc 遮罩层自定义类名
+     */
     modalClass: {},
+    
+    /**
+     * @member {Boolean} modalAppendToBody
+     * @desc 遮罩层是否添加到 body
+     * @default false
+     */
     modalAppendToBody: {
       type: Boolean,
       default: false
     },
+    
+    /**
+     * @member {Boolean} lockScroll
+     * @desc 是否锁定滚动
+     * @default true
+     */
     lockScroll: {
       type: Boolean,
       default: true
     },
+    
+    /**
+     * @member {Boolean} closeOnPressEscape
+     * @desc 是否按下 ESC 键关闭
+     * @default false
+     */
     closeOnPressEscape: {
       type: Boolean,
       default: false
     },
+    
+    /**
+     * @member {Boolean} closeOnClickModal
+     * @desc 是否点击遮罩层关闭
+     * @default false
+     */
     closeOnClickModal: {
       type: Boolean,
       default: false
     }
   },
 
+  /**
+   * @desc 组件挂载前钩子
+   */
   beforeMount() {
     this._popupId = 'popup-' + idSeed++;
     PopupManager.register(this._popupId, this);
   },
 
+  /**
+   * @desc 组件销毁前钩子
+   */
   beforeDestroy() {
     PopupManager.deregister(this._popupId);
     PopupManager.closeModal(this._popupId);
@@ -58,15 +131,43 @@ export default {
 
   data() {
     return {
+      /**
+       * @member {Boolean} opened
+       * @desc 弹出层是否已打开
+       */
       opened: false,
+      
+      /**
+       * @member {String} bodyPaddingRight
+       * @desc body 的 padding-right 值
+       */
       bodyPaddingRight: null,
+      
+      /**
+       * @member {Number} computedBodyPaddingRight
+       * @desc 计算后的 body padding-right 值
+       */
       computedBodyPaddingRight: 0,
+      
+      /**
+       * @member {Boolean} withoutHiddenClass
+       * @desc 是否没有隐藏类
+       */
       withoutHiddenClass: true,
+      
+      /**
+       * @member {Boolean} rendered
+       * @desc 是否已渲染
+       */
       rendered: false
     };
   },
 
   watch: {
+    /**
+     * @desc 监听 visible 属性变化
+     * @param {Boolean} val - 可见性值
+     */
     visible(val) {
       if (val) {
         if (this._opening) return;
@@ -85,6 +186,16 @@ export default {
   },
 
   methods: {
+    /**
+     * @desc 打开弹出层
+     * @param {Object} options - 打开选项
+     * @example
+     * // 打开弹出层
+     * popup.open();
+     * 
+     * // 带选项打开弹出层
+     * popup.open({ modal: true });
+     */
     open(options) {
       if (!this.rendered) {
         this.rendered = true;
@@ -109,6 +220,10 @@ export default {
       }
     },
 
+    /**
+     * @desc 执行打开弹出层
+     * @param {Object} props - 属性配置
+     */
     doOpen(props) {
       if (this.$isServer) return;
       if (this.willOpen && !this.willOpen()) return;
@@ -159,10 +274,19 @@ export default {
       this.doAfterOpen();
     },
 
+    /**
+     * @desc 打开后处理
+     */
     doAfterOpen() {
       this._opening = false;
     },
 
+    /**
+     * @desc 关闭弹出层
+     * @example
+     * // 关闭弹出层
+     * popup.close();
+     */
     close() {
       if (this.willClose && !this.willClose()) return;
 
@@ -184,6 +308,9 @@ export default {
       }
     },
 
+    /**
+     * @desc 执行关闭弹出层
+     */
     doClose() {
       this._closing = true;
 
@@ -198,11 +325,17 @@ export default {
       this.doAfterClose();
     },
 
+    /**
+     * @desc 关闭后处理
+     */
     doAfterClose() {
       PopupManager.closeModal(this._popupId);
       this._closing = false;
     },
 
+    /**
+     * @desc 恢复 body 样式
+     */
     restoreBodyStyle() {
       if (this.modal && this.withoutHiddenClass) {
         document.body.style.paddingRight = this.bodyPaddingRight;

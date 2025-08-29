@@ -22,9 +22,11 @@
             h.before_full_tree AS beforeFullTree,
             h.after_full_tree AS afterFullTree,
             h.version,
-            h.dept_id AS deptId
+            h.dept_id AS deptId,
+            IFNULL(d.DEPT_FULL_NAME, '未知节点') AS orgName
         FROM org_tree_change_history h
         LEFT JOIN tp_person_basicinfo p ON h.operator_id = p.person_id
+        LEFT JOIN tp_dept_basicinfo d ON h.dept_id = d.DEPT_ID AND d.ACTIVED = 1
         <where>
             <if test="query.operationType != null and query.operationType != ''">
                 AND h.operation_type = #{query.operationType}

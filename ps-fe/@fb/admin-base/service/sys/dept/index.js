@@ -28,7 +28,14 @@ export default {
 			},
 			latest() {
 				return app.service.get('/api/org-tree-change-history/latest')
+			},
+			historyView(queryData) {
+				return app.service.post('/api/org-tree-change-history/view', null, {params: queryData})
 			}
+		},
+		// 历史详情查看API - 直接在org对象下提供，供view.vue调用
+		historyView(queryData) {
+			return app.service.post('/api/org-tree-change-history/view', null, {params: queryData})
 		},
 		add(formData) {
 			return app.service.request({

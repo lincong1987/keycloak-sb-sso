@@ -1,515 +1,683 @@
 /**
- * @ignore
- * some key-codes definition and utils from closure-library
- * @author yiminghe@gmail.com
+ * @fileOverview Kickass library to create and place poppers near their reference elements.
+ * @version {{version}}
+ * @license
+ * Copyright (c) 2016 Federico Zivolo and contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
+ * keyCode - 键盘按键码工具集
+ * @description 提供常用键盘按键码常量和检测函数
+ */
+
+/**
+ * @namespace KeyCode
+ * @desc 键盘按键码工具集合
  */
 
 const KeyCode = {
 
     /**
-     * MAC_ENTER
+     * @member {Number} MAC_ENTER
+     * @desc MAC_ENTER 键 (3)
      */
     MAC_ENTER: 3,
 
     /**
-     * BACKSPACE
+     * @member {Number} BACKSPACE
+     * @desc BACKSPACE 键 (8)
      */
     BACKSPACE: 8,
 
     /**
-     * TAB
+     * @member {Number} TAB
+     * @desc TAB 键 (9)
      */
     TAB: 9,
 
     /**
-     * NUMLOCK on FF/Safari Mac
+     * @member {Number} NUM_CENTER
+     * @desc NUMLOCK 键在 FF/Safari Mac 上的值 (12)
      */
-    NUM_CENTER: 12, // NUMLOCK on FF/Safari Mac
+    NUM_CENTER: 12,
+
     /**
-     * ENTER
+     * @member {Number} ENTER
+     * @desc ENTER 键 (13)
      */
     ENTER: 13,
 
     /**
-     * SHIFT
+     * @member {Number} SHIFT
+     * @desc SHIFT 键 (16)
      */
     SHIFT: 16,
 
     /**
-     * CTRL
+     * @member {Number} CTRL
+     * @desc CTRL 键 (17)
      */
     CTRL: 17,
 
     /**
-     * ALT
+     * @member {Number} ALT
+     * @desc ALT 键 (18)
      */
     ALT: 18,
 
     /**
-     * PAUSE
+     * @member {Number} PAUSE
+     * @desc PAUSE 键 (19)
      */
     PAUSE: 19,
 
     /**
-     * CAPS_LOCK
+     * @member {Number} CAPS_LOCK
+     * @desc CAPS_LOCK 键 (20)
      */
     CAPS_LOCK: 20,
 
     /**
-     * ESC
+     * @member {Number} ESC
+     * @desc ESC 键 (27)
      */
     ESC: 27,
 
     /**
-     * SPACE
+     * @member {Number} SPACE
+     * @desc SPACE 键 (32)
      */
     SPACE: 32,
 
     /**
-     * PAGE_UP
+     * @member {Number} PAGE_UP
+     * @desc PAGE_UP 键 (33)
      */
-    PAGE_UP: 33, // also NUM_NORTH_EAST
+    PAGE_UP: 33,
+
     /**
-     * PAGE_DOWN
+     * @member {Number} PAGE_DOWN
+     * @desc PAGE_DOWN 键 (34)
      */
-    PAGE_DOWN: 34, // also NUM_SOUTH_EAST
+    PAGE_DOWN: 34,
+
     /**
-     * END
+     * @member {Number} END
+     * @desc END 键 (35)
      */
-    END: 35, // also NUM_SOUTH_WEST
+    END: 35,
+
     /**
-     * HOME
+     * @member {Number} HOME
+     * @desc HOME 键 (36)
      */
-    HOME: 36, // also NUM_NORTH_WEST
+    HOME: 36,
+
     /**
-     * LEFT
+     * @member {Number} LEFT
+     * @desc LEFT 方向键 (37)
      */
-    LEFT: 37, // also NUM_WEST
+    LEFT: 37,
+
     /**
-     * UP
+     * @member {Number} UP
+     * @desc UP 方向键 (38)
      */
-    UP: 38, // also NUM_NORTH
+    UP: 38,
+
     /**
-     * RIGHT
+     * @member {Number} RIGHT
+     * @desc RIGHT 方向键 (39)
      */
-    RIGHT: 39, // also NUM_EAST
+    RIGHT: 39,
+
     /**
-     * DOWN
+     * @member {Number} DOWN
+     * @desc DOWN 方向键 (40)
      */
-    DOWN: 40, // also NUM_SOUTH
+    DOWN: 40,
+
     /**
-     * PRINT_SCREEN
+     * @member {Number} PRINT_SCREEN
+     * @desc PRINT_SCREEN 键 (44)
      */
     PRINT_SCREEN: 44,
 
     /**
-     * INSERT
+     * @member {Number} INSERT
+     * @desc INSERT 键 (45)
      */
-    INSERT: 45, // also NUM_INSERT
+    INSERT: 45,
+
     /**
-     * DELETE
+     * @member {Number} DELETE
+     * @desc DELETE 键 (46)
      */
-    DELETE: 46, // also NUM_DELETE
+    DELETE: 46,
+
     /**
-     * ZERO
+     * @member {Number} ZERO
+     * @desc 数字键 0 (48)
      */
     ZERO: 48,
 
     /**
-     * ONE
+     * @member {Number} ONE
+     * @desc 数字键 1 (49)
      */
     ONE: 49,
 
     /**
-     * TWO
+     * @member {Number} TWO
+     * @desc 数字键 2 (50)
      */
     TWO: 50,
 
     /**
-     * THREE
+     * @member {Number} THREE
+     * @desc 数字键 3 (51)
      */
     THREE: 51,
 
     /**
-     * FOUR
+     * @member {Number} FOUR
+     * @desc 数字键 4 (52)
      */
     FOUR: 52,
 
     /**
-     * FIVE
+     * @member {Number} FIVE
+     * @desc 数字键 5 (53)
      */
     FIVE: 53,
 
     /**
-     * SIX
+     * @member {Number} SIX
+     * @desc 数字键 6 (54)
      */
     SIX: 54,
 
     /**
-     * SEVEN
+     * @member {Number} SEVEN
+     * @desc 数字键 7 (55)
      */
     SEVEN: 55,
 
     /**
-     * EIGHT
+     * @member {Number} EIGHT
+     * @desc 数字键 8 (56)
      */
     EIGHT: 56,
 
     /**
-     * NINE
+     * @member {Number} NINE
+     * @desc 数字键 9 (57)
      */
     NINE: 57,
 
     /**
-     * QUESTION_MARK
+     * @member {Number} QUESTION_MARK
+     * @desc 问号键 (63)
      */
-    QUESTION_MARK: 63, // needs localization
+    QUESTION_MARK: 63,
+
     /**
-     * A
+     * @member {Number} A
+     * @desc 字母键 A (65)
      */
     A: 65,
 
     /**
-     * B
+     * @member {Number} B
+     * @desc 字母键 B (66)
      */
     B: 66,
 
     /**
-     * C
+     * @member {Number} C
+     * @desc 字母键 C (67)
      */
     C: 67,
 
     /**
-     * D
+     * @member {Number} D
+     * @desc 字母键 D (68)
      */
     D: 68,
 
     /**
-     * E
+     * @member {Number} E
+     * @desc 字母键 E (69)
      */
     E: 69,
 
     /**
-     * F
+     * @member {Number} F
+     * @desc 字母键 F (70)
      */
     F: 70,
 
     /**
-     * G
+     * @member {Number} G
+     * @desc 字母键 G (71)
      */
     G: 71,
 
     /**
-     * H
+     * @member {Number} H
+     * @desc 字母键 H (72)
      */
     H: 72,
 
     /**
-     * I
+     * @member {Number} I
+     * @desc 字母键 I (73)
      */
     I: 73,
 
     /**
-     * J
+     * @member {Number} J
+     * @desc 字母键 J (74)
      */
     J: 74,
 
     /**
-     * K
+     * @member {Number} K
+     * @desc 字母键 K (75)
      */
     K: 75,
 
     /**
-     * L
+     * @member {Number} L
+     * @desc 字母键 L (76)
      */
     L: 76,
 
     /**
-     * M
+     * @member {Number} M
+     * @desc 字母键 M (77)
      */
     M: 77,
 
     /**
-     * N
+     * @member {Number} N
+     * @desc 字母键 N (78)
      */
     N: 78,
 
     /**
-     * O
+     * @member {Number} O
+     * @desc 字母键 O (79)
      */
     O: 79,
 
     /**
-     * P
+     * @member {Number} P
+     * @desc 字母键 P (80)
      */
     P: 80,
 
     /**
-     * Q
+     * @member {Number} Q
+     * @desc 字母键 Q (81)
      */
     Q: 81,
 
     /**
-     * R
+     * @member {Number} R
+     * @desc 字母键 R (82)
      */
     R: 82,
 
     /**
-     * S
+     * @member {Number} S
+     * @desc 字母键 S (83)
      */
     S: 83,
 
     /**
-     * T
+     * @member {Number} T
+     * @desc 字母键 T (84)
      */
     T: 84,
 
     /**
-     * U
+     * @member {Number} U
+     * @desc 字母键 U (85)
      */
     U: 85,
 
     /**
-     * V
+     * @member {Number} V
+     * @desc 字母键 V (86)
      */
     V: 86,
 
     /**
-     * W
+     * @member {Number} W
+     * @desc 字母键 W (87)
      */
     W: 87,
 
     /**
-     * X
+     * @member {Number} X
+     * @desc 字母键 X (88)
      */
     X: 88,
 
     /**
-     * Y
+     * @member {Number} Y
+     * @desc 字母键 Y (89)
      */
     Y: 89,
 
     /**
-     * Z
+     * @member {Number} Z
+     * @desc 字母键 Z (90)
      */
     Z: 90,
 
     /**
-     * META
+     * @member {Number} META
+     * @desc META 键 (WIN_KEY_LEFT) (91)
      */
-    META: 91, // WIN_KEY_LEFT
+    META: 91,
+
     /**
-     * WIN_KEY_RIGHT
+     * @member {Number} WIN_KEY_RIGHT
+     * @desc 右侧 WIN_KEY (92)
      */
     WIN_KEY_RIGHT: 92,
 
     /**
-     * CONTEXT_MENU
+     * @member {Number} CONTEXT_MENU
+     * @desc CONTEXT_MENU 键 (93)
      */
     CONTEXT_MENU: 93,
 
     /**
-     * NUM_ZERO
+     * @member {Number} NUM_ZERO
+     * @desc 数字键盘 0 (96)
      */
     NUM_ZERO: 96,
 
     /**
-     * NUM_ONE
+     * @member {Number} NUM_ONE
+     * @desc 数字键盘 1 (97)
      */
     NUM_ONE: 97,
 
     /**
-     * NUM_TWO
+     * @member {Number} NUM_TWO
+     * @desc 数字键盘 2 (98)
      */
     NUM_TWO: 98,
 
     /**
-     * NUM_THREE
+     * @member {Number} NUM_THREE
+     * @desc 数字键盘 3 (99)
      */
     NUM_THREE: 99,
 
     /**
-     * NUM_FOUR
+     * @member {Number} NUM_FOUR
+     * @desc 数字键盘 4 (100)
      */
     NUM_FOUR: 100,
 
     /**
-     * NUM_FIVE
+     * @member {Number} NUM_FIVE
+     * @desc 数字键盘 5 (101)
      */
     NUM_FIVE: 101,
 
     /**
-     * NUM_SIX
+     * @member {Number} NUM_SIX
+     * @desc 数字键盘 6 (102)
      */
     NUM_SIX: 102,
 
     /**
-     * NUM_SEVEN
+     * @member {Number} NUM_SEVEN
+     * @desc 数字键盘 7 (103)
      */
     NUM_SEVEN: 103,
 
     /**
-     * NUM_EIGHT
+     * @member {Number} NUM_EIGHT
+     * @desc 数字键盘 8 (104)
      */
     NUM_EIGHT: 104,
 
     /**
-     * NUM_NINE
+     * @member {Number} NUM_NINE
+     * @desc 数字键盘 9 (105)
      */
     NUM_NINE: 105,
 
     /**
-     * NUM_MULTIPLY
+     * @member {Number} NUM_MULTIPLY
+     * @desc 数字键盘 * (106)
      */
     NUM_MULTIPLY: 106,
 
     /**
-     * NUM_PLUS
+     * @member {Number} NUM_PLUS
+     * @desc 数字键盘 + (107)
      */
     NUM_PLUS: 107,
 
     /**
-     * NUM_MINUS
+     * @member {Number} NUM_MINUS
+     * @desc 数字键盘 - (109)
      */
     NUM_MINUS: 109,
 
     /**
-     * NUM_PERIOD
+     * @member {Number} NUM_PERIOD
+     * @desc 数字键盘 . (110)
      */
     NUM_PERIOD: 110,
 
     /**
-     * NUM_DIVISION
+     * @member {Number} NUM_DIVISION
+     * @desc 数字键盘 / (111)
      */
     NUM_DIVISION: 111,
 
     /**
-     * F1
+     * @member {Number} F1
+     * @desc F1 功能键 (112)
      */
     F1: 112,
 
     /**
-     * F2
+     * @member {Number} F2
+     * @desc F2 功能键 (113)
      */
     F2: 113,
 
     /**
-     * F3
+     * @member {Number} F3
+     * @desc F3 功能键 (114)
      */
     F3: 114,
 
     /**
-     * F4
+     * @member {Number} F4
+     * @desc F4 功能键 (115)
      */
     F4: 115,
 
     /**
-     * F5
+     * @member {Number} F5
+     * @desc F5 功能键 (116)
      */
     F5: 116,
 
     /**
-     * F6
+     * @member {Number} F6
+     * @desc F6 功能键 (117)
      */
     F6: 117,
 
     /**
-     * F7
+     * @member {Number} F7
+     * @desc F7 功能键 (118)
      */
     F7: 118,
 
     /**
-     * F8
+     * @member {Number} F8
+     * @desc F8 功能键 (119)
      */
     F8: 119,
 
     /**
-     * F9
+     * @member {Number} F9
+     * @desc F9 功能键 (120)
      */
     F9: 120,
 
     /**
-     * F10
+     * @member {Number} F10
+     * @desc F10 功能键 (121)
      */
     F10: 121,
 
     /**
-     * F11
+     * @member {Number} F11
+     * @desc F11 功能键 (122)
      */
     F11: 122,
 
     /**
-     * F12
+     * @member {Number} F12
+     * @desc F12 功能键 (123)
      */
     F12: 123,
 
     /**
-     * NUMLOCK
+     * @member {Number} NUMLOCK
+     * @desc NUMLOCK 键 (144)
      */
     NUMLOCK: 144,
 
     /**
-     * SEMICOLON
+     * @member {Number} SEMICOLON
+     * @desc 分号键 (186)
      */
-    SEMICOLON: 186, // needs localization
+    SEMICOLON: 186,
+
     /**
-     * DASH
+     * @member {Number} DASH
+     * @desc 减号键 (189)
      */
-    DASH: 189, // needs localization
+    DASH: 189,
+
     /**
-     * EQUALS
+     * @member {Number} EQUALS
+     * @desc 等号键 (187)
      */
-    EQUALS: 187, // needs localization
+    EQUALS: 187,
+
     /**
-     * COMMA
+     * @member {Number} COMMA
+     * @desc 逗号键 (188)
      */
-    COMMA: 188, // needs localization
+    COMMA: 188,
+
     /**
-     * PERIOD
+     * @member {Number} PERIOD
+     * @desc 句号键 (190)
      */
-    PERIOD: 190, // needs localization
+    PERIOD: 190,
+
     /**
-     * SLASH
+     * @member {Number} SLASH
+     * @desc 斜杠键 (191)
      */
-    SLASH: 191, // needs localization
+    SLASH: 191,
+
     /**
-     * APOSTROPHE
+     * @member {Number} APOSTROPHE
+     * @desc 撇号键 (192)
      */
-    APOSTROPHE: 192, // needs localization
+    APOSTROPHE: 192,
+
     /**
-     * SINGLE_QUOTE
+     * @member {Number} SINGLE_QUOTE
+     * @desc 单引号键 (222)
      */
-    SINGLE_QUOTE: 222, // needs localization
+    SINGLE_QUOTE: 222,
+
     /**
-     * OPEN_SQUARE_BRACKET
+     * @member {Number} OPEN_SQUARE_BRACKET
+     * @desc 左方括号键 (219)
      */
-    OPEN_SQUARE_BRACKET: 219, // needs localization
+    OPEN_SQUARE_BRACKET: 219,
+
     /**
-     * BACKSLASH
+     * @member {Number} BACKSLASH
+     * @desc 反斜杠键 (220)
      */
-    BACKSLASH: 220, // needs localization
+    BACKSLASH: 220,
+
     /**
-     * CLOSE_SQUARE_BRACKET
+     * @member {Number} CLOSE_SQUARE_BRACKET
+     * @desc 右方括号键 (221)
      */
-    CLOSE_SQUARE_BRACKET: 221, // needs localization
+    CLOSE_SQUARE_BRACKET: 221,
+
     /**
-     * WIN_KEY
+     * @member {Number} WIN_KEY
+     * @desc WIN_KEY (224)
      */
     WIN_KEY: 224,
 
     /**
-     * MAC_FF_META
+     * @member {Number} MAC_FF_META
+     * @desc MAC_FF_META (224)
      */
-    MAC_FF_META: 224, // Firefox (Gecko) fires this for the meta key instead of 91
+    MAC_FF_META: 224,
+
     /**
-     * WIN_IME
+     * @member {Number} WIN_IME
+     * @desc WIN_IME (229)
      */
     WIN_IME: 229
 };
 
-/*
-   whether text and modified key is entered at the same time.
-   */
+/**
+ * @desc 检测是否为文本修改按键事件
+ * @param {KeyboardEvent} e - 键盘事件对象
+ * @returns {Boolean} 如果是文本修改按键事件则返回 true
+ * @example
+ * // 检测是否为文本修改按键事件
+ * element.addEventListener('keydown', function(e) {
+ *   if (KeyCode.isTextModifyingKeyEvent(e)) {
+ *     console.log('这是文本修改按键事件');
+ *   }
+ * });
+ */
 KeyCode.isTextModifyingKeyEvent = function isTextModifyingKeyEvent(e) {
     const keyCode = e.keyCode;
     if (
@@ -553,9 +721,16 @@ KeyCode.isTextModifyingKeyEvent = function isTextModifyingKeyEvent(e) {
     }
 };
 
-/*
-   whether character is entered.
-   */
+/**
+ * @desc 检测是否为字符键
+ * @param {Number} keyCode - 键码
+ * @returns {Boolean} 如果是字符键则返回 true
+ * @example
+ * // 检测是否为字符键
+ * if (KeyCode.isCharacterKey(65)) {
+ *   console.log('这是字符键 A');
+ * }
+ */
 KeyCode.isCharacterKey = function isCharacterKey(keyCode) {
     if (keyCode >= KeyCode.ZERO && keyCode <= KeyCode.NINE) {
         return true;

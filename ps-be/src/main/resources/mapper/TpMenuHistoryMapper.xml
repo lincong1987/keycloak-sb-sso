@@ -4,36 +4,80 @@
 
     <!-- 结果映射 -->
     <resultMap id="BaseResultMap" type="com.jiuxi.admin.core.bean.entity.TpMenuHistory">
-        <id column="HISTORY_ID" property="historyId" jdbcType="VARCHAR"/>
-        <result column="MENU_ID" property="menuId" jdbcType="VARCHAR"/>
-        <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR"/>
-        <result column="OPERATION_TYPE" property="operationType" jdbcType="VARCHAR"/>
-        <result column="NODE_DATA_BEFORE" property="nodeDataBefore" jdbcType="LONGVARCHAR"/>
-        <result column="NODE_DATA_AFTER" property="nodeDataAfter" jdbcType="LONGVARCHAR"/>
-        <result column="FULL_TREE_BEFORE" property="fullTreeBefore" jdbcType="LONGVARCHAR"/>
-        <result column="FULL_TREE_AFTER" property="fullTreeAfter" jdbcType="LONGVARCHAR"/>
-        <result column="OPERATOR_ID" property="operatorId" jdbcType="VARCHAR"/>
-        <result column="OPERATOR_NAME" property="operatorName" jdbcType="VARCHAR"/>
-        <result column="OPERATION_TIME" property="operationTime" jdbcType="VARCHAR"/>
-        <result column="CREATE_TIME" property="createTime" jdbcType="VARCHAR"/>
-        <result column="CREATOR" property="creator" jdbcType="VARCHAR"/>
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="VARCHAR"/>
-        <result column="UPDATOR" property="updator" jdbcType="VARCHAR"/>
+        <result column="history_id" property="historyId" jdbcType="VARCHAR"/>
+        <result column="menu_id" property="menuId" jdbcType="VARCHAR"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="operation_type" property="operationType" jdbcType="VARCHAR"/>
+        <result column="node_data_before" property="nodeDataBefore" jdbcType="LONGVARCHAR"/>
+        <result column="node_data_after" property="nodeDataAfter" jdbcType="LONGVARCHAR"/>
+        <result column="full_tree_before" property="fullTreeBefore" jdbcType="LONGVARCHAR"/>
+        <result column="full_tree_after" property="fullTreeAfter" jdbcType="LONGVARCHAR"/>
+        <result column="operator_id" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="operator_name" property="operatorName" jdbcType="VARCHAR"/>
+        <result column="operation_time" property="operationTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="updator" property="updator" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <!-- 基础列名 -->
+    <!-- 基础列 -->
     <sql id="Base_Column_List">
-        HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER, 
-        FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME, 
-        CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+        history_id, menu_id, menu_name, operation_type, node_data_before, node_data_after,
+        full_tree_before, full_tree_after, operator_id, operator_name, operation_time,
+        create_time, creator, update_time, updator
     </sql>
 
-    <!-- 插入菜单历史记录 -->
-    <insert id="insert" parameterType="com.jiuxi.admin.core.bean.entity.TpMenuHistory">
+    <!-- 根据ID查询历史记录 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tp_menu_history
+        WHERE history_id = #{historyId}
+    </select>
+
+    <!-- 查询所有历史记录 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tp_menu_history
+        ORDER BY operation_time DESC
+    </select>
+
+    <!-- 分页查询历史记录 -->
+    <select id="getPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tp_menu_history
+        <where>
+            <if test="query.menuId != null and query.menuId != ''">
+                AND menu_id = #{query.menuId}
+            </if>
+            <if test="query.operationType != null and query.operationType != ''">
+                AND operation_type = #{query.operationType}
+            </if>
+            <if test="query.operatorId != null">
+                AND operator_id = #{query.operatorId}
+            </if>
+            <if test="query.operatorName != null and query.operatorName != ''">
+                AND operator_name LIKE CONCAT('%', #{query.operatorName}, '%')
+            </if>
+            <if test="query.startTime != null">
+                AND operation_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND operation_time &lt;= #{query.endTime}
+            </if>
+        </where>
+        ORDER BY operation_time DESC
+    </select>
+
+    <!-- 保存历史记录 -->
+    <insert id="save" parameterType="com.jiuxi.admin.core.bean.entity.TpMenuHistory">
         INSERT INTO tp_menu_history (
-            HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
-            FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
-            CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
+            history_id, menu_id, menu_name, operation_type, node_data_before, node_data_after,
+            full_tree_before, full_tree_after, operator_id, operator_name, operation_time,
+            create_time, creator, update_time, updator
         ) VALUES (
             #{historyId}, #{menuId}, #{menuName}, #{operationType}, #{nodeDataBefore}, #{nodeDataAfter},
             #{fullTreeBefore}, #{fullTreeAfter}, #{operatorId}, #{operatorName}, #{operationTime},
@@ -42,30 +86,30 @@
     </insert>
 
     <!-- 根据菜单ID查询历史记录 -->
-    <select id="selectByMenuId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByMenuId" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM tp_menu_history
-        WHERE MENU_ID = #{menuId}
-        ORDER BY OPERATION_TIME DESC
+        WHERE menu_id = #{menuId}
+        ORDER BY operation_time DESC
     </select>
 
     <!-- 根据操作人ID查询历史记录 -->
-    <select id="selectByOperatorId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByOperatorId" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM tp_menu_history
-        WHERE OPERATOR_ID = #{operatorId}
-        ORDER BY OPERATION_TIME DESC
+        WHERE operator_id = #{operatorId}
+        ORDER BY operation_time DESC
     </select>
 
     <!-- 根据操作类型查询历史记录 -->
-    <select id="selectByOperationType" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByOperationType" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM tp_menu_history
-        WHERE OPERATION_TYPE = #{operationType}
-        ORDER BY OPERATION_TIME DESC
+        WHERE operation_type = #{operationType}
+        ORDER BY operation_time DESC
     </select>
 
     <!-- 根据时间范围查询历史记录 -->
@@ -73,68 +117,8 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM tp_menu_history
-        WHERE OPERATION_TIME &gt;= #{startTime} AND OPERATION_TIME &lt;= #{endTime}
-        ORDER BY OPERATION_TIME DESC
-    </select>
-
-    <!-- 查询所有历史记录 -->
-    <select id="selectAll" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM tp_menu_history
-        ORDER BY OPERATION_TIME DESC
-    </select>
-
-    <!-- 根据历史记录ID查询 -->
-    <select id="selectByHistoryId" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM tp_menu_history
-        WHERE HISTORY_ID = #{historyId}
-    </select>
-
-    <!-- 分页查询历史记录 -->
-    <select id="getPage" resultMap="BaseResultMap" parameterType="com.jiuxi.admin.core.bean.query.TpMenuHistoryQuery">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM tp_menu_history
-        <where>
-            <if test="query.menuId != null and query.menuId != ''">
-                AND MENU_ID = #{query.menuId}
-            </if>
-            <if test="query.operationType != null and query.operationType != ''">
-                AND OPERATION_TYPE = #{query.operationType}
-            </if>
-            <if test="query.operatorId != null and query.operatorId != ''">
-                AND OPERATOR_ID = #{query.operatorId}
-            </if>
-            <if test="query.operatorName != null and query.operatorName != ''">
-                AND OPERATOR_NAME LIKE CONCAT('%', #{query.operatorName}, '%')
-            </if>
-             
-        </where>
-        ORDER BY OPERATION_TIME DESC
-    </select>
-
-    <!-- 保存历史记录 -->
-    <insert id="save" parameterType="com.jiuxi.admin.core.bean.entity.TpMenuHistory">
-        INSERT INTO tp_menu_history (
-            HISTORY_ID, MENU_ID, MENU_NAME, OPERATION_TYPE, NODE_DATA_BEFORE, NODE_DATA_AFTER,
-            FULL_TREE_BEFORE, FULL_TREE_AFTER, OPERATOR_ID, OPERATOR_NAME, OPERATION_TIME,
-            CREATE_TIME, CREATOR, UPDATE_TIME, UPDATOR
-        ) VALUES (
-            #{historyId}, #{menuId}, #{menuName}, #{operationType}, #{nodeDataBefore}, #{nodeDataAfter},
-            #{fullTreeBefore}, #{fullTreeAfter}, #{operatorId}, #{operatorName}, #{operationTime},
-            #{createTime}, #{creator}, #{updateTime}, #{updator}
-        )
-    </insert>
-
-    <!-- 根据ID查询详情 -->
-    <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM tp_menu_history
-        WHERE HISTORY_ID = #{historyId}
+        WHERE operation_time &gt;= #{startTime} AND operation_time &lt;= #{endTime}
+        ORDER BY operation_time DESC
     </select>
 
 </mapper>

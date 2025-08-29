@@ -14,3 +14,4 @@ window._publicConfig = {
 
     ssoLoginUrl: 'http://localhost:8180/realms/ps-realm/login-actions/required-action?client_id=ps-be&tab_id=k-YFFP9g83k&redirect_uri=http://localhost:8082/ps-be/api/sso/callback&response_type=code&scope=openid',
 }
+// http://localhost:10801/ps-be/sys/parameterconfig/view?pmId=1956969399269195776

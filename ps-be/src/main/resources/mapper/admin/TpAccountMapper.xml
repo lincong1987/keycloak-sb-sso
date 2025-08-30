@@ -30,7 +30,14 @@
         INSERT INTO tp_account
             (ACCOUNT_ID, USERNAME, USERPWD, PHONE, EXPIRED_TIME, LOCKED, ENABLED, PERSON_ID, TENANT_ID, WEIXIN, DINGDING, THREE_ID, ACTIVED, CREATE_TIME, UPDATE_TIME, EXTEND01, EXTEND02, EXTEND03)
 		VALUES
-			(#{accountId}, #{username}, #{userpwd}, #{phone}, #{expiredTime}, #{locked}, #{enabled}, #{personId}, #{tenantId}, #{weixin}, #{dingding}, #{threeId}, 1, #{createTime}, #{updateTime}, #{extend01}, #{extend02}, #{extend03})
+			(#{accountId}, #{username}, #{userpwd}, 
+			<choose>
+				<when test="phone != null and phone != ''">
+					@com.jiuxi.common.util.PhoneEncryptionUtils@encrypt(#{phone})
+				</when>
+				<otherwise>#{phone}</otherwise>
+			</choose>, 
+			#{expiredTime}, #{locked}, #{enabled}, #{personId}, #{tenantId}, #{weixin}, #{dingding}, #{threeId}, 1, #{createTime}, #{updateTime}, #{extend01}, #{extend02}, #{extend03})
     </insert>
 
     <select id="viewByPersonId" parameterType="String" resultType="com.jiuxi.admin.core.bean.vo.TpAccountVO">
@@ -63,7 +70,13 @@
             <set>
                 <if test="null != username and '' != username">USERNAME = #{username},</if>
                 <if test="null != userpwd and '' != userpwd">USERPWD = #{userpwd},</if>
-                <if test="null != phone">PHONE = #{phone},</if>
+                <if test="null != phone">PHONE = 
+                <choose>
+                    <when test="phone != null and phone != ''">
+                        @com.jiuxi.common.util.PhoneEncryptionUtils@encrypt(#{phone})
+                    </when>
+                    <otherwise>#{phone}</otherwise>
+                </choose>,</if>
                 <if test="null != expiredTime">EXPIRED_TIME = #{expiredTime},</if>
                 <if test="null != locked">LOCKED = #{locked},</if>
                 <if test="null != enabled">ENABLED = #{enabled},</if>
@@ -93,7 +106,13 @@
             <set>
                 <if test="null != username and '' != username">USERNAME = #{username},</if>
                 <if test="null != userpwd and '' != userpwd">USERPWD = #{userpwd},</if>
-                <if test="null != phone and '' != phone">PHONE = #{phone},</if>
+                <if test="null != phone and '' != phone">PHONE = 
+                <choose>
+                    <when test="phone != null and phone != ''">
+                        @com.jiuxi.common.util.PhoneEncryptionUtils@encrypt(#{phone})
+                    </when>
+                    <otherwise>#{phone}</otherwise>
+                </choose>,</if>
                 <if test="null != expiredTime">EXPIRED_TIME = #{expiredTime},</if>
                 <if test="null != locked">LOCKED = #{locked},</if>
                 <if test="null != enabled">ENABLED = #{enabled},</if>

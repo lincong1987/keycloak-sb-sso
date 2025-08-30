@@ -19,6 +19,7 @@ import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.admin.core.service.TpAccountService;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.util.*;
+import com.jiuxi.common.util.PhoneEncryptionUtils;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
 import com.jiuxi.security.autoconfig.SecurityConfigurationProperties;
 // import com.jiuxi.sms.core.service.SmsSendService;
@@ -232,6 +233,11 @@ public class TpAccountServiceImpl implements TpAccountService {
     public TpAccountVO accountView(String personId) {
         try {
             TpAccountVO vo = tpAccountMapper.viewByPersonId(personId);
+            // 解密手机号
+            if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+                String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                vo.setPhone(decryptedPhone);
+            }
             return vo;
         } catch (Exception e) {
             LOGGER.error("查看用户账号信息失败！personId:{}, 错误:{}", personId, ExceptionUtils.getStackTrace(e));
@@ -252,6 +258,11 @@ public class TpAccountServiceImpl implements TpAccountService {
     public TpAccountVO selectByAccountId(String accountId) {
         try {
             TpAccountVO vo = tpAccountMapper.selectByAccountId(accountId);
+            // 解密手机号
+            if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+                String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                vo.setPhone(decryptedPhone);
+            }
             return vo;
         } catch (Exception e) {
             LOGGER.error("查看用户账号信息失败！accountId:{}, 错误:{}", accountId, ExceptionUtils.getStackTrace(e));
@@ -680,7 +691,14 @@ public class TpAccountServiceImpl implements TpAccountService {
     public TpAccountVO getTpAccountByPhone(String phone) {
 
         try {
-            TpAccountVO vo =  tpAccountMapper.getTpAccountByPhone(phone);
+            // 先加密手机号进行查询
+            String encryptedPhone = PhoneEncryptionUtils.encrypt(phone);
+            TpAccountVO vo =  tpAccountMapper.getTpAccountByPhone(encryptedPhone);
+            // 解密查询结果中的手机号
+            if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+                String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                vo.setPhone(decryptedPhone);
+            }
             return vo;
         } catch (Exception e) {
             LOGGER.error("根据手机号查询账户信息失败！手机号:{}，错误:{}", phone, ExceptionUtils.getStackTrace(e));

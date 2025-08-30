@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.jiuxi.admin.core.mapper.TpPersonBasicinfoMapper">
@@ -92,7 +92,11 @@
         INSERT INTO tp_person_basicinfo
             (PERSON_ID, PERSON_NAME, PROFILE_PHOTO, PERSON_NO, SEX, IDTYPE, IDCARD, NATIVE_PLACE, SAFEPRIN_NATION, RESUME, BIRTHDAY, PHONE, TEL, EMAIL, OFFICE, ACTIVED, CATEGORY, ASCN_ID, CREATOR, CREATE_TIME, UPDATOR, UPDATE_TIME, TENANT_ID, EXTEND01, EXTEND02, EXTEND03)
 		VALUES
-			(#{personId}, #{personName}, #{profilePhoto}, #{personNo}, #{sex}, #{idtype}, #{idcard}, #{nativePlace}, #{safeprinNation}, #{resume}, #{birthday}, #{phone}, #{tel}, #{email}, #{office}, 1, #{category}, #{ascnId}, #{creator}, #{createTime}, #{updator}, #{updateTime}, #{tenantId}, #{extend01}, #{extend02}, #{extend03})
+			(#{personId}, #{personName}, #{profilePhoto}, #{personNo}, #{sex}, #{idtype}, #{idcard}, #{nativePlace}, #{safeprinNation}, #{resume}, #{birthday}, 
+			<choose>
+				<when test="phone != null and phone != ''">#{encryptedPhone}</when>
+				<otherwise>null</otherwise>
+			</choose>, #{tel}, #{email}, #{office}, 1, #{category}, #{ascnId}, #{creator}, #{createTime}, #{updator}, #{updateTime}, #{tenantId}, #{extend01}, #{extend02}, #{extend03})
     </insert>
 
     <select id="view" parameterType="string"
@@ -162,7 +166,11 @@
             <if test="null != safeprinNation">SAFEPRIN_NATION = #{safeprinNation},</if>
             <if test="null != resume">RESUME = #{resume},</if>
             <if test="null != birthday">BIRTHDAY = #{birthday},</if>
-            <if test="null != phone">PHONE = #{phone},</if>
+            <if test="null != phone">PHONE = 
+			<choose>
+				<when test="phone != ''">#{encryptedPhone}</when>
+				<otherwise>null</otherwise>
+			</choose>,</if>
             <if test="null != tel">TEL = #{tel},</if>
             <if test="null != email">EMAIL = #{email},</if>
             <if test="null != office">OFFICE = #{office},</if>

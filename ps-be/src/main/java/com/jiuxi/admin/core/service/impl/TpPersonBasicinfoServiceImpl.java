@@ -36,6 +36,7 @@ import com.jiuxi.common.bean.SessionVO;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.util.CommonDateUtil;
 import com.jiuxi.common.util.CommonUniqueIndexUtil;
+import com.jiuxi.common.util.PhoneEncryptionUtils;
 import com.jiuxi.common.util.SnowflakeIdUtil;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
 import com.jiuxi.security.core.holder.SessionHolder;
@@ -151,6 +152,12 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
                 list.forEach(vo -> {
                     TpDeptBasicinfoVO tpDeptBasicinfoVO = tpDeptBasicinfoMapper.selectDeptById(vo.getAscnId());
                     vo.setAscnName(tpDeptBasicinfoVO.getDeptFullName());
+                    
+                    // 解密手机号
+                    if (StrUtil.isNotBlank(vo.getPhone())) {
+                        String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                        vo.setPhone(decryptedPhone);
+                    }
                 });
             }
 
@@ -188,6 +195,14 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
             TpPersonBasicinfo bean = new TpPersonBasicinfo();
             // 转换成数据库对象
             BeanUtil.copyProperties(vo, bean);
+            
+            // 对手机号进行加密
+            if (StrUtil.isNotBlank(vo.getPhone())) {
+                String encryptedPhone = PhoneEncryptionUtils.encrypt(vo.getPhone());
+                bean.setEncryptedPhone(encryptedPhone);
+                LOGGER.debug("手机号加密处理完成，personId: {}", personId);
+            }
+            
             bean.setCreator(pid);
             bean.setCreateTime(createTime);
             bean.setUpdator(pid);
@@ -264,6 +279,12 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
     public TpPersonBasicinfoVO view(String personId, String deptId) {
         try {
             TpPersonBasicinfoVO vo = tpPersonBasicinfoMapper.view(personId);
+            
+            // 解密手机号
+            if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+                String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                vo.setPhone(decryptedPhone);
+            }
 
             // 根据用户id查询所在部门
             List<TpDeptBasicinfoVO> list = tpDeptBasicinfoMapper.personDepts(personId);
@@ -354,6 +375,14 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
         TpPersonBasicinfo bean = new TpPersonBasicinfo();
         // 转换成数据库对象
         BeanUtil.copyProperties(vo, bean);
+        
+        // 对手机号进行加密
+        if (StrUtil.isNotBlank(vo.getPhone())) {
+            String encryptedPhone = PhoneEncryptionUtils.encrypt(vo.getPhone());
+            bean.setEncryptedPhone(encryptedPhone);
+            LOGGER.debug("手机号加密处理完成，personId: {}", personId);
+        }
+        
         bean.setUpdator(pid);
         bean.setUpdateTime(updateTime);
 
@@ -632,7 +661,15 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
     @Override
     @Cacheable(cacheNames = "platform.{TpPersonBasicinfoService}$[86400]", key = "#root.methodName + ':' + #personId")
     public TpPersonBasicinfoVO getPersonBasicinfo(String personId) {
-        return  tpPersonBasicinfoMapper.view(personId);
+        TpPersonBasicinfoVO vo = tpPersonBasicinfoMapper.view(personId);
+        
+        // 解密手机号
+        if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+            String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+            vo.setPhone(decryptedPhone);
+        }
+        
+        return vo;
     }
 
     @Override
@@ -644,7 +681,13 @@ public class TpPersonBasicinfoServiceImpl implements TpPersonBasicinfoService {
             throw new TopinfoRuntimeException(-1, "根据身份证号，查询到多条数据");
         }
         if (list.size() == 1){
-            return list.get(0);
+            TpPersonBasicinfoVO vo = list.get(0);
+            // 解密手机号
+            if (vo != null && StrUtil.isNotBlank(vo.getPhone())) {
+                String decryptedPhone = PhoneEncryptionUtils.safeDecrypt(vo.getPhone());
+                vo.setPhone(decryptedPhone);
+            }
+            return vo;
         }
         return null;
     }

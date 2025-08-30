@@ -179,6 +179,8 @@ export function RsDefineConfig(__dirname, pkg, projectConfig = {}, output = {}, 
 		server: {
 			port: 10801,
 			https: projectConfig.server.https,
+			hmr: true,
+			liveReload: true,
 			proxy: {
 				...parseProxy(projectConfig.service)
 				// "/chemicalpark-manage": {

@@ -7,13 +7,17 @@
 		</div>
 		
 		<!-- 错误状态 -->
-		<div v-else-if="configError" class="config-error">
-			<fb-result status="error" title="服务不可用" sub-title="无法获取系统配置信息，请稍后重试">
-				<template #extra>
-					<fb-button type="primary" @click="loadSystemConfig">重新加载</fb-button>
-				</template>
-			</fb-result>
-		</div>
+		<config-error 
+			v-else-if="configError" 
+			:error-title="errorInfo.title"
+			:error-message="errorInfo.message"
+			:error-code="errorInfo.code"
+			:request-id="errorInfo.requestId"
+			:auto-retry="errorInfo.autoRetry"
+			:auto-retry-interval="30"
+			@retry="loadSystemConfig"
+			@contact-support="handleContactSupport"
+		/>
 		
 		<!-- 正常登录界面 -->
 		<template v-else>
@@ -68,6 +72,7 @@ import loginCardScanCodeVerify from '../../components/login/LoginCardScanCodeVer
 import LoginCardDepartmentList from '../../components/login/LoginCardDepartmentList'
 import appdownCard from '../../components/login/AppdownCard'
 import forceUpdatePwd from '../../components/login/ForceUpdatePwd'
+import ConfigError from '../../components/ConfigError'
 import { startRefreshToken } from '../../util/tokenUtil'
 export default {
 	components: {
@@ -78,6 +83,7 @@ export default {
 		loginCardScanCodeVerify,
 		appdownCard,
 		forceUpdatePwd,
+		ConfigError,
 	},
 
 	data() {
@@ -103,6 +109,15 @@ export default {
 			// 配置加载状态
 			configLoading: true,
 			configError: false,
+			
+			// 错误信息
+			errorInfo: {
+				title: '服务暂时不可用',
+				message: '无法获取系统配置信息，请检查网络连接或稍后重试',
+				code: '',
+				requestId: '',
+				autoRetry: false
+			},
 			
 			// 动态配置数据
 			loginLogoTitle: defaultLoginLogoTitle,
@@ -150,12 +165,21 @@ export default {
 				this.configLoading = true
 				this.configError = false
 				
+				// 重置错误信息
+				this.errorInfo = {
+					title: '服务暂时不可用',
+					message: '无法获取系统配置信息，请检查网络连接或稍后重试',
+					code: '',
+					requestId: this.generateRequestId(),
+					autoRetry: false
+				}
+				
 				// 获取登录页面相关配置
 				const configKeys = ['login.title', 'login.logo', 'system.copyright']
 				const promises = configKeys.map(key => 
 					this.$svc.sys.config.getConfigValue(key)
 						.then(res => ({ key, value: res.data, success: true }))
-						.catch(err => ({ key, error: err, success: false }))
+						.catch(err => ({ key, error: err, success: false, errorDetails: err }))
 				)
 				
 				// 设置超时时间
@@ -170,6 +194,8 @@ export default {
 				
 				// 处理配置结果
 				let hasError = false
+				let errorDetails = []
+				
 				results.forEach(result => {
 					if (result.success && result.value) {
 						switch (result.key) {
@@ -186,11 +212,16 @@ export default {
 					} else if (!result.success) {
 						console.warn(`获取配置 ${result.key} 失败:`, result.error)
 						hasError = true
+						errorDetails.push({
+							key: result.key,
+							error: result.errorDetails
+						})
 					}
 				})
 				
 				// 如果所有配置都失败，显示错误状态
 				if (results.every(r => !r.success)) {
+					this.updateErrorInfo(errorDetails)
 					this.configError = true
 				} else {
 					// 部分成功或全部成功，显示登录界面
@@ -199,9 +230,105 @@ export default {
 				
 			} catch (error) {
 				console.error('加载系统配置失败:', error)
+				this.updateErrorInfoFromException(error)
 				this.configError = true
 			} finally {
 				this.configLoading = false
+			}
+		},
+		
+		// 生成请求ID
+		generateRequestId() {
+			return 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+		},
+		
+		// 根据错误详情更新错误信息
+		updateErrorInfo(errorDetails) {
+			if (errorDetails && errorDetails.length > 0) {
+				const firstError = errorDetails[0].error
+				
+				// 根据错误类型设置不同的错误信息
+				if (firstError?.code) {
+					this.errorInfo.code = firstError.code
+				}
+				
+				if (firstError?.message) {
+					if (firstError.message.includes('timeout') || firstError.message.includes('超时')) {
+						this.errorInfo.title = '请求超时'
+						this.errorInfo.message = '服务器响应超时，请检查网络连接后重试'
+						this.errorInfo.autoRetry = true
+					} else if (firstError.message.includes('Network') || firstError.message.includes('网络')) {
+						this.errorInfo.title = '网络连接异常'
+						this.errorInfo.message = '无法连接到服务器，请检查网络设置'
+						this.errorInfo.autoRetry = true
+					} else if (firstError.status === 500) {
+						this.errorInfo.title = '服务器内部错误'
+						this.errorInfo.message = '服务器遇到了一个错误，请稍后重试或联系技术支持'
+						this.errorInfo.code = '500'
+					} else if (firstError.status === 404) {
+						this.errorInfo.title = '服务不存在'
+						this.errorInfo.message = '请求的配置服务不存在，请联系技术支持'
+						this.errorInfo.code = '404'
+					} else {
+						this.errorInfo.message = firstError.message
+					}
+				}
+			}
+		},
+		
+		// 根据异常更新错误信息
+		updateErrorInfoFromException(error) {
+			if (error.message.includes('请求超时')) {
+				this.errorInfo.title = '请求超时'
+				this.errorInfo.message = '服务器响应超时，请检查网络连接后重试'
+				this.errorInfo.autoRetry = true
+			} else {
+				this.errorInfo.title = '系统异常'
+				this.errorInfo.message = '系统遇到了未知错误，请稍后重试或联系技术支持'
+				this.errorInfo.code = 'UNKNOWN_ERROR'
+			}
+		},
+		
+		// 处理联系技术支持
+		handleContactSupport(supportInfo) {
+			const subject = encodeURIComponent('系统配置加载失败 - 技术支持请求')
+			const body = encodeURIComponent(`
+错误详情：
+- 错误时间：${supportInfo.timestamp}
+- 错误代码：${supportInfo.errorCode || '未知'}
+- 请求ID：${supportInfo.requestId || '未知'}
+- 页面地址：${supportInfo.url}
+- 浏览器信息：${supportInfo.userAgent}
+
+问题描述：
+系统配置加载失败，无法正常访问登录页面。
+
+请技术支持团队协助解决此问题。
+			`)
+			
+			// 可以根据实际情况修改邮箱地址
+			const mailtoLink = `mailto:support@company.com?subject=${subject}&body=${body}`
+			
+			// 尝试打开邮件客户端
+			try {
+				window.location.href = mailtoLink
+			} catch (e) {
+				// 如果无法打开邮件客户端，显示提示信息
+				this.$message.info({
+					content: '请联系技术支持：support@company.com',
+					duration: 5
+				})
+				
+				// 复制支持信息到剪贴板
+				if (navigator.clipboard) {
+					navigator.clipboard.writeText(`错误代码：${supportInfo.errorCode}\n请求ID：${supportInfo.requestId}\n时间：${supportInfo.timestamp}`)
+						.then(() => {
+							this.$message.success('错误信息已复制到剪贴板')
+						})
+						.catch(() => {
+							console.warn('无法复制到剪贴板')
+						})
+				}
 			}
 		},
 		

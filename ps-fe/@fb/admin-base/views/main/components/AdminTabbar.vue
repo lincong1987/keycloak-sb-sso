@@ -7,7 +7,7 @@
 				 @on-tab-change="handleTabChange"
 				 @on-tab-dblclick="handleTabDblclick"
 		>
-			<fb-tab v-for="(tab, index) in  tabs" :label="tab.tabLabel" :name="tab.tabName"
+			<fb-tab v-for="(tab, ) in  tabs" :label="tab.tabLabel" :name="tab.tabName"
 					:key="tab.tabName"></fb-tab>
 		</fb-tabs>
 
@@ -314,6 +314,6 @@
 </script>
 
 <style lang="less">
-@import ~"../../../assets/styles/layout/tabbar";
+@import "../../../assets/styles/layout/tabbar.less";
 
 </style>

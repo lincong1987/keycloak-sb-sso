@@ -44,7 +44,7 @@
             {{ retrying ? '重试中...' : '重新加载' }}
           </fb-button>
           
-          <fb-button 
+          <!-- <fb-button 
             v-if="showContactSupport"
             type="default" 
             size="large"
@@ -53,7 +53,7 @@
           >
             <fb-icon name="customer-service"></fb-icon>
             联系技术支持
-          </fb-button>
+          </fb-button> -->
         </div>
         
         <!-- 帮助信息 -->
@@ -499,7 +499,6 @@ export default {
   }
 }
 
-// 响应式设计
 @media (max-width: 768px) {
   .config-error-container {
     padding: 32px 24px;

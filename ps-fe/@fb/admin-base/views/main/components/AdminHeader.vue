@@ -1,16 +1,16 @@
 <template>
 	<div class="fb-admin-header" :style="getLayoutHeaderStyle">
 		<!-- 配置加载状态 -->
-		<div v-if="configLoading" class="fb-admin-header__logo config-loading" style="font-size:24px;     gap: 8px;">
+		<div v-if="configLoading" class="fb-admin-header__logo config-loading">
 			<fb-icon name="loading" size="16"></fb-icon> 加载中...
 		</div>
 		<!-- 配置错误状态 -->
-		<div v-else-if="configError" class="fb-admin-header__logo config-error" style="font-size:24px;">
+		<div v-else-if="configError" class="fb-admin-header__logo config-error">
 			<fb-icon name="warning" size="16"></fb-icon> 配置加载失败
 			<fb-button size="xs" type="link" @on-click="loadSystemConfig">重试</fb-button>
 		</div>
 		<!-- 正常显示 -->
-		<div v-else class="fb-admin-header__logo" style="font-size:24px;">
+		<div v-else class="fb-admin-header__logo">
 			<img v-if="logoUrl" :src="logoUrl" alt="Logo" class="logo-image" />
 			{{ logoTitle }}
 		</div>
@@ -751,22 +751,24 @@ export default {
 	.fb-admin-header__logo {
 
 		height: 100%;
-		font-size: 28px;
+		font-size: clamp(16px, 2.5vw, 22px);
 		font-weight: 700;
 		color: #FFFFFF;
 		line-height: 34px;
 		text-shadow: 0px 0px 6px rgba(0, 21, 41, 0.1);
 		padding-top: 0px;
 		//padding-left: 72px;
-		padding-left: 16px;
-		padding-right: 22px;
+		padding-left: clamp(12px, 1.5vw, 16px);
+		padding-right: clamp(16px, 2vw, 22px);
 		position: relative;
-		width: 440px;
+		width: clamp(360px, 30vw, 480px);
 		display: flex;
 		align-items: center;
+		gap: clamp(12px, 1.5vw, 16px);
 
 		img {
-			height: 32px;
+			height: clamp(24px, 3vw, 32px);
+			width: auto;
 		}
 
 		//&:before {

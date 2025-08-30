@@ -1,237 +1,363 @@
 <template>
   <div class="user-profile">
-    <fb-flex direction-column gap="16px">
-      <!-- 个人信息卡片 -->
-      <div class="card-wrapper">
-        <div class="header">
-          <fb-icon name="user" size="16" color="#2FA1FE"></fb-icon>
-          <span class="title">个人信息</span>
-        </div>
-        <div class="body">
-          <fb-flex gap="24px">
-            <!-- 头像区域 -->
-            <div class="avatar-section">
-              <div class="avatar-wrapper">
-                <img :src="userInfo.avatar || defaultAvatar" alt="用户头像" class="avatar" />
-                <div class="avatar-overlay" @click="uploadAvatar">
-                  <fb-icon name="camera" size="20" color="#fff"></fb-icon>
+    <div class="profile-container">
+      <!-- 个人资料头部 -->
+      <div class="profile-header">
+        <div class="header-background"></div>
+        <div class="header-content">
+          <div class="avatar-section">
+            <div class="avatar-wrapper">
+              <fb-avatar
+                class="avatar-uploader"
+                action="/api/upload/avatar"
+                :show-file-list="false"
+                :on-success="handleAvatarUpload"
+                :before-upload="uploadAvatar"
+              >
+                <div class="avatar-container">
+                  <img v-if="userInfo.profilePhoto || userInfo.avatar" :src="userInfo.profilePhoto || userInfo.avatar" class="avatar" />
+                  <div v-else class="avatar-placeholder">
+                    <fb-icon name="user" class="avatar-icon"></fb-icon>
+                  </div>
+                  <div class="avatar-overlay">
+                    <fb-icon name="camera" class="camera-icon"></fb-icon>
+                  </div>
+                </div>
+              </fb-avatar>
+            </div>
+            <div class="user-info">
+              <h1 class="user-name">
+                {{ userInfo.personName || userInfo.realName || userInfo.username }}
+                <span v-if="userInfo.userRoles && userInfo.userRoles.length > 0" class="role-name">
+                  （{{ userInfo.userRoles.map(role => role.roleName).join('，') }}）
+                </span>
+              </h1>
+              <div class="user-details">
+                <div class="detail-item">
+                  <fb-icon name="apartment" class="detail-icon"></fb-icon>
+                  <span>{{ userInfo.deptFullName || userInfo.deptName || '暂无部门' }}</span>
+                </div>
+                <div class="detail-item">
+                  <fb-icon name="user" class="detail-icon"></fb-icon>
+                  <span>{{ userInfo.office || userInfo.position || '暂无职位' }}</span>
                 </div>
               </div>
-              <fb-button type="text" size="small" @click="uploadAvatar">更换头像</fb-button>
             </div>
-            
-            <!-- 基本信息 -->
-            <div class="info-section">
-              <fb-flex direction="column" gap="16px">
-                <fb-flex gap="32px">
-                  <div class="info-item">
-                    <label>用户名</label>
-                    <span class="value">{{ userInfo.username }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>姓名</label>
-                    <span class="value">{{ userInfo.realName }}</span>
-                  </div>
-                </fb-flex>
-                <fb-flex gap="32px">
-                  <div class="info-item">
-                    <label>邮箱</label>
-                    <span class="value">{{ userInfo.email }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>手机号</label>
-                    <span class="value">{{ userInfo.phone }}</span>
-                  </div>
-                </fb-flex>
-                <fb-flex gap="32px">
-                  <div class="info-item">
-                    <label>部门</label>
-                    <span class="value">{{ userInfo.deptName }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>职位</label>
-                    <span class="value">{{ userInfo.position }}</span>
-                  </div>
-                </fb-flex>
-              </fb-flex>
-            </div>
-          </fb-flex>
-          
-          <div class="actions">
-            <fb-button type="primary" @click="editProfile">编辑信息</fb-button>
+          </div>
+          <div class="header-actions">
+            <fb-button type="primary" size="large" @on-click="editProfile" class="edit-btn">
+              <fb-icon name="edit"></fb-icon>
+              编辑资料
+            </fb-button>
           </div>
         </div>
       </div>
 
-      <!-- 安全设置卡片 -->
-      <div class="card-wrapper">
-        <div class="header">
-          <fb-icon name="shield" size="16" color="#FC9C3B"></fb-icon>
-          <span class="title">安全设置</span>
+      <!-- 信息卡片网格 -->
+      <div class="info-grid">
+        <!-- 基本信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-icon basic-info">
+              <i class="iconfont jpx-icon-information-card-fill"></i>
+            </div>
+            <h3 class="card-title">基本信息</h3>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-fill label-icon"></i>
+                <span>姓名</span>
+              </div>
+              <div class="info-value">{{ userInfo.personName || userInfo.realName || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user label-icon"></i>
+                <span>性别</span>
+              </div>
+              <div class="info-value">{{ userInfo.sexName || getSexText(userInfo.sex) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-information-card label-icon"></i>
+                <span>证件类型</span>
+              </div>
+              <div class="info-value">{{ userInfo.idtypeName || getIdTypeText(userInfo.idtype) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-information-card-fill label-icon"></i>
+                <span>证件号</span>
+              </div>
+              <div class="info-value">{{ userInfo.idcard || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <fb-icon name="calendar" class="label-icon"></fb-icon>
+                <span>出生日期</span>
+              </div>
+              <div class="info-value">{{ formatDate(userInfo.birthday) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <fb-icon name="global" class="label-icon"></fb-icon>
+                <span>民族</span>
+              </div>
+              <div class="info-value">{{ userInfo.safeprinNationName || getNationText(userInfo.safeprinNation) }}</div>
+            </div>
+
+          </div>
         </div>
-        <div class="body">
-          <fb-flex direction="column" gap="16px">
-            <div class="security-item clickable" @click="changePassword">
-              <fb-flex justify="space-between" align="center">
-                <div>
-                  <fb-flex align="center" gap="12px">
-                    <fb-icon name="lock" size="16" color="#666"></fb-icon>
-                    <div>
-                      <div class="item-title">修改密码</div>
-                      <div class="item-desc">定期修改密码，保护账户安全</div>
-                    </div>
-                  </fb-flex>
-                </div>
-                <fb-icon name="arrow-right" size="16" color="#999"></fb-icon>
-              </fb-flex>
+
+        <!-- 联系信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-icon contact-info">
+              <i class="iconfont jpx-icon-phone-fill"></i>
             </div>
-            
-            <div class="security-item clickable" @click="viewLoginHistory">
-              <fb-flex justify="space-between" align="center">
-                <div>
-                  <fb-flex align="center" gap="12px">
-                    <fb-icon name="history" size="16" color="#666"></fb-icon>
-                    <div>
-                      <div class="item-title">登录记录</div>
-                      <div class="item-desc">查看最近的登录活动</div>
-                    </div>
-                  </fb-flex>
-                </div>
-                <fb-icon name="arrow-right" size="16" color="#999"></fb-icon>
-              </fb-flex>
+            <h3 class="card-title">联系信息</h3>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-phone-fill label-icon"></i>
+                <span>手机号</span>
+              </div>
+              <div class="info-value">{{ userInfo.phone || '-' }}</div>
             </div>
-          </fb-flex>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-phone label-icon"></i>
+                <span>联系电话</span>
+              </div>
+              <div class="info-value">{{ userInfo.tel || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-phone-call-fill label-icon"></i>
+                <span>邮箱</span>
+              </div>
+              <div class="info-value">{{ userInfo.email || '-' }}</div>
+            </div>
+            <div class="info-row full-width">
+              <div class="info-label">
+                <fb-icon name="environment" class="label-icon"></fb-icon>
+                <span>通信地址</span>
+              </div>
+              <div class="info-value address">{{ userInfo.maddress || '-' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 工作信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-icon work-info">
+              <i class="iconfont jpx-icon-work-notes-fill"></i>
+            </div>
+            <h3 class="card-title">工作信息</h3>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-home-fill label-icon"></i>
+                <span>部门</span>
+              </div>
+              <div class="info-value">{{ userInfo.deptName || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-business-fill label-icon"></i>
+                <span>职位</span>
+              </div>
+              <div class="info-value">{{ userInfo.position || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-work-parameter-fill label-icon"></i>
+                <span>岗位</span>
+              </div>
+              <div class="info-value">{{ userInfo.office || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-management label-icon"></i>
+                <span>人员编号</span>
+              </div>
+              <div class="info-value">{{ userInfo.personNo || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <fb-icon name="calendar" class="label-icon"></fb-icon>
+                <span>参加工作时间</span>
+              </div>
+              <div class="info-value">{{ formatDate(userInfo.partWorkDate) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <fb-icon name="crown" class="label-icon"></fb-icon>
+                <span>职称</span>
+              </div>
+              <div class="info-value">{{ getTitleText(userInfo.titleCode) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 教育信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-icon education-info">
+              <i class="iconfont jpx-icon-education-fill"></i>
+            </div>
+            <h3 class="card-title">教育信息</h3>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-school-fill label-icon"></i>
+                <span>毕业学校</span>
+              </div>
+              <div class="info-value">{{ userInfo.school || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-education label-icon"></i>
+                <span>所学专业</span>
+              </div>
+              <div class="info-value">{{ userInfo.sepcSubject || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-education-fill label-icon"></i>
+                <span>最高学历</span>
+              </div>
+              <div class="info-value">{{ getDiplomaText(userInfo.diplomaCode) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-school label-icon"></i>
+                <span>最高学位</span>
+              </div>
+              <div class="info-value">{{ userInfo.degree || '-' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 其他信息卡片 -->
+        <div class="info-card full-width">
+          <div class="card-header">
+            <div class="card-icon other-info">
+              <i class="iconfont jpx-icon-user-management-fill"></i>
+            </div>
+            <h3 class="card-title">其他信息</h3>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-police-fill label-icon"></i>
+                <span>执法证号</span>
+              </div>
+              <div class="info-value">{{ userInfo.checkcardNo || '-' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-police label-icon"></i>
+                <span>执法证有效期</span>
+              </div>
+              <div class="info-value">{{ formatDate(userInfo.checkcardLimitdate) }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i class="iconfont jpx-icon-user-government-fill label-icon"></i>
+                <span>政治面貌</span>
+              </div>
+              <div class="info-value">{{ getPoliticsText(userInfo.politicsCode) }}</div>
+            </div>
+            <div class="resume-section">
+              <div class="resume-header">
+                <i class="iconfont jpx-icon-information-fill label-icon"></i>
+                <span>个人简介</span>
+              </div>
+              <div class="resume-content">{{ userInfo.resume || '暂无个人简介' }}</div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- 系统信息卡片 -->
-      <div class="card-wrapper">
-        <div class="header">
-          <fb-icon name="info" size="16" color="#1FB2AF"></fb-icon>
-          <span class="title">系统信息</span>
-        </div>
-        <div class="body">
-          <fb-flex direction="column" gap="12px">
-            <fb-flex justify="space-between">
-              <span class="label">最后登录时间</span>
-              <span class="value">{{ userInfo.lastLoginTime }}</span>
-            </fb-flex>
-            <fb-flex justify="space-between">
-              <span class="label">账户创建时间</span>
-              <span class="value">{{ userInfo.createTime }}</span>
-            </fb-flex>
-            <fb-flex justify="space-between">
-              <span class="label">账户状态</span>
-              <fb-badge :type="userInfo.status === 1 ? 'success' : 'danger'">
-                {{ userInfo.status === 1 ? '正常' : '禁用' }}
-              </fb-badge>
-            </fb-flex>
-          </fb-flex>
-        </div>
-      </div>
-    </fb-flex>
+    <!-- 编辑弹框 -->
+    <tp-dialog ref="TpDialog"></tp-dialog>
 
-    <!-- 编辑信息弹窗 -->
-    <fb-dialog v-model="editDialogVisible" title="编辑个人信息" width="600px">
-      <fb-form ref="editForm" :model="editForm" :rules="editRules" label-width="80px">
-        <fb-form-item label="姓名" prop="realName">
-          <fb-input v-model="editForm.realName" placeholder="请输入姓名"></fb-input>
-        </fb-form-item>
-        <fb-form-item label="邮箱" prop="email">
-          <fb-input v-model="editForm.email" placeholder="请输入邮箱"></fb-input>
-        </fb-form-item>
-        <fb-form-item label="手机号" prop="phone">
-          <fb-input v-model="editForm.phone" placeholder="请输入手机号"></fb-input>
-        </fb-form-item>
-        <fb-form-item label="职位" prop="position">
-          <fb-input v-model="editForm.position" placeholder="请输入职位"></fb-input>
-        </fb-form-item>
-      </fb-form>
-      <template #footer>
-        <fb-button @click="editDialogVisible = false">取消</fb-button>
-        <fb-button type="primary" @click="saveProfile">保存</fb-button>
-      </template>
-    </fb-dialog>
 
-    <!-- 修改密码弹窗 -->
-    <fb-dialog v-model="passwordDialogVisible" title="修改密码" width="500px">
-      <fb-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" label-width="100px">
-        <fb-form-item label="当前密码" prop="oldPassword">
-          <fb-input v-model="passwordForm.oldPassword" type="password" placeholder="请输入当前密码"></fb-input>
-        </fb-form-item>
-        <fb-form-item label="新密码" prop="newPassword">
-          <fb-input v-model="passwordForm.newPassword" type="password" placeholder="请输入新密码"></fb-input>
-        </fb-form-item>
-        <fb-form-item label="确认密码" prop="confirmPassword">
-          <fb-input v-model="passwordForm.confirmPassword" type="password" placeholder="请再次输入新密码"></fb-input>
-        </fb-form-item>
-      </fb-form>
-      <template #footer>
-        <fb-button @click="passwordDialogVisible = false">取消</fb-button>
-        <fb-button type="primary" @click="savePassword">确定</fb-button>
-      </template>
-    </fb-dialog>
   </div>
 </template>
 
 <script>
-import app from '@fb/fb-core'
-
 export default {
-  name: 'UserProfile',
+  name: 'Profile',
   data() {
     return {
+      // 请求的 service
+      service: this.$svc.sys.person,
       userInfo: {
         username: '',
         realName: '',
+        personName: '',
+        personId: '',
         email: '',
         phone: '',
+        tel: '',
         deptName: '',
+        deptFullName: '',
+        deptId: '',
         position: '',
+        office: '',
+        roleName: '',
+        userRoles: [],
         avatar: '',
-        status: 1,
-        lastLoginTime: '',
-        createTime: ''
+        profilePhoto: '',
+        sex: '',
+        sexName: '',
+        idtype: '',
+        idtypeName: '',
+        idcard: '',
+        birthday: '',
+        safeprinNation: '',
+        safeprinNationName: '',
+        nativePlace: '',
+        nativePlaceName: '',
+        politicsCode: '',
+        personNo: '',
+        partWorkDate: '',
+        titleCode: '',
+        diplomaCode: '',
+        degree: '',
+        school: '',
+        sepcSubject: '',
+        checkcardNo: '',
+        checkcardLimitdate: '',
+        maddress: '',
+        resume: '',
+        actived: '',
+        category: '',
+        ascnId: '',
+        ascnName: '',
+        creator: '',
+        createTime: '',
+        updator: '',
+        updateTime: '',
+        tenantId: '',
+        extend01: '',
+        extend02: '',
+        extend03: '',
+        defaultDept: '',
+        defaultDeptName: '',
+        passKey: '',
+        deptIds: '',
+        deptFullNames: ''
       },
-      defaultAvatar: '/assets/images/default-avatar.png',
-      editDialogVisible: false,
-      passwordDialogVisible: false,
-      editForm: {
-        realName: '',
-        email: '',
-        phone: '',
-        position: ''
-      },
-      passwordForm: {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      },
-      editRules: {
-        realName: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-        ],
-        phone: [
-          { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-        ]
-      },
-      passwordRules: {
-        oldPassword: [
-          { required: true, message: '请输入当前密码', trigger: 'blur' }
-        ],
-        newPassword: [
-          { required: true, message: '请输入新密码', trigger: 'blur' },
-          { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
-        ],
-        confirmPassword: [
-          { required: true, message: '请再次输入新密码', trigger: 'blur' },
-          { validator: this.validateConfirmPassword, trigger: 'blur' }
-        ]
-      }
+      defaultAvatar: '/assets/images/default-avatar.png'
     }
   },
   mounted() {
@@ -239,15 +365,48 @@ export default {
   },
   methods: {
     // 加载用户信息
-    async loadUserInfo() {
-      try {
-        const response = await app.api.get('/sys/user/profile')
-        if (response.success) {
-          this.userInfo = response.data
-        }
-      } catch (error) {
-        this.$message.error('加载用户信息失败')
+    loadUserInfo() {
+      // 获取当前登录用户信息
+      let userInfo = app.$datax.get('userInfo') || {}
+      let personId = userInfo.personId
+      let deptId = userInfo.deptId || ''
+      
+      if (!personId) {
+        this.$message.error('无法获取用户ID，请重新登录')
+        return
       }
+      
+      // 调用person service的view方法获取用户信息
+      this.service.view({"personId": personId, "deptId": deptId}).then((result) => {
+        // 判断code
+        if (result.code == 1) {
+          // 合并数据而不是直接覆盖，保留预定义的userRoles数组
+          Object.assign(this.userInfo, result.data)
+          // 查询用户角色信息
+          this.loadUserRoles(personId, deptId)
+        } else {
+          // 服务器返回失败
+          this.$message.error('获取用户信息失败: ' + result.message)
+        }
+      }).catch((err) => {
+        // 服务器返回失败
+        console.error('获取用户信息失败:', err);
+        this.$message.error('获取用户信息失败')
+      })
+    },
+    
+    // 加载用户角色信息
+    loadUserRoles(personId, deptId) {
+      this.service.personRoles({"personId": personId, "deptId": deptId}).then((result) => {
+        if (result.code == 1 && result.data && result.data.length > 0) {
+          // 保存所有角色信息用于标签显示
+          this.userInfo.userRoles = result.data
+          // 保留第一个角色名称用于兼容性
+          this.userInfo.roleName = result.data[0].roleName
+        }
+      }).catch((err) => {
+        console.error('获取用户角色失败:', err);
+      })
     },
     
     // 上传头像
@@ -283,74 +442,104 @@ export default {
     
     // 编辑个人信息
     editProfile() {
-      this.editForm = {
-        realName: this.userInfo.realName,
-        email: this.userInfo.email,
-        phone: this.userInfo.phone,
-        position: this.userInfo.position
-      }
-      this.editDialogVisible = true
+      let param = {"userInfo": this.userInfo};
+      let options = {"height": 600, "width": 900};
+      
+      this.$refs.TpDialog.show(import('./profile_edit.vue'), param, "编辑个人信息", options);
     },
     
-    // 保存个人信息
-    async saveProfile() {
-      try {
-        await this.$refs.editForm.validate()
-        const response = await app.api.put('/sys/user/profile', this.editForm)
-        if (response.success) {
-          Object.assign(this.userInfo, this.editForm)
-          this.editDialogVisible = false
-          this.$message.success('信息更新成功')
-        }
-      } catch (error) {
-        if (error !== false) {
-          this.$message.error('信息更新失败')
-        }
-      }
+    // 处理保存成功
+    handleSaveSuccess(data) {
+      this.loadUserInfo() // 重新加载用户信息
+      this.$message.success('个人信息保存成功')
     },
     
-    // 修改密码
-    changePassword() {
-      this.passwordForm = {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: ''
+    // 格式化日期
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      if (dateStr.length === 8) {
+        // YYYYMMDD格式转换为YYYY-MM-DD
+        return `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`
       }
-      this.passwordDialogVisible = true
+      return dateStr
     },
     
-    // 保存密码
-    async savePassword() {
-      try {
-        await this.$refs.passwordForm.validate()
-        const response = await app.api.put('/sys/user/change-password', {
-          oldPassword: this.passwordForm.oldPassword,
-          newPassword: this.passwordForm.newPassword
-        })
-        if (response.success) {
-          this.passwordDialogVisible = false
-          this.$message.success('密码修改成功')
-        }
-      } catch (error) {
-        if (error !== false) {
-          this.$message.error('密码修改失败')
-        }
+    // 获取性别文本
+    getSexText(sex) {
+      const sexMap = {
+        '1': '男',
+        '2': '女'
       }
+      return sexMap[sex] || sex
     },
     
-    // 验证确认密码
-    validateConfirmPassword(rule, value, callback) {
-      if (value !== this.passwordForm.newPassword) {
-        callback(new Error('两次输入的密码不一致'))
-      } else {
-        callback()
+    // 获取证件类型文本
+    getIdTypeText(idtype) {
+      const idTypeMap = {
+        'Y2401': '身份证',
+        'Y2402': '护照',
+        'Y2403': '军官证',
+        'Y2404': '其他'
       }
+      return idTypeMap[idtype] || idtype
     },
     
-    // 查看登录记录
-    viewLoginHistory() {
-      this.$router.push('/sys/user/login-history')
+    // 获取民族文本
+    getNationText(nation) {
+      // 这里可以根据实际的字典数据进行映射
+      return nation
+    },
+    
+    // 获取政治面貌文本
+    getPoliticsText(politics) {
+      const politicsMap = {
+        'SYS1301': '中共党员',
+        'SYS1302': '中共预备党员',
+        'SYS1303': '共青团员',
+        'SYS1304': '民革党员',
+        'SYS1305': '民盟盟员',
+        'SYS1306': '民建会员',
+        'SYS1307': '民进会员',
+        'SYS1308': '农工党党员',
+        'SYS1309': '致公党党员',
+        'SYS1310': '九三学社社员',
+        'SYS1311': '台盟盟员',
+        'SYS1312': '无党派人士',
+        'SYS1313': '群众'
+      }
+      return politicsMap[politics] || politics
+    },
+    
+    // 获取职称文本
+    getTitleText(title) {
+      const titleMap = {
+        'SYS1201': '正高级',
+        'SYS1202': '副高级',
+        'SYS1203': '中级',
+        'SYS1204': '初级',
+        'SYS1205': '员级'
+      }
+      return titleMap[title] || title
+    },
+    
+    // 获取学历文本
+    getDiplomaText(diploma) {
+      const diplomaMap = {
+        'SYS1401': '博士研究生',
+        'SYS1402': '硕士研究生',
+        'SYS1403': '大学本科',
+        'SYS1404': '大学专科',
+        'SYS1405': '中等专业学校',
+        'SYS1406': '技工学校',
+        'SYS1407': '高中',
+        'SYS1408': '初中',
+        'SYS1409': '小学',
+        'SYS1410': '文盲或半文盲',
+        'SYS1411': '其他'
+      }
+      return diplomaMap[diploma] || diploma
     }
+
   }
 }
 </script>

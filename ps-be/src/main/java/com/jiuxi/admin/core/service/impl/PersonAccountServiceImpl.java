@@ -8,6 +8,7 @@ import com.jiuxi.admin.core.mapper.TpAccountMapper;
 import com.jiuxi.admin.core.mapper.TpPersonBasicinfoMapper;
 import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.common.util.CommonDateUtil;
+import com.jiuxi.common.util.PhoneEncryptionUtils;
 // import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -77,7 +78,15 @@ public class PersonAccountServiceImpl implements PersonAccountService {
         }
         TpAccount bean = new TpAccount();
         bean.setAccountId(tpAccountVO.getAccountId());
-        bean.setPhone(phone);
+        
+        // 对手机号进行加密
+        if (StrUtil.isNotBlank(phone)) {
+            String encryptedPhone = PhoneEncryptionUtils.encrypt(phone);
+            bean.setPhone(encryptedPhone);
+        } else {
+            bean.setPhone(phone);
+        }
+        
         bean.setUpdateTime(CommonDateUtil.now());
         tpAccountMapper.update(bean);
     }

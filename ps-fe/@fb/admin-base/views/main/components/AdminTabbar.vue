@@ -7,7 +7,7 @@
 				 @on-tab-change="handleTabChange"
 				 @on-tab-dblclick="handleTabDblclick"
 		>
-			<fb-tab v-for="(tab, ) in  tabs" :label="tab.tabLabel" :name="tab.tabName"
+			<fb-tab v-for="(tab ) in  tabs" :label="tab.tabLabel" :name="tab.tabName"
 					:key="tab.tabName"></fb-tab>
 		</fb-tabs>
 
@@ -207,33 +207,100 @@
 			},
 
 			refresh (tab, index) {
-				const AdminMain = find(this.$parent, 'AdminMain')
-				if (AdminMain.$children && AdminMain.$children[index]) {
-					const AdminMainChild = AdminMain.$children
-					for (let i = 0; i < AdminMainChild.length; i++) {
-						let comp = AdminMainChild[i]
-						let key = comp.$vnode.key == null
-							? comp.$vnode.componentOptions.Ctor.cid + (comp.$vnode.componentOptions.tag ? `::${comp.$vnode.componentOptions.tag}` : '')
-							: comp.$vnode.key;
-						let sear = key.slice(key.indexOf('/'))
-						if (sear === this.tabs[index].fullPath) {
-							this.deleteKeepAliveComp(comp)
-						}
-					}
-					// this.deleteKeepAliveComp(AdminMain.$children[index])
-				}
-				if (Object.keys(this.$route.params).length) {
+				// 清理当前标签页的keep-alive缓存
+				this.clearCurrentTabCache(index)
+				
+				// 使用路由刷新机制
+				const currentRoute = this.$route
+				if (Object.keys(currentRoute.params).length) {
 					this.$router.replace({
 						name: 'refresh',
-						params: this.$route.params
+						params: currentRoute.params
 					})
 				} else {
 					this.$router.replace({
 						path: '/refresh',
-						query: this.$route.query
+						query: currentRoute.query
 					})
 				}
-				// this.$router.push(tab.path + '?_t=' + new Date().getTime())
+			},
+
+			clearCurrentTabCache(index) {
+				try {
+					// 获取当前标签页的路径
+					const currentTab = this.tabs[index]
+					if (!currentTab) return
+					
+					// 查找AdminMain组件
+					const AdminMain = find(this.$parent, 'AdminMain')
+					if (!AdminMain) return
+					
+					// 获取keep-alive实例
+					const keepAliveInstance = this.findKeepAliveInstance(AdminMain)
+					if (keepAliveInstance && keepAliveInstance.cache) {
+						// 清理匹配当前路径的缓存
+						this.clearCacheByPath(keepAliveInstance, currentTab.fullPath)
+					}
+				} catch (error) {
+					console.warn('清理缓存时出错:', error)
+				}
+			},
+
+			findKeepAliveInstance(component) {
+				// 递归查找keep-alive组件实例
+				if (!component) return null
+				
+				// 检查当前组件是否是keep-alive
+				if (component.$options && component.$options.name === 'keep-alive') {
+					return component
+				}
+				
+				// 在子组件中查找
+				if (component.$children && component.$children.length > 0) {
+					for (let child of component.$children) {
+						const result = this.findKeepAliveInstance(child)
+						if (result) return result
+					}
+				}
+				
+				return null
+			},
+
+			clearCacheByPath(keepAliveInstance, targetPath) {
+				if (!keepAliveInstance.cache || !keepAliveInstance.keys) return
+				
+				const cache = keepAliveInstance.cache
+				const keys = keepAliveInstance.keys
+				
+				// 查找并删除匹配的缓存项
+				for (let key of Object.keys(cache)) {
+					const cachedComponent = cache[key]
+					if (cachedComponent && cachedComponent.componentOptions) {
+						// 尝试从组件选项中获取路径信息
+						const componentPath = this.extractPathFromComponent(cachedComponent)
+						if (componentPath === targetPath) {
+							// 删除缓存
+							delete cache[key]
+							const keyIndex = keys.indexOf(key)
+							if (keyIndex > -1) {
+								keys.splice(keyIndex, 1)
+							}
+							// 销毁组件实例
+							if (cachedComponent.componentInstance && cachedComponent.componentInstance.$destroy) {
+								cachedComponent.componentInstance.$destroy()
+							}
+							break
+						}
+					}
+				}
+			},
+
+			extractPathFromComponent(vnode) {
+				// 尝试从vnode中提取路径信息
+				if (vnode.key && typeof vnode.key === 'string' && vnode.key.includes('/')) {
+					return vnode.key.slice(vnode.key.indexOf('/'))
+				}
+				return null
 			},
 
 			handleTabDblclick (tab, index) {

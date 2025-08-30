@@ -193,6 +193,14 @@ public class TpAccountServiceImpl implements TpAccountService {
         TpAccount bean = new TpAccount();
         // 转换成数据库对象
         BeanUtil.copyProperties(vo, bean);
+        
+        // 对手机号进行加密
+        if (StrUtil.isNotBlank(vo.getPhone())) {
+            String encryptedPhone = PhoneEncryptionUtils.encrypt(vo.getPhone());
+            bean.setPhone(encryptedPhone);
+            LOGGER.debug("手机号加密处理完成，personId: {}", vo.getPersonId());
+        }
+        
         String accountId = SnowflakeIdUtil.nextIdStr();
         bean.setAccountId(accountId);
         String now = CommonDateUtil.now();
@@ -290,6 +298,14 @@ public class TpAccountServiceImpl implements TpAccountService {
             TpAccount bean = new TpAccount();
             // 转换成数据库对象
             BeanUtil.copyProperties(vo, bean);
+            
+            // 对手机号进行加密
+            if (StrUtil.isNotBlank(vo.getPhone())) {
+                String encryptedPhone = PhoneEncryptionUtils.encrypt(vo.getPhone());
+                bean.setPhone(encryptedPhone);
+                LOGGER.debug("手机号加密处理完成，accountId: {}", vo.getAccountId());
+            }
+            
             bean.setUpdateTime(CommonDateUtil.now());
             // 禁止修改密码
             bean.setUserpwd(null);

@@ -14,4 +14,5 @@ export const install: (adapter: any) => void;
 /**
  * 默认导出 permission 对象
  */
-export default any;
+declare const _default: any;
+export default _default;

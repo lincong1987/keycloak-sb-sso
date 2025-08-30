@@ -17,9 +17,10 @@ export const directives: {
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   directives: {
     permission: any;
     waves: any;
-  }
+  };
 };
+export default _default;

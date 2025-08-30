@@ -206,9 +206,10 @@ export class Manager {
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   Manager: typeof Manager;
   storageManager: typeof storageManager;
   cookieManager: typeof cookieManager;
   cookies: typeof cookies;
 };
+export default _default;

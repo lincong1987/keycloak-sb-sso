@@ -12,6 +12,7 @@ export const banner: string;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   banner: string;
-}
+};
+export default _default;

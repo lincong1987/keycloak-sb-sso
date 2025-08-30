@@ -75,9 +75,10 @@ export class ResizeController {
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   inserted(el: HTMLElement, binding: any, vnode: any): void;
   unbind(el: HTMLElement, binding: any, vnode: any): void;
   update(el: HTMLElement, binding: any, vnode: any): void;
   componentUpdated(): void;
 };
+export default _default;

@@ -58,7 +58,8 @@ export function handleAuto(files: Array<any> | any): Array<any>;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   handle: typeof handle;
   handleAuto: typeof handleAuto;
 };
+export default _default;

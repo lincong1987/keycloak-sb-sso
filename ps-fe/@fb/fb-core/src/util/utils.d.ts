@@ -19,7 +19,8 @@ export function uuid(): string;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   uuid: typeof uuid;
   toRaw: typeof toRaw;
 };
+export default _default;

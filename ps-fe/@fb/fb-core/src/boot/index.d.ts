@@ -8,4 +8,5 @@ import Application from './Application';
 /**
  * 默认导出 Application 类
  */
-export default Application;
+declare const _default: typeof Application;
+export default _default;

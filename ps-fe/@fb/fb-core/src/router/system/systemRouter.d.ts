@@ -6,4 +6,5 @@
 /**
  * 系统路由数组
  */
-export default Array<any>;
+declare const systemRouter: Array<any>;
+export default systemRouter;

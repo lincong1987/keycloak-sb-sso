@@ -60,6 +60,7 @@ export function VueConfig(path: string, pkg: any, fbconfig: any, config?: any): 
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   VueConfig: typeof VueConfig;
 };
+export default _default;

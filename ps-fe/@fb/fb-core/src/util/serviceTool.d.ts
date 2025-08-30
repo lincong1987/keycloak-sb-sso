@@ -29,8 +29,9 @@ export function handle(service: any, files: Array<any> | any): void;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   handle: typeof handle;
   parsePathToNamespace: typeof parsePathToNamespace;
   injectServiceProvide: typeof injectServiceProvide;
 };
+export default _default;

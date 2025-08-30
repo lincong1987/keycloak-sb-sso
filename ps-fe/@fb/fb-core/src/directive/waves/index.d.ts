@@ -14,7 +14,8 @@ export const install: (adapter: any) => void;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   waves: any;
   install: (adapter: any) => void;
 };
+export default _default;

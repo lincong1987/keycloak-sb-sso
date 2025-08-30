@@ -21,7 +21,8 @@ export function handle(store: any, files: Array<any> | any): any;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   handle: typeof handle;
   fixModules: typeof fixModules;
 };
+export default _default;

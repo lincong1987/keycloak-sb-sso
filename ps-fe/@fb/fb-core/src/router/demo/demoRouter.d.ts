@@ -6,4 +6,5 @@
 /**
  * 示例路由数组
  */
-export default Array<any>;
+declare const demoRouter: Array<any>;
+export default demoRouter;

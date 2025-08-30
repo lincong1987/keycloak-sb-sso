@@ -6,8 +6,9 @@
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   bind(el: HTMLElement, binding: any): void;
   update(el: HTMLElement, binding: any): void;
   unbind(el: HTMLElement): void;
 };
+export default _default;

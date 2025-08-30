@@ -56,7 +56,7 @@ export function flatFilesToRouteArr(indexPath: string, files: Array<any> | any):
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   handle: typeof handle;
   autoRouter: typeof autoRouter;
   injectRouter: typeof injectRouter;
@@ -64,3 +64,4 @@ export default {
   initRoutes: typeof initRoutes;
   flatFilesToRouteArr: typeof flatFilesToRouteArr;
 };
+export default _default;

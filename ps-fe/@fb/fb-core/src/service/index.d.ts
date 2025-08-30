@@ -3,15 +3,7 @@
  * @module service/index
  */
 
-import axios, {
-  AxiosAdapter,
-  AxiosBasicCredentials,
-  AxiosProxyConfig,
-  AxiosTransformer,
-  CancelToken,
-  Method,
-  ResponseType,
-} from 'axios';
+import axios from 'axios';
 
 /**
  * 服务对象
@@ -37,8 +29,9 @@ export function installService(app: any, serviceConfig?: Array<any>): any;
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   axios: any;
   installService: (app: any, serviceConfig?: Array<any>) => any;
   createService: (config: any, app: any) => any;
 };
+export default _default;

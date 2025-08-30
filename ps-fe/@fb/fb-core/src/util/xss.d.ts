@@ -8,12 +8,13 @@ import xss from 'xss';
 /**
  * XSS过滤器
  */
-export const xssFilter: xss.FilterXSS;
+export const xssFilter: any;
 
 /**
  * 默认导出对象
  */
-export default {
+declare const _default: {
   whiteList: any;
   xssFilter: typeof xssFilter;
 };
+export default _default;

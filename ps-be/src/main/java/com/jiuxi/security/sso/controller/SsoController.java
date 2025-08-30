@@ -7,6 +7,7 @@ import com.jiuxi.security.core.service.TopinfoSecurityCommonService;
 import com.jiuxi.security.sso.config.KeycloakSsoProperties;
 import com.jiuxi.security.sso.principal.KeycloakUserPrincipal;
 import com.jiuxi.security.sso.service.KeycloakOAuth2Service;
+import com.jiuxi.admin.core.service.TpTimeRuleService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -20,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +54,9 @@ public class SsoController {
     
     @Autowired
     private TopinfoSecurityCommonService topinfoSecurityCommonService;
+    
+    @Autowired
+    private TpTimeRuleService tpTimeRuleService;
     
     public SsoController() {
         System.out.println("SsoController 已创建！");
@@ -268,7 +275,36 @@ public class SsoController {
                 return;
             }
             
-            // 4. 生成ps-be系统的token
+            // 4. 验证用户登录时间规则
+            try {
+                // 获取用户角色列表
+                List<String> roleIds = new ArrayList<>();
+                if (accountVO.getRoleIds() != null && !accountVO.getRoleIds().trim().isEmpty()) {
+                    roleIds = Arrays.asList(accountVO.getRoleIds().split(","));
+                }
+                
+                // 验证登录时间规则
+                TpTimeRuleService.LoginTimeValidationResult validationResult = 
+                    tpTimeRuleService.validateLoginTimeWithReason(accountVO.getPersonId(), roleIds);
+                
+                if (!validationResult.isAllowed()) {
+                    logger.warn("用户 {} 登录被时间规则拒绝: {}", keycloakUsername, validationResult.getReason());
+                    String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + 
+                        java.net.URLEncoder.encode("登录失败: " + validationResult.getReason(), "UTF-8");
+                    response.sendRedirect(errorUrl);
+                    return;
+                }
+                
+                logger.info("用户 {} 通过时间规则验证", keycloakUsername);
+            } catch (Exception e) {
+                logger.error("验证登录时间规则时发生异常: {}", e.getMessage(), e);
+                String errorUrl = properties.getRedirect().getErrorUrl() + "&error_detail=" + 
+                    java.net.URLEncoder.encode("登录时间验证失败", "UTF-8");
+                response.sendRedirect(errorUrl);
+                return;
+            }
+            
+            // 5. 生成ps-be系统的token
             try {
                 String token = topinfoSecurityCommonService.createToken(accountVO);
                 accountVO.setToken(token);

@@ -101,21 +101,23 @@
 							slot: 'view',
 							sortable: false,
 							width: 200,
-						}, {
-							name: 'roleType',
-							label: '角色类型',
-							sortable: false,
-							width: 200,
-						}, {
-							name: 'createRoleName',
-							label: '创建者角色',
-							sortable: false,
-							width: 200,
-						}, {
+						}, 
+						// {
+						// 	name: 'roleType',
+						// 	label: '角色类型',
+						// 	sortable: false,
+						// 	width: 200,
+						// },
+						//  {
+						// 	name: 'createRoleName',
+						// 	label: '创建者角色',
+						// 	sortable: false,
+						// 	width: 200,
+						// }, 
+						{
 							name: 'roleDesc',
 							label: '角色描述',
 							sortable: false,
-							width: 220,
 						}, {
 							name: 'orderIndex',
 							label: '排序',

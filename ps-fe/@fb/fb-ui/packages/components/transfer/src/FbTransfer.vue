@@ -1,132 +1,4 @@
-<template1>
-<div :class="getClass">
-
-	<div :class="`${prefix}-transfer-list`" :style="listStyle">
-		<div :class="`${prefix}-transfer-list-header`">
-
-			<fb-checkbox v-model="sourceAllChecked"
-						 @on-change="handelSourceAllCheck"
-						 :disabled="mySourceList.length === 0"
-			>
-				<template #label="props">
-					{{ sourceHasCheckedText }}
-				</template>
-			</fb-checkbox>
-
-			<span
-				:class="`${prefix}-transfer-list-header-selected`">
-					<span :class="`${prefix}-transfer-list-header-title`">{{ titles[0] }}</span>
-				</span>
-
-		</div>
-		<div :class="`${prefix}-transfer-list-body`">
-			<fb-checkbox-group
-				:class="`${prefix}-transfer-list-content`"
-				v-if="mySourceList.length > 0"
-				v-model="sourceChecked"
-				:data="mySourceList"
-				:reader="reader"
-			>
-				<!--				<template #label="props">-->
-				<!--					<template v-if="$scopedSlots.source"> ddd-->
-				<!--						<slot name="source"-->
-				<!--							  :node="props.node"-->
-				<!--						>dd-->
-				<!--						</slot>-->
-				<!--					</template>-->
-				<!--					<template v-else> sss-->
-				<!--						{{ props.label }}-->
-				<!--					</template>-->
-				<!--				</template>-->
-
-			</fb-checkbox-group>
-
-			<fb-empty v-if="mySourceList.length === 0"></fb-empty>
-
-		</div>
-		<div :class="`${prefix}-transfer-list-footer`">
-		</div>
-	</div>
-	<div :class="`${prefix}-transfer-operation`">
-		<fb-button
-			v-if="showFastButtons"
-			size="s"
-			icon="previous"
-			@on-click="handleTransAllToLeft"
-			:disabled="myTargetList.length === 0"
-			:type="myTargetList.length > 0 ? 'primary' : ''"
-		>
-		</fb-button>
-		<fb-button size="s"
-				   icon="left"
-				   @on-click="handleTransToLeft"
-				   :disabled="targetChecked.length === 0"
-				   :type="targetChecked.length > 0 ? 'primary' : ''"
-		>{{ toLeftButtonText }}
-		</fb-button>
-		<fb-button size="s"
-				   icon="right"
-				   @on-click="handleTransToRight"
-				   :disabled="sourceChecked.length === 0"
-				   :type="sourceChecked.length > 0 ? 'primary' : ''"
-		>{{ toRightButtonText }}
-		</fb-button>
-		<fb-button
-			v-if="showFastButtons"
-			size="s"
-			icon="next"
-			@on-click="handleTransAllToRight"
-			:disabled="mySourceList.length === 0"
-			:type="mySourceList.length > 0 ? 'primary' : ''"
-		>
-		</fb-button>
-	</div>
-	<div :class="`${prefix}-transfer-list`" :style="listStyle">
-
-		<div :class="`${prefix}-transfer-list-header`">
-
-			<fb-checkbox v-model="targetAllChecked"
-						 @on-change="handelTargetAllCheck"
-						 :disabled="myTargetList.length === 0"
-			>
-				<template #label="props">
-					{{ targetHasCheckedText }}
-				</template>
-			</fb-checkbox>
-
-			<span
-				:class="`${prefix}-transfer-list-header-selected`">
-					<span :class="`${prefix}-transfer-list-header-title`">{{ titles[1] }}</span>
-				</span>
-
-		</div>
-		<div :class="`${prefix}-transfer-list-body`">
-
-			<fb-checkbox-group v-model="targetChecked"
-							   :class="`${prefix}-transfer-list-content`"
-							   :data="myTargetList"
-							   :reader="reader"
-							   @on-change="handleTargetStatusChange"
-			>
-				<!--				<template v-slot:label="{node}">-->
-				<!--					<slot name="target"-->
-				<!--						  :node="node"-->
-				<!--					></slot>-->
-				<!--				</template>-->
-			</fb-checkbox-group>
-
-			<fb-empty v-if="myTargetList.length === 0"></fb-empty>
-
-		</div>
-
-		<div :class="`${prefix}-transfer-list-footer`">
-
-		</div>
-
-	</div>
-</div>
-</template1>
-
+ 
 <script>
 import FbButton from '../../button/src/FbButton'
 import FbCheckbox from '../../checkbox/src/FbCheckbox'
@@ -242,16 +114,23 @@ export default {
 			mySourceList = group[1]
 
 		}
+		let localButtons = [...(this.buttons || [null, null])]
+		if(!localButtons[0]){
+			localButtons[0] = null
+		}
+		if(!localButtons[1]){
+			localButtons[1] = null
+		}
 
 		return {
 			prefix,
 			toLeftButtonDisabled: true,
 			toLeftButtonType: '',
-			toLeftButtonText: this.buttons[0] || '',
+			toLeftButtonText: localButtons[0] || '',
 
 			toRightButtonDisabled: true,
 			toRightButtonType: '',
-			toRightButtonText: this.buttons[1] || '',
+			toRightButtonText: localButtons[1] || '',
 
 			mySourceList: mySourceList,
 			sourceChecked: this.selectedKeys,

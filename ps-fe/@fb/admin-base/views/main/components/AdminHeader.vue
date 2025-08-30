@@ -1,7 +1,7 @@
 <template>
 	<div class="fb-admin-header" :style="getLayoutHeaderStyle">
 		<!-- 配置加载状态 -->
-		<div v-if="configLoading" class="fb-admin-header__logo config-loading" style="font-size:24px;">
+		<div v-if="configLoading" class="fb-admin-header__logo config-loading" style="font-size:24px;     gap: 8px;">
 			<fb-icon name="loading" size="16"></fb-icon> 加载中...
 		</div>
 		<!-- 配置错误状态 -->

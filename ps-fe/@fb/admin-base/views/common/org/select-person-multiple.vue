@@ -4,12 +4,12 @@
 			<fb-dialog-tree-select>
 
 				<template slot="title">
-					<span style="font-weight: bold"> 已选择 {{tags.length}} 项 </span>
+					<span style="font-weight: bold"> 已选择 {{ tags.length }} 项 </span>
 				</template>
 
 				<template slot="tags">
 					<fb-tags v-model="tags" type="primary" effect="dark" @on-remove="handleTagRemove">
-						<template v-slot="{node}">
+						<template v-slot="{ node }">
 							{{ node.label }}
 						</template>
 
@@ -17,19 +17,15 @@
 				</template>
 
 				<template slot="tree">
-					<fb-card header="组织机构" :body-style="{height: '330px'}" body-overflow="auto">
-						<fb-tree style="overflow: auto; height: 365px"
-								 ref="tree"
-								 :service="$svc.sys.dept.org.tree"
-								 :param="{}"
-								 :reader="{value: 'id', label: 'text'}"
-								 @on-data-load="callBack"
-								 @on-select-change="handleSelectChange"/>
+					<fb-card header="组织机构" :body-style="{ height: '330px' }" body-overflow="auto">
+						<fb-tree style="overflow: auto; height: 365px" ref="tree" :service="$svc.sys.dept.org.tree"
+							:param="{}" :reader="{ value: 'id', label: 'text' }" @on-data-load="callBack"
+							@on-select-change="handleSelectChange" />
 					</fb-card>
 				</template>
 
 				<template slot="checkbox">
-					<fb-card header="人员选择" :body-style="{height: '330px'}">
+					<fb-card header="人员选择" :body-style="{ height: '330px' }">
 						<div>
 							<fb-input v-model="formData.personName" placeholder="搜索" prependIcon="search">
 								<div slot="append-button">
@@ -41,15 +37,12 @@
 							<fb-checkbox :value="allChecked" label="全选" @on-click="checkAll"></fb-checkbox>
 						</div>
 						<div style="height: 210px; overflow: auto">
-							<fb-checkbox-group v-model="checked"
-											   :data="nodes"
-											   vertical
-											   @on-change="onChangeCheckbox">
-								<template v-slot:label="{node}">
+							<fb-checkbox-group v-model="checked" :data="nodes" vertical @on-change="onChangeCheckbox">
+								<template v-slot:label="{ node }">
 									<fb-text>{{ node.label }}</fb-text>
+									<!-- <fb-text> -</fb-text>
 									<fb-text> -</fb-text>
-									<fb-text> -</fb-text>
-									<fb-text>{{ node.value }}</fb-text>
+									<fb-text>{{ node.value }}</fb-text> -->
 								</template>
 							</fb-checkbox-group>
 						</div>
@@ -61,7 +54,7 @@
 
 		<div class="tp-dialog-bottom">
 			<fb-button style="margin-right: 12px" type="primary" @on-click="add">确定</fb-button>
-			<fb-button @on-click="handleClose">关闭</fb-button>
+			<fb-button @on-click="handleClose">取消</fb-button>
 		</div>
 	</div>
 </template>
@@ -70,173 +63,205 @@
 
 
 
-	export default {
-		name: 'select-user-multiple',
-		mixins: [],
-		components: {},
-		// 接收父组件的传参
-		props: {
-			param: {
-				type: Object,
-				require: false,
-			},
-			parentPage: {
-				type: Object,
-				default: null,
-			},
+export default {
+	name: 'select-user-multiple',
+	mixins: [],
+	components: {},
+	// 接收父组件的传参
+	props: {
+		param: {
+			type: Object,
+			require: false,
 		},
-		mounted() {
-			this.initView(this.param);
+		parentPage: {
+			type: Object,
+			default: null,
 		},
-		data() {
-			return {
-				// 已选择的节点
-				/*{
-                 value: 1,
-                 label: '选项一',
-                 type: "primary",
-                 closable: true
-                 }*/
-				tags: [],
-				checked: [],
-				// 人员待选列表
-				/*{
-                 value: 1,
-                 label: '选项一',
-                 }*/
-				nodes: [],
-				formData: {
-					personName: '',
-					deptId: '',
-					size: 1000,
-					current: 1,
-				},
+	},
+	mounted() {
+		 
+		this.initView(this.param);
+	},
+	data() {
+		return {
+			// 已选择的节点
+			/*{
+			 value: 1,
+			 label: '选项一',
+			 type: "primary",
+			 closable: true
+			 }*/
+			tags: [],
+			checked: [],
+			// 人员待选列表
+			/*{
+			 value: 1,
+			 label: '选项一',
+			 }*/
+			nodes: [],
+			formData: {
+				personName: '',
+				deptId: '',
+				size: 1000,
+				current: 1,
+			},
+		}
+	},
+
+	/*watch: {
+		checked(value){
+
+
+
+		}
+	},*/
+
+	methods: {
+		// 回显方法
+		initView(param) {
+			let that = this;
+			if (param && param.persons && param.persons.length >= 1) {
+
+				param.persons.forEach(function (node) {
+					that.tags.push({
+						label: node.personName,
+						value: node.personId + ":" + node.deptId,
+						deptId: node.deptId,
+						deptFullName: node.deptFullName,
+						type: 'primary',
+						closable: true,
+					})
+				})
 			}
 		},
 
-		/*watch: {
-			checked(value){
+		// 取消
+		handleClose() {
+			this.closeTpDialog()
+		},
+		// 确定
+		add() {
+			// 1 单弹出框新增成功，关闭弹出框，param是回传的参数
+			let result = this.tags.map(sel => {
+				return {
+					label: sel.label,
+					value: sel.value.split(":")[0],
+					deptId: sel.deptId,
+					deptFullName: sel.deptFullName,
+					type: sel.type,
+					closable: sel.closable,
+				}
+			})
 
-
-
+			// 调用回调函数
+			if (this.param && this.param.callback) {
+				this.param.callback(result);
 			}
-		},*/
 
-		methods: {
-			// 回显方法
-			initView(param) {
-				let that = this;
-				if (param && param.persons && param.persons.length >= 1) {
+			this.closeTpDialog()
+		},
+		// 树的回调方法, 默认选中根节点
+		callBack(node) {
+			this.$nextTick(() => {
+				if (node.data.length > 0) {
+					// 默认选择第一个根节点的根node
+					this.$refs.tree.selectNodeByValue(node.data[0].id)
+				}
+			})
+		},
+		// 树点击的选中节点回调方法
+		handleSelectChange(tagsNode) {
+			// 选中的部门
+			this.formData.deptId = tagsNode.id
+			this.handleQuery()
+		},
+		// 列表方法
+		handleQuery() {
 
-					param.persons.forEach(function (node) {
-						that.tags.push({
-							label: node.personName,
-							value: node.personId + ":" + node.deptId,
-							deptId: node.deptId,
-							deptFullName: node.deptFullName,
-							type: 'primary',
-							closable: true,
+			app.$svc.common.org.getPersonByDeptId(this.formData).then((result) => {
+
+				// 判断code
+				if (result.code == 1) {
+					// 清空原来的数据
+					this.nodes = []
+
+					this.checked = []
+
+					// 人员列表
+					let persons = result.data.records
+
+					let that = this;
+
+					this.$nextTick(() => {
+
+						persons.forEach((node, index) => {
+							let n = {
+								value: node.personId + ":" + node.deptId,
+								label: node.personName,
+								phone: node.phone,
+								deptId: node.deptId,
+								deptFullName: node.deptFullName,
+							}
+							that.nodes.push(n)
+							if (that.tags.map(sel => sel.value).includes(node.personId + ":" + node.deptId)) {
+								this.$nextTick(() => {
+									that.checked.push(node.personId + ":" + node.deptId)
+								})
+							}
 						})
 					})
-				}
-			},
-
-			// 取消
-			handleClose() {
-				this.closeTpDialog()
-			},
-			// 确定
-			add() {
-				// 1 单弹出框新增成功，关闭弹出框，param是回传的参数
-				let param = this.tags.map(sel => {
-					return {
-						label: sel.label,
-						value: sel.value.split(":")[0],
-						deptId: sel.deptId,
-						deptFullName: sel.deptFullName,
-						type: sel.type,
-						closable: sel.closable,
-					}
-				})
-
-				this.closeTpDialog(param)
-			},
-			// 树的回调方法, 默认选中根节点
-			callBack(node) {
-				this.$nextTick(() => {
-					if (node.data.length > 0) {
-						// 默认选择第一个根节点的根node
-						this.$refs.tree.selectNodeByValue(node.data[0].id)
-					}
-				})
-			},
-			// 树点击的选中节点回调方法
-			handleSelectChange(tagsNode) {
-				// 选中的部门
-				this.formData.deptId = tagsNode.id
-				this.handleQuery()
-			},
-			// 列表方法
-			handleQuery() {
-
-				app.$svc.common.org.getPersonByDeptId(this.formData).then((result) => {
-
-					// 判断code
-					if (result.code == 1) {
-						// 清空原来的数据
-						this.nodes = []
-
-						this.checked = []
-
-						// 人员列表
-						let persons = result.data.records
-
-						let that = this;
-
-						this.$nextTick(() => {
-
-							persons.forEach((node, index) => {
-								let n = {
-									value: node.personId + ":" + node.deptId,
-									label: node.personName,
-									phone: node.phone,
-									deptId: node.deptId,
-									deptFullName: node.deptFullName,
-								}
-								that.nodes.push(n)
-								if (that.tags.map(sel => sel.value).includes(node.personId + ":" + node.deptId)) {
-									this.$nextTick(() => {
-										that.checked.push(node.personId + ":" + node.deptId)
-									})
-								}
-							})
-						})
-					} else {
-						// 服务器返回失败
-						this.$message.error(result.message)
-					}
-				}).catch((err) => {
+				} else {
 					// 服务器返回失败
-					console.log(err)
-				})
-			},
-			// 删除的监听
-			handleTagRemove(value, node) {
-
-				let inChecked = this.checked.indexOf(value)
-				if (inChecked !== -1) {
-					this.checked.splice(inChecked, 1)
+					this.$message.error(result.message)
 				}
-			},
-			// 人员选择框中点击选择某一项
-			onChangeCheckbox(chks, value, checked, node) {
+			}).catch((err) => {
+				// 服务器返回失败
+				console.log(err)
+			})
+		},
+		// 删除的监听
+		handleTagRemove(value, node) {
 
-				console.log(chks)
+			let inChecked = this.checked.indexOf(value)
+			if (inChecked !== -1) {
+				this.checked.splice(inChecked, 1)
+			}
+		},
+		// 人员选择框中点击选择某一项
+		onChangeCheckbox(chks, value, checked, node) {
 
-				let inTags = this.tags.map(sel => sel.value).indexOf(value)
+			console.log(chks)
 
-				// add
-				if (checked) {
+			let inTags = this.tags.map(sel => sel.value).indexOf(value)
+
+			// add
+			if (checked) {
+				if (inTags === -1) {
+					this.tags.push({
+						label: node.label,
+						value: node.value,
+						deptId: node.deptId,
+						deptFullName: node.deptFullName,
+						type: 'primary',
+						closable: true,
+					})
+				}
+			} else {
+				// remove
+				if (inTags !== -1) {
+					this.tags.splice(inTags, 1)
+				}
+			}
+
+		},
+
+		// 全选
+		checkAll(checked, e) {
+
+			// 全选
+			if (checked) {
+				this.nodes.forEach((node, index) => {
+					let inTags = this.tags.map(sel => sel.value).indexOf(node.value)
 					if (inTags === -1) {
 						this.tags.push({
 							label: node.label,
@@ -247,61 +272,32 @@
 							closable: true,
 						})
 					}
-				} else {
-					// remove
+				})
+
+				this.checked = this.nodes.map(node => node.value)
+			} else { // 取消全选
+				this.nodes.forEach((node, index) => {
+					let inTags = this.tags.map(sel => sel.value).indexOf(node.value)
 					if (inTags !== -1) {
 						this.tags.splice(inTags, 1)
 					}
-				}
-
-			},
-
-			// 全选
-			checkAll(checked, e) {
-
-				// 全选
-				if (checked) {
-					this.nodes.forEach((node, index) => {
-						let inTags = this.tags.map(sel => sel.value).indexOf(node.value)
-						if (inTags === -1) {
-							this.tags.push({
-								label: node.label,
-								value: node.value,
-								deptId: node.deptId,
-								deptFullName: node.deptFullName,
-								type: 'primary',
-								closable: true,
-							})
-						}
-					})
-
-					this.checked = this.nodes.map(node => node.value)
-				} else { // 取消全选
-					this.nodes.forEach((node, index) => {
-						let inTags = this.tags.map(sel => sel.value).indexOf(node.value)
-						if (inTags !== -1) {
-							this.tags.splice(inTags, 1)
-						}
-					})
-					this.checked = []
-				}
-			},
+				})
+				this.checked = []
+			}
 		},
-		computed: {
-			allChecked: {
-				get() {
-					return (this.checked.length === 0 || this.nodes.length === 0) ? false : (this.checked.length === this.nodes.length ? true : 'indeterminate')
-				},
-				set(value) {
-					console.log("allChecked setter", value)
-				},
-
+	},
+	computed: {
+		allChecked: {
+			get() {
+				return (this.checked.length === 0 || this.nodes.length === 0) ? false : (this.checked.length === this.nodes.length ? true : 'indeterminate')
 			},
+			set(value) {
+				console.log("allChecked setter", value)
+			},
+
 		},
-	}
+	},
+}
 </script>
 
-<style scoped lang="less">
-
-
-</style>
+<style scoped lang="less"></style>

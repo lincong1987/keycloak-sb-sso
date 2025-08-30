@@ -3,7 +3,7 @@ package com.jiuxi.admin.core.controller;
 import com.jiuxi.common.util.PhoneDataMigrationUtil;
 import com.jiuxi.common.util.TpAccountPhoneDataMigrationUtil;
 import com.jiuxi.common.util.PhoneEncryptionUtils;
-import com.jiuxi.core.bean.TopinfoResult;
+import com.jiuxi.common.bean.JsonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +35,13 @@ public class MigrationController {
      * 迁移tp_person_basicinfo表手机号数据
      */
     @PostMapping("/phone/person")
-    public TopinfoResult migratePersonPhoneData() {
+    public JsonResponse<String> migratePersonPhoneData() {
         try {
             int count = phoneDataMigrationUtil.migratePhoneData();
-            return TopinfoResult.success("tp_person_basicinfo表手机号迁移完成，成功处理 " + count + " 条记录");
+            return JsonResponse.buildSuccess("tp_person_basicinfo表手机号迁移完成，成功处理 " + count + " 条记录");
         } catch (Exception e) {
             LOGGER.error("tp_person_basicinfo表手机号迁移失败", e);
-            return TopinfoResult.error("迁移失败：" + e.getMessage());
+            return JsonResponse.buildFailure("迁移失败：" + e.getMessage());
         }
     }
     
@@ -49,13 +49,13 @@ public class MigrationController {
      * 迁移tp_account表手机号数据
      */
     @PostMapping("/phone/account")
-    public TopinfoResult migrateAccountPhoneData() {
+    public JsonResponse<String> migrateAccountPhoneData() {
         try {
             int count = tpAccountPhoneDataMigrationUtil.migrateAccountPhoneData();
-            return TopinfoResult.success("tp_account表手机号迁移完成，成功处理 " + count + " 条记录");
+            return JsonResponse.buildSuccess("tp_account表手机号迁移完成，成功处理 " + count + " 条记录");
         } catch (Exception e) {
             LOGGER.error("tp_account表手机号迁移失败", e);
-            return TopinfoResult.error("迁移失败：" + e.getMessage());
+            return JsonResponse.buildFailure("迁移失败：" + e.getMessage());
         }
     }
     
@@ -63,13 +63,13 @@ public class MigrationController {
      * 验证tp_person_basicinfo表手机号迁移结果
      */
     @GetMapping("/phone/person/validate")
-    public TopinfoResult validatePersonPhoneMigration() {
+    public JsonResponse<String> validatePersonPhoneMigration() {
         try {
             String result = phoneDataMigrationUtil.validateMigration();
-            return TopinfoResult.success(result);
+            return JsonResponse.buildSuccess(result);
         } catch (Exception e) {
             LOGGER.error("tp_person_basicinfo表手机号迁移验证失败", e);
-            return TopinfoResult.error("验证失败：" + e.getMessage());
+            return JsonResponse.buildFailure("验证失败：" + e.getMessage());
         }
     }
     
@@ -77,13 +77,13 @@ public class MigrationController {
      * 验证tp_account表手机号迁移结果
      */
     @GetMapping("/phone/account/validate")
-    public TopinfoResult validateAccountPhoneMigration() {
+    public JsonResponse<String> validateAccountPhoneMigration() {
         try {
             String result = tpAccountPhoneDataMigrationUtil.validateMigration();
-            return TopinfoResult.success(result);
+            return JsonResponse.buildSuccess(result);
         } catch (Exception e) {
             LOGGER.error("tp_account表手机号迁移验证失败", e);
-            return TopinfoResult.error("验证失败：" + e.getMessage());
+            return JsonResponse.buildFailure("验证失败：" + e.getMessage());
         }
     }
     
@@ -91,11 +91,11 @@ public class MigrationController {
      * 测试手机号加密功能
      */
     @PostMapping("/phone/test")
-    public TopinfoResult testPhoneEncryption(@RequestBody Map<String, String> request) {
+    public JsonResponse<Object> testPhoneEncryption(@RequestBody Map<String, String> request) {
         try {
             String phone = request.get("phone");
             if (phone == null || phone.trim().isEmpty()) {
-                return TopinfoResult.error("手机号不能为空");
+                return JsonResponse.buildFailure("手机号不能为空");
             }
             
             // 加密
@@ -110,10 +110,10 @@ public class MigrationController {
             result.put("decrypted", decrypted);
             result.put("success", phone.equals(decrypted));
             
-            return TopinfoResult.success("手机号加密测试完成", result);
+            return JsonResponse.build(200, "手机号加密测试完成", result);
         } catch (Exception e) {
             LOGGER.error("手机号加密测试失败", e);
-            return TopinfoResult.error("测试失败：" + e.getMessage());
+            return JsonResponse.buildFailure("测试失败：" + e.getMessage());
         }
     }
     
@@ -121,7 +121,7 @@ public class MigrationController {
      * 批量迁移所有表的手机号数据
      */
     @PostMapping("/phone/all")
-    public TopinfoResult migrateAllPhoneData() {
+    public JsonResponse<Object> migrateAllPhoneData() {
         try {
             Map<String, Object> result = new HashMap<>();
             
@@ -135,10 +135,10 @@ public class MigrationController {
             
             result.put("total", personCount + accountCount);
             
-            return TopinfoResult.success("所有表手机号迁移完成", result);
+            return JsonResponse.build(200, "所有表手机号迁移完成", result);
         } catch (Exception e) {
             LOGGER.error("批量手机号迁移失败", e);
-            return TopinfoResult.error("迁移失败：" + e.getMessage());
+            return JsonResponse.buildFailure("迁移失败：" + e.getMessage());
         }
     }
 }

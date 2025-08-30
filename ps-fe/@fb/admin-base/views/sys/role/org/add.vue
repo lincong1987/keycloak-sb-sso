@@ -17,7 +17,7 @@
 
 				<fb-row>
 					<fb-col span="24">
-						<fb-form-item label="角色介绍" prop="resume" :rule="[{roleDesc: true}]">
+						<fb-form-item label="角色描述" prop="resume" :rule="[{roleDesc: true}]">
 							<fb-textarea rows="2" v-model="formData.roleDesc"
 										 type="text"
 										 placeholder="请输入内容"
@@ -27,7 +27,7 @@
 					</fb-col>
 				</fb-row>
 				<fb-row>
-					<fb-col span="12">
+					<fb-col span="12" style="display: none;">
 						<fb-form-item label="角色类型">
 							<fb-radio-group v-model="formData.roleType"
 											:data="[{id: 0, name: '政府',}, {id: 1, name: '企业',}]"

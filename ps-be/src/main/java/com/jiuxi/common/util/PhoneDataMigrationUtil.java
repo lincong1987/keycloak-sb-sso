@@ -227,4 +227,9 @@ public class PhoneDataMigrationUtil {
             return "统计失败：" + e.getMessage();
         }
     }
+
+    public String validateMigration() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validateMigration'");
+    }
 }

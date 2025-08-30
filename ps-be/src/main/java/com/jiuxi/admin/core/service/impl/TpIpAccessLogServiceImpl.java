@@ -83,23 +83,23 @@ public class TpIpAccessLogServiceImpl implements TpIpAccessLogService {
                                String requestUri, String requestMethod, String userAgent,
                                String username, String matchedRule, String ruleType, String cityCode) {
         try {
-            TpIpAccessLog log = new TpIpAccessLog();
-            log.setLogId(IdUtil.simpleUUID());
-            log.setClientIp(clientIp);
-            log.setAccessTime(new Date());
-            log.setAccessResult(accessResult);
-            log.setDenyReason(denyReason);
-            log.setRequestUri(requestUri);
-            log.setRequestMethod(requestMethod);
-            log.setUserAgent(userAgent);
-            log.setUsername(username);
-            log.setMatchedRule(matchedRule);
-            log.setRuleType(ruleType);
-            log.setCityCode(cityCode);
-            log.setActived(TpIpAccessLog.ACTIVED_YES);
-            log.setCreateTime(new Date());
+            TpIpAccessLog accessLog = new TpIpAccessLog();
+            accessLog.setLogId(IdUtil.simpleUUID());
+            accessLog.setClientIp(clientIp);
+            accessLog.setAccessTime(new Date());
+            accessLog.setAccessResult(accessResult);
+            accessLog.setDenyReason(denyReason);
+            accessLog.setRequestUri(requestUri);
+            accessLog.setRequestMethod(requestMethod);
+            accessLog.setUserAgent(userAgent);
+            accessLog.setUsername(username);
+            accessLog.setMatchedRule(matchedRule);
+            accessLog.setRuleType(ruleType);
+            accessLog.setCityCode(cityCode);
+            accessLog.setActived(TpIpAccessLog.ACTIVED_YES);
+            accessLog.setCreateTime(new Date());
             
-            tpIpAccessLogMapper.insert(log);
+            tpIpAccessLogMapper.insert(accessLog);
         } catch (Exception e) {
             log.error("记录IP访问日志详情失败", e);
         }

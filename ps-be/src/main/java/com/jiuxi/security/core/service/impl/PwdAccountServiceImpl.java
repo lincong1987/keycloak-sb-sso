@@ -3,6 +3,7 @@ package com.jiuxi.security.core.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.jiuxi.admin.core.service.TpSystemConfigService;
+import com.jiuxi.admin.core.service.TpTimeRuleService;
 import com.jiuxi.common.util.CommonDateUtil;
 import com.jiuxi.common.util.SmUtils;
 import com.jiuxi.core.bean.TopinfoRuntimeException;
@@ -24,6 +25,8 @@ import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,6 +54,9 @@ public class PwdAccountServiceImpl implements AccountService {
 
     @Autowired(required = false)
     private TpSystemConfigService tpSystemConfigService;
+
+    @Autowired(required = false)
+    private TpTimeRuleService tpTimeRuleService;
 
     @PostConstruct
     public void init() {
@@ -219,6 +225,24 @@ public class PwdAccountServiceImpl implements AccountService {
             }
             LOGGER.error("登录失败，密码错误，当前登录用户名:{}", userName);
             throw new TopinfoRuntimeException(-1, "登录失败，用户名或密码错误");
+        }
+
+        // 时间规则验证
+        if (tpTimeRuleService != null) {
+            // 直接从数据库查询用户角色ID列表
+            String roleQuerySql = "SELECT ROLE_ID FROM tp_person_role WHERE PERSON_ID = ?";
+            List<String> roleIdsList = jdbcTemplate.queryForList(roleQuerySql, String.class, accountVO.getPersonId());
+            
+            LOGGER.debug("用户 {} 的角色列表: {}", userName, roleIdsList);
+            
+            // 验证登录时间
+            TpTimeRuleService.LoginTimeValidationResult validationResult = 
+                tpTimeRuleService.validateLoginTimeWithReason(accountVO.getPersonId(), roleIdsList);
+            
+            if (!validationResult.isAllowed()) {
+                LOGGER.error("登录失败，时间规则验证不通过，用户名:{}, 原因:{}", userName, validationResult.getReason());
+                throw new TopinfoRuntimeException(-1, validationResult.getReason());
+            }
         }
 
         // 查询人员是政府人员还是企业人员的标示

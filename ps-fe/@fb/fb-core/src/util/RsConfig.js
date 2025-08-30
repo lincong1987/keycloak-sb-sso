@@ -52,6 +52,22 @@ function parseProxy(services) {
 		let p = Object.assign({}, {
 			changeOrigin: true,
 			target: 'http://localhost:8080/',
+			// 使用onProxyReq回调来动态设置请求头，确保后端能获取到真实客户端IP
+			onProxyReq: (proxyReq, req, res) => {
+				// 获取真实客户端IP
+				const realIp = req.headers['x-forwarded-for'] || 
+							   req.connection.remoteAddress || 
+							   req.socket.remoteAddress ||
+							   (req.connection.socket ? req.connection.socket.remoteAddress : null);
+				
+				// 设置转发头信息
+				if (realIp) {
+					proxyReq.setHeader('X-Forwarded-For', realIp);
+					proxyReq.setHeader('X-Real-IP', realIp);
+				}
+				proxyReq.setHeader('X-Forwarded-Proto', req.protocol || 'http');
+				proxyReq.setHeader('X-Forwarded-Host', req.headers.host || 'localhost:10801');
+			}
 		}, service)
 
 		if (p.target.indexOf('ws://') != -1) {

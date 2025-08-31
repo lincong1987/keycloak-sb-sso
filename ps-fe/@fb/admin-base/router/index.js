@@ -41,6 +41,13 @@ let index = [
 				},
 				component: () => import('../views/login/LoginForget.vue'),
 			},
+			// {
+			// 	path: 'forget-pass',
+			// 	meta: {
+			// 		title: '忘记密码'
+			// 	},
+			// 	component: () => import('../views/login/LoginForget.vue'),
+			// },
 		],
 	},
 

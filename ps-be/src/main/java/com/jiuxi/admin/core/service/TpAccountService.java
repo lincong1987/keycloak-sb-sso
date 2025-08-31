@@ -93,6 +93,16 @@ public interface TpAccountService {
     String accountFindpwd(String phone);
 
     /**
+     * 邮箱找回密码
+     *
+     * @param email: 邮箱地址
+     * @return String
+     * @author system
+     * @date 2024-01-21
+     */
+    String accountFindpwdByEmail(String email);
+
+    /**
      * 新密码和账号验证码一起提交，修改密码
      *
      * @param phone:
@@ -102,6 +112,18 @@ public interface TpAccountService {
      * @date 2021-02-04 15:38
      */
     int accountCheckVcode(String phone, String vcode, String userpwd);
+
+    /**
+     * 邮箱验证码校验并修改密码
+     *
+     * @param email: 邮箱地址
+     * @param vcode: 验证码
+     * @param userpwd: 新密码
+     * @return int
+     * @author system
+     * @date 2024-01-21
+     */
+    int accountCheckVcodeByEmail(String email, String vcode, String userpwd);
 
     /**
      * 修改账号密码，先校验原密码
@@ -176,6 +198,16 @@ public interface TpAccountService {
      * @date 2024/5/29 9:15
      */
     TpAccountVO getTpAccountByUsername(String username);
+
+    /**
+     * 根据邮箱查询账户信息
+     *
+     * @param email 邮箱地址
+     * @return com.jiuxi.admin.core.bean.vo.TpAccountVO
+     * @author system
+     * @date 2024-01-21
+     */
+    TpAccountVO getTpAccountByEmail(String email);
 
     /**
      * 根据人员id，删除账号信息

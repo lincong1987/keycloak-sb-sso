@@ -71,4 +71,24 @@ public interface TpAccountMapper {
      */
     TpAccountVO getTpAccountByUsername(@Param("username") String username);
 
+    /**
+     * 根据邮箱查询账户信息
+     *
+     * @param email 邮箱地址
+     * @return com.jiuxi.admin.core.bean.vo.TpAccountVO
+     * @author system
+     * @date 2024-01-21
+     */
+    TpAccountVO getTpAccountByEmail(@Param("email") String email);
+
+    /**
+     * 根据邮箱查询账户列表（用于找回密码）
+     *
+     * @param email 邮箱地址
+     * @return List<TpAccount>
+     * @author system
+     * @date 2024-01-21
+     */
+    List<TpAccount> selectByEmail(String email);
+
 }

@@ -142,4 +142,23 @@
           and ACTIVED = 1
     </select>
 
+    <!-- 根据邮箱查询账号信息 -->
+    <select id="getTpAccountByEmail" parameterType="String" resultType="com.jiuxi.admin.core.bean.vo.TpAccountVO">
+        select ta.ACCOUNT_ID, ta.USERNAME, ta.USERPWD, ta.PHONE, ta.EXPIRED_TIME, ta.LOCKED, ta.ENABLED, ta.PERSON_ID, ta.TENANT_ID, ta.WEIXIN, ta.DINGDING, ta.THREE_ID, ta.ACTIVED, ta.CREATE_TIME, ta.UPDATE_TIME, ta.EXTEND01, ta.EXTEND02, ta.EXTEND03
+        from tp_account ta
+        inner join tp_person_basicinfo tpb on ta.PERSON_ID = tpb.PERSON_ID
+        where tpb.EMAIL = #{email}
+          and ta.ACTIVED = 1
+          and tpb.ACTIVED = 1
+    </select>
+
+    <select id="selectByEmail" resultType="com.jiuxi.admin.core.bean.entity.TpAccount">
+        select ta.*
+        from tp_account ta
+        inner join tp_person_basicinfo tpb on ta.PERSON_ID = tpb.PERSON_ID
+        where tpb.EMAIL = #{email}
+          and ta.ACTIVED = 1
+          and tpb.ACTIVED = 1
+    </select>
+
 </mapper>

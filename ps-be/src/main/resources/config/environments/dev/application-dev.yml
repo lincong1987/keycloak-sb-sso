@@ -53,6 +53,32 @@ spring:
         min-idle: 0
   redisson:
     config: classpath:redis/redisson-single.yml
+  # 邮件服务配置
+  mail:
+    # SMTP服务器地址
+    host: smtp.163.com
+    # SMTP服务器端口（163邮箱SSL端口）
+    port: 465
+    # 发送邮件的邮箱账号
+    username: 18069853753@163.com
+    # 邮箱密码或授权码
+    password: WQbFDS7fdK92fKcU
+    # 邮件编码
+    default-encoding: UTF-8
+    # SMTP配置
+    properties:
+      mail:
+        smtp:
+          # 启用SMTP认证
+          auth: true
+          # 启用SSL加密
+          ssl:
+            enable: true
+          # SSL端口
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
 
 ##########################################################################
 #############  topinfo-platform-mybatis-starter-autoconfigurer
@@ -196,6 +222,8 @@ shotmsg:
     dflgurl: http://msg.hibnet.com:9993/services/SmsService
     clientID: 162
     Sharedsecret: p6{Nc9]JyF&2
+
+
 
 ############################################################
 ############# logging 日志配置 - 开发环境

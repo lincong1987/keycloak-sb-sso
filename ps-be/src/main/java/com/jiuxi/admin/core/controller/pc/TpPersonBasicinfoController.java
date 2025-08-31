@@ -208,22 +208,56 @@ public class TpPersonBasicinfoController {
 
     /**
      * 找回密码,发送验证码
+     * 支持手机号和邮箱两种方式
      */
-    @RequestMapping("/account-findpwd")
+    /**
+     * 手机号找回密码
+     */
+    @RequestMapping("/account-findpwd-by-phone")
     @IgnoreAuthorization
-    public JsonResponse accountFindpwd(@RequestParam(value = "phone") String phone) {
+    public JsonResponse accountFindpwdByPhone(@RequestParam("phone") String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return JsonResponse.buildFailure("请提供手机号");
+        }
+        
         String userName = tpAccountService.accountFindpwd(phone);
+        return JsonResponse.buildSuccess(userName);
+    }
 
+    /**
+     * 邮箱找回密码
+     */
+    @RequestMapping("/account-findpwd-by-email")
+    @IgnoreAuthorization
+    public JsonResponse accountFindpwdByEmail(@RequestParam("email") String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return JsonResponse.buildFailure("请提供邮箱地址");
+        }
+        
+        String userName = tpAccountService.accountFindpwdByEmail(email);
         return JsonResponse.buildSuccess(userName);
     }
 
     /**
      * 找回密码,校验验证码并修改密码
+     * 支持手机号和邮箱两种方式
      */
     @RequestMapping("/check-vcode")
     @IgnoreAuthorization
-    public JsonResponse accountCheckVcode(String phone, String vcode, String userpwd) {
-        int count = tpAccountService.accountCheckVcode(phone, vcode, userpwd);
+    public JsonResponse accountCheckVcode(@RequestParam(value = "phone", required = false) String phone,
+                                          @RequestParam(value = "email", required = false) String email,
+                                          String vcode, String userpwd) {
+        int count;
+        if (phone != null && !phone.trim().isEmpty()) {
+            // 手机号验证码校验
+            count = tpAccountService.accountCheckVcode(phone, vcode, userpwd);
+        } else if (email != null && !email.trim().isEmpty()) {
+            // 邮箱验证码校验
+            count = tpAccountService.accountCheckVcodeByEmail(email, vcode, userpwd);
+        } else {
+            return JsonResponse.buildFailure("请提供手机号或邮箱地址");
+        }
+        
         if (count == 1) {
             return JsonResponse.buildSuccess("密码修改成功！");
         } else {

@@ -15,6 +15,7 @@ import com.jiuxi.admin.core.event.TpAccountEvent;
 import com.jiuxi.admin.core.listener.service.TpAccountEventService;
 import com.jiuxi.admin.core.mapper.TpAccountMapper;
 import com.jiuxi.admin.core.mapper.TpPersonBasicinfoMapper;
+import com.jiuxi.admin.core.service.EmailService;
 import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.admin.core.service.TpAccountService;
 import com.jiuxi.common.exception.ExceptionUtils;
@@ -75,6 +76,9 @@ public class TpAccountServiceImpl implements TpAccountService {
 
     @Autowired(required = false)
     private TpAccountEventService tpAccountEventService;
+
+    @Autowired(required = false)
+    private EmailService emailService;
 
 
 
@@ -338,50 +342,49 @@ public class TpAccountServiceImpl implements TpAccountService {
         //     throw new TopinfoRuntimeException(-1, "没有短信服务可用！");
         // }
         throw new TopinfoRuntimeException(-1, "短信服务不可用！");
-        /*
-        try {
-            // 判断手机号是否存在，并且判断手机号对应的用户是否有账号
-            List<TpAccount> list = tpAccountMapper.selectByPhone(phone);
-            if (list.size() == 0) {
-                LOGGER.error("{} 该手机号未注册！", phone);
-                throw new TopinfoRuntimeException(-1, "找回密码失败！");
-            } else if (list.size() > 1) {
-                LOGGER.error("{} 该手机号对应多个账号！", phone);
-                throw new TopinfoRuntimeException(-1, "找回密码失败！");
-            }
-            // 判断上个验证码发送时间距离当前验证码发送时间的间隔
-            String verificationCode = list.get(0).getVerificationCode();
-            if (StrUtil.isNotBlank(verificationCode)) {
-                List<String> verificationCodes = StrUtil.split(verificationCode, ":");
-                String oldTime = verificationCodes.get(2);
-                Long diff = (CommonDateUtil.currentTimeMillis() - Long.valueOf(oldTime)) / 1000;
-                if (diff < 60) {
-                    throw new TopinfoRuntimeException(-1, "请1分钟后再次发送验证码！");
-                }
-            }
+        
+        // try {
+        //     // 判断手机号是否存在，并且判断手机号对应的用户是否有账号
+        //     List<TpAccount> list = tpAccountMapper.selectByPhone(phone);
+        //     if (list.size() == 0) {
+        //         LOGGER.error("{} 该手机号未注册！", phone);
+        //         throw new TopinfoRuntimeException(-1, "找回密码失败！");
+        //     } else if (list.size() > 1) {
+        //         LOGGER.error("{} 该手机号对应多个账号！", phone);
+        //         throw new TopinfoRuntimeException(-1, "找回密码失败！");
+        //     }
+        //     // 判断上个验证码发送时间距离当前验证码发送时间的间隔
+        //     String verificationCode = list.get(0).getVerificationCode();
+        //     if (StrUtil.isNotBlank(verificationCode)) {
+        //         List<String> verificationCodes = StrUtil.split(verificationCode, ":");
+        //         String oldTime = verificationCodes.get(2);
+        //         Long diff = (CommonDateUtil.currentTimeMillis() - Long.valueOf(oldTime)) / 1000;
+        //         if (diff < 60) {
+        //             throw new TopinfoRuntimeException(-1, "请1分钟后再次发送验证码！");
+        //         }
+        //     }
 
 
-            // 有一个对应的用户，生成验证码存入数据库，同时发送邮件给用户code，数据库存储验证码规则:email:code:time，time为时间戳
-            String code = RandomStringUtils.randomNumeric(properties.getValidateCode().getLength());
-            // 验证码生成，更新账号表保存数据库的VERIFICATION_CODE字段中。
-            String time = String.valueOf(CommonDateUtil.currentTimeMillis());
-            String newVerificationCode = phone.concat(":").concat(code).concat(":").concat(time);
-            LOGGER.info("验证码 = {}", newVerificationCode);
-            TpAccount tpAccount = new TpAccount();
-            tpAccount.setAccountId(list.get(0).getAccountId());
-            tpAccount.setVerificationCode(newVerificationCode);
-            tpAccountMapper.update(tpAccount);
-            // 给用户发短信
-            JSONObject templateParam = new JSONObject();
-            templateParam.put(TpConstant.SMSCode.PWDCODEKEY, code);
-            // 发短信
-            // SendSmsResponse sendSmsResponse = smsSendService.sendSms(phone, adminProperties.getSmsCode().getTemplatecode().get(TpConstant.SMSCode.PWDTEMPLATECODE), templateParam);
-            return list.get(0).getUsername();
-        } catch (MyBatisSystemException e) {
-            LOGGER.error("验证码发送失败！手机号:{}, 错误:{}", phone, ExceptionUtils.getStackTrace(e));
-            throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "验证码发送失败！" : e.getMessage());
-        }
-        */
+        //     // 有一个对应的用户，生成验证码存入数据库，同时发送邮件给用户code，数据库存储验证码规则:email:code:time，time为时间戳
+        //     String code = RandomStringUtils.randomNumeric(properties.getValidateCode().getLength());
+        //     // 验证码生成，更新账号表保存数据库的VERIFICATION_CODE字段中。
+        //     String time = String.valueOf(CommonDateUtil.currentTimeMillis());
+        //     String newVerificationCode = phone.concat(":").concat(code).concat(":").concat(time);
+        //     LOGGER.info("验证码 = {}", newVerificationCode);
+        //     TpAccount tpAccount = new TpAccount();
+        //     tpAccount.setAccountId(list.get(0).getAccountId());
+        //     tpAccount.setVerificationCode(newVerificationCode);
+        //     tpAccountMapper.update(tpAccount);
+        //     // 给用户发短信
+        //     JSONObject templateParam = new JSONObject();
+        //     templateParam.put(TpConstant.SMSCode.PWDCODEKEY, code);
+        //     // 发短信
+        //     // SendSmsResponse sendSmsResponse = smsSendService.sendSms(phone, adminProperties.getSmsCode().getTemplatecode().get(TpConstant.SMSCode.PWDTEMPLATECODE), templateParam);
+        //     return list.get(0).getUsername();
+        // } catch (MyBatisSystemException e) {
+        //     LOGGER.error("验证码发送失败！手机号:{}, 错误:{}", phone, ExceptionUtils.getStackTrace(e));
+        //     throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "验证码发送失败！" : e.getMessage());
+        // }
     }
 
     /**
@@ -408,6 +411,10 @@ public class TpAccountServiceImpl implements TpAccountService {
             throw new TopinfoRuntimeException(-1, "验证码无效！");
         }
         List<String> verificationCodes = StrUtil.split(verificationCode, ":");
+        // 检查验证码格式是否正确（应该包含3个部分：phone:code:time）
+        if (verificationCodes.size() < 3) {
+            throw new TopinfoRuntimeException(-1, "验证码格式无效！");
+        }
         String oldPhone = verificationCodes.get(0);
         String oldVcode = verificationCodes.get(1);
         String oldTime = verificationCodes.get(2);
@@ -747,10 +754,161 @@ public class TpAccountServiceImpl implements TpAccountService {
     public void deleteByPersonId(String personId) {
         TpAccountVO view = tpAccountMapper.viewByPersonId(personId);
         if (view == null) {
-            LOGGER.error("根据人员id未查询到账号信息！personId：{}", personId);
+            LOGGER.error("根据人员id未查询到账号信息！personId:{}", personId);
             return;
         }
         String updateTime = CommonDateUtil.now();
         tpAccountMapper.deleteByPersonId(personId, updateTime, CommonUniqueIndexUtil.addDeleteTime(view.getUsername()), CommonUniqueIndexUtil.addDeleteTime(view.getPhone()));
     }
+
+    /**
+     * 根据邮箱获取账号信息
+     *
+     * @param email 邮箱
+     * @return TpAccountVO
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    @Override
+    public TpAccountVO getTpAccountByEmail(String email) {
+        return tpAccountMapper.getTpAccountByEmail(email);
+    }
+
+    /**
+     * 邮箱找回密码
+     *
+     * @param email 邮箱
+     * @return String
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    @Override
+    @Transactional(rollbackFor = TopinfoRuntimeException.class)
+    public String accountFindpwdByEmail(String email) {
+        try {
+            // 判断邮箱是否存在，并且判断邮箱对应的用户是否有账号
+            List<TpAccount> list = tpAccountMapper.selectByEmail(email);
+            if (list.size() == 0) {
+                LOGGER.error("{} 该邮箱未注册！", email);
+                throw new TopinfoRuntimeException(-1, "找回密码失败！");
+            } else if (list.size() > 1) {
+                LOGGER.error("{} 该邮箱对应多个账号！", email);
+                throw new TopinfoRuntimeException(-1, "找回密码失败！");
+            }
+            // 判断上个验证码发送时间距离当前验证码发送时间的间隔
+            String verificationCode = list.get(0).getVerificationCode();
+            if (StrUtil.isNotBlank(verificationCode)) {
+                List<String> verificationCodes = StrUtil.split(verificationCode, ":");
+                // 检查验证码格式是否正确（应该包含3个部分：email:code:time）
+                if (verificationCodes.size() >= 3) {
+                    String oldTime = verificationCodes.get(2);
+                    Long diff = (CommonDateUtil.currentTimeMillis() - Long.valueOf(oldTime)) / 1000;
+                    if (diff < 60) {
+                        throw new TopinfoRuntimeException(-1, "请1分钟后再次发送验证码！");
+                    }
+                }
+            }
+
+            // 有一个对应的用户，生成验证码存入数据库，同时发送邮件给用户code，数据库存储验证码规则:email:code:time，time为时间戳
+            String code = RandomStringUtils.randomNumeric(properties.getValidateCode().getLength());
+            // 验证码生成，更新账号表保存数据库的VERIFICATION_CODE字段中。
+            String time = String.valueOf(CommonDateUtil.currentTimeMillis());
+            String newVerificationCode = email.concat(":").concat(code).concat(":").concat(time);
+            LOGGER.info("验证码 = {}", newVerificationCode);
+            TpAccount tpAccount = new TpAccount();
+            tpAccount.setAccountId(list.get(0).getAccountId());
+            tpAccount.setVerificationCode(newVerificationCode);
+            tpAccountMapper.update(tpAccount);
+            // 给用户发邮件
+             if (emailService != null) {
+                 String subject = "密码找回验证码";
+                 boolean emailSent = emailService.sendVerificationCode(email, subject, code);
+                 if (emailSent) {
+                     LOGGER.info("验证码邮件发送成功，邮箱: {}", email);
+                 } else {
+                     LOGGER.error("验证码邮件发送失败，邮箱: {}", email);
+                     throw new TopinfoRuntimeException(-1, "验证码邮件发送失败！");
+                 }
+             } else {
+                 LOGGER.warn("邮件服务不可用，无法发送验证码邮件");
+                 throw new TopinfoRuntimeException(-1, "邮件服务不可用！");
+             }
+            return list.get(0).getUsername();
+        } catch (MyBatisSystemException e) {
+            LOGGER.error("验证码发送失败！邮箱:{}, 错误:{}", email, ExceptionUtils.getStackTrace(e));
+            throw new TopinfoRuntimeException(-1, StrUtil.isBlank(e.getMessage()) ? "验证码发送失败！" : e.getMessage());
+        }
+    }
+
+    /**
+     * 邮箱验证码验证并修改密码
+     *
+     * @param email   邮箱
+     * @param vcode   验证码
+     * @param userpwd 新密码
+     * @return int
+     * @author Trae AI
+     * @date 2024/12/19
+     */
+    @Override
+    public int accountCheckVcodeByEmail(String email, String vcode, String userpwd) {
+        List<TpAccount> list = tpAccountMapper.selectByEmail(email);
+        if (list.size() == 0) {
+            LOGGER.error("{} 该邮箱未注册！", email);
+            throw new TopinfoRuntimeException(-1, "密码修改失败！");
+        } else if (list.size() > 1) {
+            LOGGER.error("{} 该邮箱对应多个账号！", email);
+            throw new TopinfoRuntimeException(-1, "密码修改失败！");
+        }
+        String verificationCode = list.get(0).getVerificationCode();
+        if (StrUtil.isBlank(verificationCode)) {
+            throw new TopinfoRuntimeException(-1, "验证码无效！");
+        }
+        List<String> verificationCodes = StrUtil.split(verificationCode, ":");
+        // 检查验证码格式是否正确（应该包含3个部分：email:code:time）
+        if (verificationCodes.size() < 3) {
+            throw new TopinfoRuntimeException(-1, "验证码格式无效！");
+        }
+        String oldEmail = verificationCodes.get(0);
+        String oldVcode = verificationCodes.get(1);
+        String oldTime = verificationCodes.get(2);
+        if (!StrUtil.equals(oldEmail, email)) {
+            throw new TopinfoRuntimeException(-1, "验证码无效！");
+        }
+        if (!StrUtil.equals(oldVcode, vcode)) {
+            throw new TopinfoRuntimeException(-1, "验证码无效！");
+        }
+
+        // 时间戳转换成秒
+        Long diff = (CommonDateUtil.currentTimeMillis() - Long.valueOf(oldTime)) / 1000;
+        if (diff > properties.getValidateCode().getExpireIn()) {
+            throw new TopinfoRuntimeException(-1, "验证码已失效！");
+        }
+
+        // 校验密码是否符合弱密码等级要求
+        boolean regularFla = PwdRegularUtils.pwdRegular(properties.getAuthentication().getRegular(), userpwd);
+        if (!regularFla) {
+            throw new TopinfoRuntimeException(-1, "密码不符合安全等级要求！");
+        }
+
+        // 修改用户账号密码
+        TpAccount bean = new TpAccount();
+        // 转换成数据库对象
+        bean.setPersonId(list.get(0).getPersonId());
+        bean.setUserpwd(SmUtils.digestHexSM3(userpwd));
+        bean.setUpdateTime(CommonDateUtil.now());
+        bean.setLastPasswordChangeTime(CommonDateUtil.now());
+
+        int count = tpAccountMapper.updateByPersonId(bean);
+
+        // 发布事件，修改账号给第三方系统
+        if (null != tpAccountEventService) {
+            // 将明文推给第三方，第三方根据自己的需求自己在加密
+            bean.setUserpwd(userpwd);
+            applicationContext.publishEvent(new TpAccountEvent("账号密码修改同步监听", tpAccountEventService, bean, OpertionTypeEnum.DELETE.getOpertionType()));
+        }
+
+        return count;
+    }
+
 }

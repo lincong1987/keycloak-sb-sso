@@ -155,7 +155,7 @@
 			nextOne() {
 				this.$refs.forgetOne.validate((result, error) => {
 					if (result) {
-						this.$svc.sys.person.accountFindpwd({"phone": this.forgetForm0.phone}).then(json => {
+						this.$svc.sys.person.accountFindpwdByPhone({"phone": this.forgetForm0.phone}).then(json => {
 							// 登录按钮 loading
 							if (json && json.code == 1) {
 								this.boxCode = 1
@@ -173,7 +173,7 @@
 			},
 			doForgetShortMsg() {
 				if (!this.shortBtnDisabled) {
-					this.$svc.sys.person.accountFindpwd({"phone": this.forgetForm0.phone}).then(json => {
+					this.$svc.sys.person.accountFindpwdByPhone({"phone": this.forgetForm0.phone}).then(json => {
 						// 登录按钮 loading
 						if (json && json.code == 1) {
 							this.$message.success('请注意查收验证码')

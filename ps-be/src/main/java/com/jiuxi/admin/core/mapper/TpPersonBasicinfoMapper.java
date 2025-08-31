@@ -30,6 +30,8 @@ public interface TpPersonBasicinfoMapper {
 
     TpPersonBasicinfo selectByPhoneAndPersonId(@Param("phone") String phone, @Param("personId") String personId);
 
+    TpPersonBasicinfo selectByEmail(@Param("email") String email);
+
     /**
      * 查询出在该单位所有部门下的所有主部门关联关系的人员id
      *

@@ -7,17 +7,17 @@
 					密码找回
 				</div>
 				<div class="box" v-show="!boxCode">
-					<div class="title">验证码将会发送至您注册的手机号</div>
+					<div class="title">验证码将会发送至您注册的邮箱</div>
 					<fb-form :model="forgetForm0" ref="forgetOne" autocomplete="off">
-						<fb-form-item prop="phone" label="手机号" :showLabel="false"
-									  :rule='[{required:true}, {type: "mobile"}]'>
-							<fb-input v-model="forgetForm0.phone"
+						<fb-form-item prop="email" label="邮箱" :showLabel="false"
+									  :rule='[{required:true}, {type: "email"}]'>
+							<fb-input v-model="forgetForm0.email"
 									  size="l"
-									  prepend-icon="mobilephone"
+									  prepend-icon="mail"
 									  clearable
-									  placeholder="请输入手机号"
+									  placeholder="请输入邮箱地址"
 									  autocomplete="off"
-									maxlength="11"	
+									maxlength="50"	
 							/>
 						</fb-form-item>
 
@@ -37,16 +37,16 @@
 				</div>
 
 				<div class="box" v-show="boxCode === 1">
-					<div class="title">验证码已发送至您的手机</div>
+					<div class="title">验证码已发送至您的邮箱</div>
 					<fb-form :model="forgetForm1" :rule="rules1" ref="forgetTwo" autocomplete="off">
 						<fb-form-item prop="username" label="用户名" :showLabel="false"
 									  :rule='[{required:true}]'>
 							<fb-input v-model="forgetForm1.username" prepend-icon="user" size="l" disabled
 									  placeholder="用户名"/>
 						</fb-form-item>
-						<fb-form-item prop="mobileCode" label="验证码" :showLabel="false"
+						<fb-form-item prop="emailCode" label="验证码" :showLabel="false"
 									  :rule='[{required: true}, {type: "string", len: 6}]'>
-							<fb-input v-model="forgetForm1.mobileCode"
+							<fb-input v-model="forgetForm1.emailCode"
 									  size="l"
 									  type="capture"
 									  prepend-icon="verificationcode"
@@ -58,7 +58,7 @@
 							</fb-input>
 
 							<fb-button
-								class="phone-code-btn"
+								class="email-code-btn"
 								type="primary"
 								size="s"
 								:disabled="shortBtnDisabled"
@@ -118,11 +118,11 @@
 				shortBtnText: '获取验证码',
 				shortBtnDisabled: false,
 				forgetForm0: {
-					phone: ''
+					email: ''
 				},
 				forgetForm1: {
 					username: 'admin',
-					mobileCode: '',
+					emailCode: '',
 					password: '',
 					confirmPass: ''
 				},
@@ -155,27 +155,31 @@
 			nextOne() {
 				this.$refs.forgetOne.validate((result, error) => {
 					if (result) {
-						this.$svc.sys.person.accountFindpwd({"phone": this.forgetForm0.phone}).then(json => {
+						this.$svc.sys.person.accountFindpwdByEmail({"email": this.forgetForm0.email}).then(json => {
 							// 登录按钮 loading
 							if (json && json.code == 1) {
 								this.boxCode = 1
 								this.countDown()
 								this.forgetForm1.username = json.data
+								// 清空验证码输入框
+								this.forgetForm1.emailCode = ''
 								this.$message.success('请注意查收验证码')
 							} else {
 								this.$message.success(json.message)
 							}
 						})
 					} else {
-						this.$message.warn('请输入正确的手机号')
+						this.$message.warn('请输入正确的邮箱地址')
 					}
 				})
 			},
 			doForgetShortMsg() {
 				if (!this.shortBtnDisabled) {
-					this.$svc.sys.person.accountFindpwd({"phone": this.forgetForm0.phone}).then(json => {
+					this.$svc.sys.person.accountFindpwdByEmail({"email": this.forgetForm0.email}).then(json => {
 						// 登录按钮 loading
 						if (json && json.code == 1) {
+							// 清空验证码输入框
+							this.forgetForm1.emailCode = ''
 							this.$message.success('请注意查收验证码')
 						} else {
 							this.$message.success(json.message)
@@ -203,8 +207,8 @@
 				this.$refs.forgetTwo.validate((result, error) => {
 					if (result) {
 						this.$svc.sys.person.checkVcode({
-							"phone": this.forgetForm0.phone,
-							"vcode": this.forgetForm1.mobileCode,
+							"email": this.forgetForm0.email,
+							"vcode": this.forgetForm1.emailCode,
 							"userpwd": this.forgetForm1.confirmPass
 						}).then(json => {
 							// 登录按钮 loading
@@ -274,7 +278,7 @@
 
 	}
 
-	.phone-code-btn {
+	.email-code-btn {
 		width: 90px;
 		height: 36px;
 		margin-left: 8px;

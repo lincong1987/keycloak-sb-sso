@@ -10,7 +10,7 @@
 <tp-upload
     readonly
     view="avatar"
-    v-model="fileList"
+    v-model="file.fileList"
     :service="$svc.sys.file"
     :param="{referType: file.referType}"
     :referid="userInfo.personId"

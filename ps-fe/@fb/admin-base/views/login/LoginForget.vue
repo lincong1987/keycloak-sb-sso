@@ -1,11 +1,16 @@
 <template>
 	<!--  系统忘记密码 - login 的二级路由	-->
 	<div class="login-forget">
-		<forget-card
+		<!-- <forget-card
 			ref="forgetCard"
 			@toLogin="toLogin"
 			@doForgetFinish="doForgetFinish"
-		></forget-card>
+		></forget-card> -->
+	 <forget-card-mail
+			ref="forgetCard"
+			@toLogin="toLogin"
+			@doForgetFinish="doForgetFinish"
+		></forget-card-mail>
 	</div>
 </template>
 
@@ -16,10 +21,12 @@
  */
 
 import ForgetCard from "../../components/login/ForgetCard.vue";
+import ForgetCardMail from "../../components/login/ForgetCardMail.vue";
 
 export default {
 	components: {
 		ForgetCard,
+		ForgetCardMail
 	},
 
 	data() {

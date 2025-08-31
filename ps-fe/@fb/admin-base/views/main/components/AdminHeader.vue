@@ -359,9 +359,14 @@ export default {
 //			window.setInterval(() => {
 //
 //			}, 300000)
+	this.heartbeat()
+			this.heartbeatTimer= setTimeout(() => {
+				this.heartbeat()
+			}, 300000)
 		},
 		// 心跳 5 分钟一次
 		heartbeat() {
+			
 			let token = app.$datax.get('token')
 			let baseURL = app.service.defaults.baseURL
 			// 组装请求地址， 小于 10k
@@ -371,8 +376,8 @@ export default {
 			img.onerror = img.onload = function() {
 			}
 			img.src = query
-
-			setTimeout(() => {
+clearTimeout(this.heartbeatTimer)
+			this.heartbeatTimer = setTimeout(() => {
 				this.heartbeat()
 			}, 300000)
 

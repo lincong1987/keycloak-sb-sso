@@ -7,23 +7,15 @@
         <div class="header-content">
           <div class="avatar-section">
             <div class="avatar-wrapper">
-              <fb-avatar
-                class="avatar-uploader"
-                action="/api/upload/avatar"
-                :show-file-list="false"
-                :on-success="handleAvatarUpload"
-                :before-upload="uploadAvatar"
-              >
-                <div class="avatar-container">
-                  <img v-if="userInfo.profilePhoto || userInfo.avatar" :src="userInfo.profilePhoto || userInfo.avatar" class="avatar" />
-                  <div v-else class="avatar-placeholder">
-                    <fb-icon name="user" class="avatar-icon"></fb-icon>
-                  </div>
-                  <div class="avatar-overlay">
-                    <fb-icon name="camera" class="camera-icon"></fb-icon>
-                  </div>
-                </div>
-              </fb-avatar>
+<tp-upload
+    readonly
+    view="avatar"
+    v-model="fileList"
+    :service="$svc.sys.file"
+    :param="{referType: file.referType}"
+    :referid="userInfo.personId"
+    :accept="'.png,.jpeg,.jpg'"
+></tp-upload>
             </div>
             <div class="user-info">
               <h1 class="user-name">
@@ -34,7 +26,7 @@
               </h1>
               <div class="user-details">
                 <div class="detail-item">
-                  <fb-icon name="apartment" class="detail-icon"></fb-icon>
+                  <fb-icon name="team-fill" class="detail-icon"></fb-icon>
                   <span>{{ userInfo.deptFullName || userInfo.deptName || '暂无部门' }}</span>
                 </div>
                 <div class="detail-item">
@@ -298,6 +290,11 @@ export default {
   name: 'Profile',
   data() {
     return {
+
+       file: {
+                referType: 'SYS1014',
+                fileList: []
+            },
       // 请求的 service
       service: this.$svc.sys.person,
       userInfo: {

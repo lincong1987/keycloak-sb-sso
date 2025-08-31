@@ -50,8 +50,28 @@ public class FileExpServiceImpl implements FileExpService {
      */
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
-        // return jdfsClientService.uploadFile(file); // Commented out - jdfsClientService not available
-        return null;
+        try {
+            // 生成唯一文件名
+            String originalFilename = file.getOriginalFilename();
+            String fileExtName = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = com.jiuxi.common.util.SnowflakeIdUtil.nextIdStr() + fileExtName;
+            
+            // 创建上传目录
+            String rootDir = System.getProperty("user.dir") + "/uploads";
+            java.io.File uploadDir = new java.io.File(rootDir);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            
+            // 保存文件
+            String relativePath = "/" + fileName;
+            java.io.File targetFile = new java.io.File(rootDir + relativePath);
+            file.transferTo(targetFile);
+            
+            return relativePath;
+        } catch (Exception e) {
+            throw new IOException("文件上传失败: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -77,8 +97,33 @@ public class FileExpServiceImpl implements FileExpService {
      */
     @Override
     public String uploadFile(InputStream inputStream, long fileSize, String fileExtName) {
-        // return jdfsClientService.uploadFile(inputStream, fileSize, fileExtName); // Commented out - jdfsClientService not available
-        return null; // Placeholder implementation
+        try {
+            // 生成唯一文件名
+            String fileName = com.jiuxi.common.util.SnowflakeIdUtil.nextIdStr() + fileExtName;
+            
+            // 创建上传目录
+            String rootDir = System.getProperty("user.dir") + "/uploads";
+            java.io.File uploadDir = new java.io.File(rootDir);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            
+            // 保存文件
+            String relativePath = "/" + fileName;
+            java.io.File targetFile = new java.io.File(rootDir + relativePath);
+            
+            try (java.io.FileOutputStream fos = new java.io.FileOutputStream(targetFile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+            }
+            
+            return relativePath;
+        } catch (Exception e) {
+            throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -91,8 +136,19 @@ public class FileExpServiceImpl implements FileExpService {
      */
     @Override
     public InputStream getInputStream(String fileid, String filename) {
-        // return jdfsClientService.getInputStream(fileid, filename); // Commented out - jdfsClientService not available
-        return null; // Placeholder implementation
+        try {
+            String rootDir = System.getProperty("user.dir") + "/uploads";
+            String filePath = rootDir + fileid;
+            java.io.File file = new java.io.File(filePath);
+            
+            if (file.exists() && file.isFile()) {
+                return new java.io.FileInputStream(file);
+            } else {
+                throw new RuntimeException("文件不存在: " + filePath);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("获取文件流失败: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -107,6 +163,13 @@ public class FileExpServiceImpl implements FileExpService {
      */
     @Override
     public void downloadFile(String fileid, String filename, HttpServletRequest request, HttpServletResponse response) {
-        // jdfsClientService.downloadFile(fileid, filename, request, response); // Commented out - jdfsClientService not available
+        try {
+            // 使用CommonFileUtil进行文件下载
+            // 假设文件存储在本地，fileid就是相对路径
+            String rootDir = System.getProperty("user.dir") + "/uploads"; // 默认上传目录
+            com.jiuxi.common.util.CommonFileUtil.downloadFile(filename, rootDir, fileid, response);
+        } catch (Exception e) {
+            throw new RuntimeException("文件下载失败: " + e.getMessage(), e);
+        }
     }
 }

@@ -15,7 +15,7 @@
  * (c) 2020 lincong1987
  */
 
-import ForgetCard from "../../components/login/ForgetCard";
+import ForgetCard from "../../components/login/ForgetCard.vue";
 
 export default {
 	components: {

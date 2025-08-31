@@ -29,8 +29,11 @@
 		<div class="login-content">
 			<div class="content">
 				<login-card-scan-code-verify :inLoginProcess="inLoginProcess" captcha-type="slider"
-					@doLogin="doLoginNew" @toAppDownload="toAppDownload" @toForget="toForget" @toRegister="toRegister"
-					ref="loginCard" :show-register-link="true" v-show="!seletDepartment && !cardCode" />
+					@doLogin="doLoginNew" @toAppDownload="toAppDownload"
+					 @toForget="toForget" @toRegister="toRegister"
+					ref="loginCard" :show-register-link="true"
+					:show-forget-link="true"  
+					 v-show="!seletDepartment && !cardCode" />
 
 				<login-card-department-list v-show="seletDepartment" :fieldObj="{ label: 'deptFullName', id: 'deptId' }"
 					:departmentList="departmentList" @confirmDepartment="confirmDepartment" />
@@ -47,6 +50,8 @@
 					<force-update-pwd ref="forceUpdatePwd" @toLogin="toLogin"
 						@doUpdatePwd="doUpdatePwd"></force-update-pwd>
 				</div>
+
+		
 
 			</div>
 		</div>

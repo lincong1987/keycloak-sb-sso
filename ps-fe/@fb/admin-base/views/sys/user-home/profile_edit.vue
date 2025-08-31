@@ -364,9 +364,16 @@ export default {
 
         // 关闭对话框
         handleClose() {
-				// 关闭，并传递参数
-				this.closeTpDialog("param");
-			},
+            // 关闭弹框 - 使用TpDialog的正确关闭方法
+            if (this.$parent && this.$parent.close) {
+                this.$parent.close();
+            } else if (this.$parent && this.$parent.$parent && this.$parent.$parent.close) {
+                this.$parent.$parent.close();
+            } else {
+                // 发送关闭事件给父组件
+                this.$emit('close');
+            }
+        },
     }
 }
 </script>

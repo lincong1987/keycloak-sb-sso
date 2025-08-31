@@ -7,7 +7,7 @@
 					密码找回
 				</div>
 				<div class="box" v-show="!boxCode">
-					<div class="title">验证码将会发送至您注册的邮箱</div>
+					<div class="title">请输入您注册的邮箱地址</div>
 					<fb-form :model="forgetForm0" ref="forgetOne" autocomplete="off">
 						<fb-form-item prop="email" label="邮箱" :showLabel="false"
 									  :rule='[{required:true}, {type: "email"}]'>
@@ -37,7 +37,7 @@
 				</div>
 
 				<div class="box" v-show="boxCode === 1">
-					<div class="title">验证码已发送至您的邮箱</div>
+					<div class="title">验证码将会发送至您注册的邮箱</div>
 					<fb-form :model="forgetForm1" :rule="rules1" ref="forgetTwo" autocomplete="off">
 						<fb-form-item prop="username" label="用户名" :showLabel="false"
 									  :rule='[{required:true}]'>

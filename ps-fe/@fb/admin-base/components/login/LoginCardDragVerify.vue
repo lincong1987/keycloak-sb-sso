@@ -24,7 +24,7 @@
 					@doLogin="doLogin">
 				</login-form-drag-img>
 
-
+www
 				<div>
 					<fb-link  v-show="showForgetLink" type="primary" label="忘记密码？" @click="toForget"></fb-link>
 					<fb-link  v-show="showRegisterLink" type="primary" label="点击注册" class="register-btn" @click="toRegister"></fb-link>
@@ -128,5 +128,5 @@
 </script>
 
 <style lang="less" scoped>
-@import ~"../../assets/styles/login/login-card";
+@import "../../assets/styles/login/login-card.less";
 </style>

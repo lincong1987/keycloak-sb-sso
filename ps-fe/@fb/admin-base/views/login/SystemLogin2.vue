@@ -28,7 +28,8 @@
 
 		<div class="login-content">
 			<div class="content">
-				<login-card-scan-code-verify :inLoginProcess="inLoginProcess" captcha-type="slider"
+				<login-card-scan-code-verify :inLoginProcess="inLoginProcess"
+				 captcha-type="slider"
 					@doLogin="doLoginNew" @toAppDownload="toAppDownload"
 					 @toForget="toForget" @toRegister="toRegister"
 					ref="loginCard" :show-register-link="true"
@@ -51,7 +52,7 @@
 						@doUpdatePwd="doUpdatePwd"></force-update-pwd>
 				</div>
 
-		
+		 
 
 			</div>
 		</div>

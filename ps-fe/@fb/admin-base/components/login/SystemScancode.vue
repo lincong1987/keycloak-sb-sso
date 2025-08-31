@@ -1,6 +1,8 @@
 <template>
-	<div class="login-scan-code">
-		<div class="login-scan-code--img" :style="getStyle"></div>
+	<div class="login-scan-code" >
+		<div class="login-scan-code--img" :style="getStyle">
+			<fb-qrcode v-model="loginUrl"></fb-qrcode>
+		</div>
 		<div v-show="isMask" class="login-scan-code--mask">
 			<span>二维码已失效</span>
 			<fb-button type="primary" size="l" @on-click="handleClick" :disabled="disabled" :loading="loading">点击刷新</fb-button>
@@ -30,6 +32,7 @@
 				loading: false,
 				isMask: false,
 				backgroundImage: '',
+				loginUrl: ""
 			}
 		},
 
@@ -46,7 +49,8 @@
 			getCapture () {
 				this.disabled = true
 				this.loading = true
-				this.backgroundImage = this.api + new Date().getTime()
+				//this.backgroundImage = this.api + new Date().getTime()
+this.loginUrl = 'http://admin.dlszywz.cn/include/captcha/captcha.php?'
 
 				this.$nextTick(() => {
 					setTimeout(() => {
@@ -80,11 +84,11 @@
 
 	.login-scan-code {
 		position:         relative;
-		width: 160px;
-		height: 160px;
+		width: 256px;
+		height: 256px;
 		border-radius: 2px;
-		border: 1px solid #D3D3D3;
-		padding: 8px;
+		// border: 1px solid #D3D3D3;
+		// padding: 8px;
 
 
 		.login-scan-code--img {
@@ -95,10 +99,10 @@
 
 		.login-scan-code--mask {
 			position: absolute;
-			top: 0;
-			left: 0;
-			width: 160px;
-			height: 160px;
+	top: 1px;
+    left: 1px;
+    width: 254px;
+    height: 254px;
 			background: rgba(255, 255, 255, 0.7);
 			border-radius: 2px;
 			text-align: center;

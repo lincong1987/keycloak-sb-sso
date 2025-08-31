@@ -2,7 +2,7 @@
 <template>
 	<transition name="slide-to-down">
 		<div class="login-dialog">
-			<!-- <div class="point-code" :class="[showScanCode ? 'pc' : '']" @click="changeCard"></div> -->
+			<div class="point-code" :class="[showScanCode ? 'pc' : '']" @click="changeCard"></div>
 			<div v-if="!showScanCode" class="login-form">
 				<div class="login-form__caption">
 					<fb-tabs v-model="currentTab">
@@ -11,14 +11,14 @@
 					</fb-tabs>
 				</div>
 
-				<!--	验证码表单  -->
-<!--				<login-form-code-->
-<!--					ref="formDrag"-->
-<!--					:clearForm="clearForm"-->
-<!--					v-if="currentTab == 'pass'"-->
-<!--					:inLoginProcess="inLoginProcess"-->
-<!--					@doLogin="doLogin">-->
-<!--				</login-form-code>-->
+				<!--	验证码字段  -->
+				<!-- <login-form-code
+					ref="formDrag"
+					:clearForm="clearForm"
+					v-if="currentTab == 'pass'"
+					:inLoginProcess="inLoginProcess"
+					@doLogin="doLogin">
+				</login-form-code> -->
 
 				<!--	拖拽表单  -->
 				<login-form-drag-img
@@ -45,30 +45,29 @@
 				<div class="login-actions">
 					<!-- SSO登录按钮 -->
 					<div class="sso-login-section">
-						<fb-divider>或</fb-divider>
 						<fb-button type="primary" size="large" block @on-click="handleSSOLogin" class="sso-login-btn">
 							<fb-icon name="key" style="margin-right: 8px;"></fb-icon>
 							使用SSO统一登录
 						</fb-button>
 					</div>
 					
-					<!-- <fb-link  v-show="showForgetLink" type="primary" label="忘记密码？" @click="toForget"></fb-link> -->
+					<fb-link  v-show="showForgetLink" type="primary" label="忘记密码？" @click="toForget"></fb-link>
 					<!-- <fb-link  v-show="showRegisterLink" type="primary" label="点击注册" class="register-btn" @click="toRegister"></fb-link> -->
 				</div>
 
 			</div>
 
 			<div v-if="false || showScanCode" class="login-code">
-				<fb-tabs v-model="codeCurrentTab" :data="[
-					{label: '钉钉', value: 'ding'},
-				]"></fb-tabs>
-				<system-scancode-dd v-if="codeCurrentTab === 'ding'"></system-scancode-dd>
-				<div v-else>
+				<!-- <fb-tabs v-model="codeCurrentTab" :data="[
+					{label: '钉钉', value: 'ding1'},
+				]"></fb-tabs> -->
+				<!-- <system-scancode-dd v-if="codeCurrentTab === 'ding'"></system-scancode-dd> -->
+				<div  >
 					<SystemScancode></SystemScancode>
-					<div class="texts">
+					<!-- <div class="texts">
 						<fb-icon name="scan"></fb-icon>
 						<span>打开浙政钉扫描二维码登录</span>
-					</div>
+					</div> -->
 					<div class="links">
 						<span @click="toForget">忘记密码？</span>
 						<!-- <em>|</em>
@@ -274,7 +273,7 @@
 
 		.login-code {
 			padding: 0 24px;
-			padding-top: 29px;
+			padding-top: 86px;
 			font-size: 14px;
 
 			.title {

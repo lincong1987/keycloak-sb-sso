@@ -137,7 +137,7 @@
                     <template v-slot:view="props">
                         <fb-link-group>
                             <fb-link :click="() => handleView(props.row)"
-                                :label="formatOperterTime(props.row.operterTime)" type="primary"></fb-link>
+                                :label="props.row.username" type="primary"></fb-link>
                         </fb-link-group>
                     </template>
                 </fb-simple-table>
@@ -279,13 +279,18 @@ export default {
                 primaryKey: "logId",
 
                 columns: [
-
+ {
+                        name: 'username',
+                        label: '用户名',
+                        sortable: false,
+                        width: 100,   slot: 'view',
+                    },
                     {
                         name: 'operterTime',
                         label: '操作时间',
                         sortable: false,
                         width: 200,
-                        slot: 'view',
+                     
                     },
                     // {
                     //     name: 'appName',
@@ -324,18 +329,13 @@ export default {
                     //     sortable: false,
                     //     width: 100,
                     // },
-                    {
-                        name: 'operterMsg',
-                        label: '操作信息',
-                        sortable: false,
-                        width: 100,
-                    },
-                    {
-                        name: 'username',
-                        label: '用户名',
-                        sortable: false,
-                        width: 150,
-                    },
+                    // {
+                    //     name: 'operterMsg',
+                    //     label: '操作信息',
+                    //     sortable: false,
+                    //     width: 100,
+                    // },
+                   
                     // {
                     //     name: 'extend01',
                     //     label: '操作信息',
@@ -400,9 +400,12 @@ export default {
              
             let operterTypeMap = groupBy(data, 'operterType')
 
+            console.log('operterTypeMap', operterTypeMap)
+
             let myData =Object.keys(operterTypeMap).map((key) => {
+                 
                 return {
-                    name: this.$logconstant.operterTypeData.find(item => item.value === key).label, // 获取操作类型的标签
+                    name: this.$logconstant.operterTypeData.find(item => item.value === key).label || '未知', // 获取操作类型的标签
                     value: operterTypeMap[key].length // 获取该操作类型的数量
                 }
             })
@@ -437,7 +440,7 @@ export default {
                 }
             }
 
-            this.$refs.TpDialog.show(import('@fb/log-center-ui/src/views/sys/tpoperatelog/view.vue'), param, "查看", options);
+            this.$refs.TpDialog.show(import('./view.vue'), param, "查看", options);
         },
         // 导出功能实现
         handleExport() {

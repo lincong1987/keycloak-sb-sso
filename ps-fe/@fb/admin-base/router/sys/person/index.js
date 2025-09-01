@@ -13,7 +13,7 @@ export default [
 			title: '人员管理',
 		},
 		component: () => import('../../../views/sys/person/org/list.vue'),
-	}, {
+	},{
 		path: '/sys/person/ent/list',
 		meta: {
 			title: '人员管理',

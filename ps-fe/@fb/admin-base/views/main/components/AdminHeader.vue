@@ -440,7 +440,7 @@ clearTimeout(this.heartbeatTimer)
 			let removeDatax = ['login', 'token', 'TOKEN_REAL', 'userInfo']
 			let removeStore = ['admin/removeToken', 'menu/clear', 'tabbar/clear']
 			this.$msgbox.confirm('确定要退出吗？', () => {
-				//this.logoutLog();
+				this.logoutLog();
 				app.trigger('monitor-login-out', {
 					removeDatax,
 					removeStore,

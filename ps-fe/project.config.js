@@ -38,6 +38,7 @@ module.exports = {
 		host: '0.0.0.0',
 		port: 10801,
 		https: false,
+		hmr: true
 	},
 
 	// 将会自动创建 vueInstance.[name] 服务， 全局 app.$svc.[name]

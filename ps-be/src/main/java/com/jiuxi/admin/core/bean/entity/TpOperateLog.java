@@ -29,6 +29,12 @@ public class TpOperateLog {
     private String personId;
 
     /**
+     * 人员姓名
+     */
+    @TableField("PERSON_NAME")
+    private String personName;
+
+    /**
      * 模块代码
      */
     @TableField("MODULE_CODE")
@@ -150,6 +156,14 @@ public class TpOperateLog {
 
     public void setPersonId(String personId) {
         this.personId = personId;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
     public String getModuleCode() {

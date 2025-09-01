@@ -37,7 +37,7 @@
             type="primary" 
             size="large"
             :loading="retrying"
-            @click="handleRetry"
+            @on-click="handleRetry"
             class="retry-btn"
           >
             <fb-icon name="reload" v-if="!retrying"></fb-icon>
@@ -88,7 +88,7 @@
         <div v-if="autoRetry && countdown > 0" class="auto-retry">
           <fb-icon name="clock-circle"></fb-icon>
           <span>{{ countdown }}秒后自动重试</span>
-          <fb-button type="link" size="small" @click="cancelAutoRetry">取消</fb-button>
+          <fb-button type="link" size="small" @on-click="cancelAutoRetry">取消</fb-button>
         </div>
       </div>
     </div>
@@ -110,7 +110,7 @@ export default {
     // 错误标题
     errorTitle: {
       type: String,
-      default: '服务暂时不可用'
+      default: '服务正在恢复'
     },
     
     // 错误消息

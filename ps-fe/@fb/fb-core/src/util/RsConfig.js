@@ -14,6 +14,15 @@ function parseAlias(pages, __dirname) {
 	// 添加 @fb 别名，指向项目根目录下的 @fb 文件夹
 	alias['@fb'] = path.resolve(__dirname, '@fb');
 
+	// 根据环境添加 Vue 别名
+	// 开发环境：使用完整版本（包含模板编译器）
+	// 生产环境：使用运行时版本（体积更小）
+	if (process.env.NODE_ENV === 'development') {
+		alias['vue$'] = 'vue/dist/vue.esm.js';
+	} else {
+		alias['vue$'] = 'vue/dist/vue.runtime.esm.js';
+	}
+
 	// 根据入口页面，定义不同的别名
 	Object.keys(pages).forEach(page => {
 		if (page === "src") {

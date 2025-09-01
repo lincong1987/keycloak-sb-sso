@@ -200,6 +200,7 @@
 			},
 			// 获取状态类型
 			getStatusType(status) {
+				return 'default';
 				switch (status) {
 					case '1':
 						return 'success'; // 启用
@@ -211,7 +212,7 @@
 			},
 			// 获取状态文本
 			getStatusText(status) {
-				switch (status) {
+				switch (status+"") {
 					case '1':
 						return '启用';
 					case '0':

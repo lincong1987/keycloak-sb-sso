@@ -26,7 +26,7 @@
 						</fb-property-item>
 					</fb-col>
 				</fb-row>
-				<fb-row>
+				<!-- <fb-row>
 					<fb-col span="12">
 						<fb-property-item label="操作结果">
 							{{operterResultName}}
@@ -53,7 +53,7 @@
 							{{formData.extend02}}
 						</fb-property-item>
 					</fb-col>
-				</fb-row>
+				</fb-row> -->
 			</fb-property>
 		</div>
 		<div class="tp-dialog-bottom">

@@ -22,6 +22,11 @@ public class TpOperateLogVO {
     private String personId;
 
     /**
+     * 人员姓名
+     */
+    private String personName;
+
+    /**
      * 模块代码
      */
     private String moduleCode;
@@ -135,6 +140,14 @@ public class TpOperateLogVO {
 
     public void setPersonId(String personId) {
         this.personId = personId;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
     public String getModuleCode() {

@@ -53,5 +53,12 @@ public class CoreCommandLineRunner implements CommandLineRunner {
             // 使用者配置了aes的key和vi，默认加载aes
             AesUtils.newInstance(aesSecretKey, aesSecretIv);
         }
+
+        LOGGER.info("系统初始化完成");
+        LOGGER.info("系统启动成功");
+        LOGGER.info("系统启动完毕");
+        LOGGER.info("System initialization is complete");
+        LOGGER.info("System Started successfully");
+        LOGGER.info("System startup is complete");
     }
 }

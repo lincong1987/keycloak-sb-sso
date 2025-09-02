@@ -60,8 +60,11 @@ export class WebLogger {
         // 用户类型
         data.category = userInfo.category;
         // 系统名称
-        data.appName = app.projectConfig.name;
+        data.appName = data.appName || app.projectConfig.name;
         let token = app.$datax.get('token')
+
+
+  
 
         // 组装请求地址， 小于 10k
         let query = this.baseURL + '/platform/logger/collection?jt=' + token;

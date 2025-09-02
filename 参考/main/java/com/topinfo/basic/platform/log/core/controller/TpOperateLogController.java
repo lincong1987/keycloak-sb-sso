@@ -21,11 +21,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Optional;
 
-
 import com.topinfo.basic.platform.log.core.bean.vo.TpOperateLogVO;
 import com.topinfo.basic.platform.log.core.bean.query.TpOperateLogQuery;
 import com.topinfo.basic.platform.log.core.service.TpOperateLogService;
-
 
 /**
  * @ClassName: TpOperateLogController
@@ -53,7 +51,7 @@ public class TpOperateLogController {
         String token = request.getHeader("Token");
 
         // 判断token 是否为空
-        if(StrUtil.isBlank(token)){
+        if (StrUtil.isBlank(token)) {
             return JsonResponse.buildFailure("token不能为空！");
         }
 
@@ -64,27 +62,27 @@ public class TpOperateLogController {
         return JsonResponse.buildSuccess(page);
     }
 
-
     /**
      * 登录日志采集
+     * 
      * @author 杨攀
      * @date 2022/9/21 15:42
-     * @param ticket 滑动验证票据
+     * @param ticket   滑动验证票据
      * @param username 用户名
      * @param category 用户类别
-     * @param jt token
+     * @param jt       token
      * @return void
      */
     @RequestMapping("/login")
     public JsonResponse login(String ticket, String username, String category, String jt, HttpServletRequest request) {
 
         // 判断token 是否为空
-        if(StrUtil.isBlank(jt)){
+        if (StrUtil.isBlank(jt)) {
             return JsonResponse.buildFailure("token不能为空！");
         }
 
         // 判断滑动验证票据不能为空！
-        if(StrUtil.isBlank(ticket)){
+        if (StrUtil.isBlank(ticket)) {
             return JsonResponse.buildFailure("滑动验证票据不能为空！");
         }
 
@@ -93,7 +91,7 @@ public class TpOperateLogController {
 
         // 保存访问客户端ip
         String ip = request.getHeader("X-Forwarded-For");
-        if(StrUtil.isBlank(ip)){
+        if (StrUtil.isBlank(ip)) {
             ip = request.getRemoteAddr();
         }
 
@@ -119,25 +117,26 @@ public class TpOperateLogController {
         return JsonResponse.buildSuccess();
     }
 
-
     /**
      * 操作日志采集
+     * 
      * @author 杨攀
      * @date 2022/9/21 17:23
-     * @param moduleCode 模块code
+     * @param moduleCode  模块code
      * @param operterType 操作类型
-     * @param operterRid 操作记录ID、修改、删除时，记录ID
-     * @param username 账号
-     * @param category 人员类别
-     * @param jt token
+     * @param operterRid  操作记录ID、修改、删除时，记录ID
+     * @param username    账号
+     * @param category    人员类别
+     * @param jt          token
      * @param request
      * @return void
      */
     @RequestMapping("/collection")
-    public JsonResponse collection(String moduleCode, String operterType, String operterRid, String username, String category, String jt, HttpServletRequest request) {
+    public JsonResponse collection(String moduleCode, String operterType, String operterRid, String username,
+            String category, String jt, HttpServletRequest request) {
 
         // 判断token 是否为空
-        if(StrUtil.isBlank(jt)){
+        if (StrUtil.isBlank(jt)) {
             return JsonResponse.buildFailure("token不能为空！");
         }
 
@@ -146,7 +145,7 @@ public class TpOperateLogController {
 
         // 保存访问客户端ip
         String ip = request.getHeader("X-Forwarded-For");
-        if(StrUtil.isBlank(ip)){
+        if (StrUtil.isBlank(ip)) {
             ip = request.getRemoteAddr();
         }
 
@@ -166,15 +165,25 @@ public class TpOperateLogController {
         extend03 = Optional.ofNullable(extend03).orElse("");
         extend03 = URLDecoder.decode(extend03, Charset.forName("UTF-8"));
 
+        // operterMsg
+        String operterMsg = request.getParameter("operterMsg");
+        operterMsg = Optional.ofNullable(operterMsg).orElse("");
+        operterMsg = URLDecoder.decode(operterMsg, Charset.forName("UTF-8"));
+        // appName
+        String appName = request.getParameter("appName");
+        appName = Optional.ofNullable(appName).orElse("");
+        appName = URLDecoder.decode(appName, Charset.forName("UTF-8"));
+        System.out.println("===collection" + operterMsg + " " + appName);
         // 操作日志采集
-        tpOperateLogService.collection(moduleCode, operterType, operterRid, username, category, jt, ip, userAgent, extend01, extend02, extend03);
+        tpOperateLogService.collection(moduleCode, operterType, operterRid, username, category, jt, ip, userAgent,
+                operterMsg, appName, extend03);
 
         return JsonResponse.buildSuccess();
     }
 
-
     /**
      * 信息
+     * 
      * @author 杨攀
      * @date 2022/9/21 15:41
      * @param logId
@@ -185,7 +194,7 @@ public class TpOperateLogController {
         TpOperateLogVO vo = tpOperateLogService.view(logId);
         return JsonResponse.buildSuccess(vo);
     }
-    
+
     /**
      * 保存
      *
@@ -197,6 +206,5 @@ public class TpOperateLogController {
         String logId = tpOperateLogService.add(tpOperateLog, jwtpid);
         return JsonResponse.buildSuccess(logId);
     }
-
 
 }

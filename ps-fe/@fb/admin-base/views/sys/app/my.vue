@@ -37,7 +37,7 @@
 						<h4 class="app-name">{{ getClientDisplayName(client) }}</h4>
 						<p class="app-description">{{ client.description || client.clientId }}</p>
 						<span class="app-status" :class="{ enabled: client.enabled }">{{ client.enabled ? '启用' : '禁用'
-							}}</span>
+						}}</span>
 					</div>
 				</div>
 			</div>
@@ -60,6 +60,10 @@ export default {
 			clientsLoading: false,
 			clientsError: null
 		}
+	},
+
+	mounted() {
+		this.getClients();
 	},
 	methods: {
 		getSsoUserStatus() {
@@ -146,6 +150,18 @@ export default {
 		openClient(client) {
 			console.log('打开客户端:', client);
 
+			// 记录用户点击应用的日志
+			// this.$logger.send({
+			// 	action: 'click_application',
+			// 	module: 'sso_client_management',
+			// 	details: {
+			// 		clientId: client.clientId,
+			// 		clientName: this.getClientDisplayName(client),
+			// 		enabled: client.enabled
+			// 	},
+			// 	message: `用户点击了应用: ${this.getClientDisplayName(client)} (${client.clientId})`
+			// });
+
 			// 构建客户端访问URL
 			let targetUrl = null;
 
@@ -164,8 +180,38 @@ export default {
 			}
 
 			if (targetUrl) {
+				// 记录成功打开应用的日志
+				this.$logger.send({
+
+					details: {
+						clientId: client.clientId,
+						clientName: this.getClientDisplayName(client),
+						targetUrl: targetUrl
+					},
+					operterMsg: `成功打开应用: ${this.getClientDisplayName(client)}, URL: ${targetUrl}; clientId: ${client.clientId}`,
+					appName: client.clientId,
+					// 模块编码
+					moduleCode: 'SSO_CLIENT_OPEN',
+					// 模块名称
+					moduleName: '打开SSO客户端',
+					// 操作类型： login/logout/add/delete/edit/query/pass/unpass, 可以自己定义
+					operateType: 'app',
+					// 操作人id
+					operterId: app.$datax.get('userInfo').personId,
+				});
 				window.open(targetUrl, '_blank');
 			} else {
+				// 记录无法打开应用的日志
+				// this.$logger.send({
+				// 	action: 'open_application_failed',
+				// 	module: 'sso_client_management',
+				// 	details: {
+				// 		clientId: client.clientId,
+				// 		clientName: this.getClientDisplayName(client),
+				// 		reason: 'no_access_url'
+				// 	},
+				// 	message: `无法打开应用: ${this.getClientDisplayName(client)}, 原因: 暂无访问地址`
+				// });
 				this.$message.info(`客户端 ${this.getClientDisplayName(client)} 暂无访问地址`);
 			}
 		}

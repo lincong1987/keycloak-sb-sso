@@ -224,8 +224,8 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
         bean.setUpdateTime(now);
         // 是否有效
         bean.setActived(LoggerConstant.YES);
-        bean.setExtend01(extend01);
-        bean.setExtend02(extend02);
+        bean.setExtend01(operterMsg);
+        bean.setExtend02(appName);
         bean.setExtend03(extend03);
 
         // 新增
@@ -242,13 +242,13 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
      * @param username 账号
      * @param category 人员类别
      * @param token
-     * @param extend01
-     * @param extend02
-     * @param extend03
+     * @param operterMsg 操作消息
+     * @param appName 应用名称
+     * @param extend03 扩展字段3
      * @return void
      */
     @Override
-    public void collection(String moduleCode, String operterType, String operterRid, String username, String category, String token, String ip, String userAgent, String extend01, String extend02, String extend03) {
+    public void collection(String moduleCode, String operterType, String operterRid, String username, String category, String token, String ip, String userAgent, String operterMsg, String appName, String extend03) {
 
         // 判断是否在配置的模块中， 避免别人攻击的垃圾数据干扰
         if(!properties.customizeModuleMap.containsKey(moduleCode)){
@@ -298,8 +298,8 @@ public class TpOperateLogServiceImpl implements TpOperateLogService {
         bean.setUpdateTime(now);
         // 是否有效
         bean.setActived(LoggerConstant.YES);
-        bean.setExtend01(extend01);
-        bean.setExtend02(extend02);
+        bean.setExtend01(operterMsg);
+        bean.setExtend02(appName);
         bean.setExtend03(extend03);
         // 新增
         tpOperateLogDao.add(bean);

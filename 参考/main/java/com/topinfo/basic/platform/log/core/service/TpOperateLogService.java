@@ -57,11 +57,11 @@ public interface TpOperateLogService {
      * @param username 账号
      * @param category 人员类别
      * @param token
-     * @param extend01
-     * @param extend02
-     * @param extend03
+     * @param operterMsg 操作消息
+     * @param appName 应用名称
+     * @param extend03 扩展字段3
      * @return void
      */
-    void collection(String moduleCode, String operterType, String operterRid, String username, String category, String token, String ip, String userAgent,String extend01, String extend02, String extend03);
+    void collection(String moduleCode, String operterType, String operterRid, String username, String category, String token, String ip, String userAgent,String operterMsg, String appName, String extend03);
 }
 

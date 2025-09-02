@@ -130,14 +130,12 @@
             <template slot="table">
                 <fb-simple-table ref="table" :service="table.service.search" :param="formData" :pk="table.primaryKey"
                     :formatters="table.formatters" :columns="table.columns" :multiple="false"
-                    :scroll="{ x: 1100, y: 372, }" auto-load
-                    @on-data-load="handleDataLoaded"
-                    >
+                    :scroll="{ x: 1100, y: 372, }" auto-load @on-data-load="handleDataLoaded">
 
                     <template v-slot:view="props">
                         <fb-link-group>
-                            <fb-link :click="() => handleView(props.row)"
-                                :label="props.row.username" type="primary"></fb-link>
+                            <fb-link :click="() => handleView(props.row)" :label="props.row.username"
+                                type="primary"></fb-link>
                         </fb-link-group>
                     </template>
                 </fb-simple-table>
@@ -145,7 +143,7 @@
                 <fb-flex>
                     <fbec-pie-base ref="ec_1" theme="fbecLight" style="height: 300px; width: 100%"></fbec-pie-base>
                 </fb-flex>
- 
+
             </template>
         </fb-page-search>
         <tp-dialog ref="TpDialog"></tp-dialog>
@@ -175,7 +173,7 @@ export default {
         //     that.onlineNum = data
         // });
 
-        
+
     },
 
     computed: {
@@ -279,18 +277,18 @@ export default {
                 primaryKey: "logId",
 
                 columns: [
- {
+                    {
                         name: 'username',
                         label: '用户名',
                         sortable: false,
-                        width: 100,   slot: 'view',
+                        width: 100, slot: 'view',
                     },
                     {
                         name: 'operterTime',
                         label: '操作时间',
                         sortable: false,
                         width: 200,
-                     
+
                     },
                     // {
                     //     name: 'appName',
@@ -335,7 +333,7 @@ export default {
                     //     sortable: false,
                     //     width: 100,
                     // },
-                   
+
                     // {
                     //     name: 'extend01',
                     //     label: '操作信息',
@@ -393,26 +391,26 @@ export default {
 
     // 方法
     methods: {
-        handleDataLoaded(data){
+        handleDataLoaded(data) {
             this.updateEc_1(data.data.records)
         },
-         updateEc_1(data) {
-             
+        updateEc_1(data) {
+
             let operterTypeMap = groupBy(data, 'operterType')
 
             console.log('operterTypeMap', operterTypeMap)
 
-            let myData =Object.keys(operterTypeMap).map((key) => {
-                 
+            let myData = Object.keys(operterTypeMap).map((key) => {
+                let op = this.$logconstant.operterTypeData.find(item => item.value === key)
                 return {
-                    name: this.$logconstant.operterTypeData.find(item => item.value === key).label || '未知', // 获取操作类型的标签
+                    name: op?.label || key || '未知', // 获取操作类型的标签
                     value: operterTypeMap[key].length // 获取该操作类型的数量
                 }
             })
             let val = {
                 series: [
                     {
-                        data:myData,
+                        data: myData,
                     }
                 ]
             }
@@ -421,7 +419,7 @@ export default {
 
         // 列表方法
         handleQuery() {
-            this.$refs.table.doSearch( )
+            this.$refs.table.doSearch()
         },
         formatOperterTime(val) {
             if (val) {

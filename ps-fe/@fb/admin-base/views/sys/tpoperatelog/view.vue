@@ -35,7 +35,7 @@
 				</fb-row>
 				<fb-row>
 					<fb-col span="12">
-name						<fb-property-item label="操作IP">
+ 						<fb-property-item label="操作IP">
 							{{formData.operterIp}}
 						</fb-property-item>
 					</fb-col>

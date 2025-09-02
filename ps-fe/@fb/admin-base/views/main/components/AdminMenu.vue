@@ -103,15 +103,23 @@ export default {
 				if (this.menu && this.menu.subMenu) {
 					this.myMenu = cloneDeep(this.menu.subMenu)
 					this.selectedLevel = []
-					this.myMenu.children.map(menu => {
-						// 默认全展开
-						if (menu.id) {
-							this.selectedLevel.push(menu.id)
-						}
-						menu.children = menu.children.filter(item => {
-							return item.type === 'SYS1901' || item.type === 'SYS1905'
+					// 确保 children 存在且是数组
+					if (this.myMenu.children && Array.isArray(this.myMenu.children)) {
+						this.myMenu.children.map(menu => {
+							// 默认全展开
+							if (menu.id) {
+								this.selectedLevel.push(menu.id)
+							}
+							// 确保 menu.children 存在且是数组
+							if (menu.children && Array.isArray(menu.children)) {
+								menu.children = menu.children.filter(item => {
+									return item.type === 'SYS1901' || item.type === 'SYS1905'
+								})
+							} else {
+								menu.children = []
+							}
 						})
-					})
+					}
 				}
 			},
 			deep: true,

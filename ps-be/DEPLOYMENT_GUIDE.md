@@ -95,7 +95,7 @@ curl http://localhost/health
 **Realm 配置**
 ```json
 {
-  "realm": "ps-bmp",
+  "realm": "ps-realm",
   "displayName": "PS BMP System",
   "enabled": true,
   "accessTokenLifespan": 3600,
@@ -108,7 +108,7 @@ curl http://localhost/health
 **客户端配置**
 ```json
 {
-  "clientId": "ps-bmp-client",
+  "clientId": "ps-realm-client",
   "name": "PS BMP Client",
   "enabled": true,
   "clientAuthenticatorType": "client-secret",
@@ -177,8 +177,8 @@ server {
     # OIDC 认证配置
     access_by_lua_block {
         local opts = {
-            discovery = "http://keycloak:8080/realms/ps-bmp/.well-known/openid_configuration",
-            client_id = "ps-bmp-client",
+            discovery = "http://keycloak:8080/realms/ps-realm/.well-known/openid_configuration",
+            client_id = "ps-realm-client",
             client_secret = "your-client-secret",
             redirect_uri = "http://localhost/auth/callback",
             scope = "openid profile email",
@@ -223,8 +223,8 @@ server {
     location /auth/callback {
         access_by_lua_block {
             local opts = {
-                discovery = "http://keycloak:8080/realms/ps-bmp/.well-known/openid_configuration",
-                client_id = "ps-bmp-client",
+                discovery = "http://keycloak:8080/realms/ps-realm/.well-known/openid_configuration",
+        client_id = "ps-realm-client",
                 client_secret = "your-client-secret",
                 redirect_uri = "http://localhost/auth/callback"
             }
@@ -263,8 +263,8 @@ server {
 keycloak:
   enabled: true
   base-url: ${KEYCLOAK_BASE_URL:http://keycloak:8080}
-  realm: ${KEYCLOAK_REALM:ps-bmp}
-  client-id: ${KEYCLOAK_CLIENT_ID:ps-bmp-client}
+  realm: ${KEYCLOAK_REALM:ps-realm}
+    client-id: ${KEYCLOAK_CLIENT_ID:ps-realm-client}
   
   jwt:
     clock-skew: 60
@@ -422,13 +422,13 @@ docker-compose logs keycloak | grep "LOGIN\|LOGOUT"
 docker-compose exec nginx nginx -t
 
 # 检查 Keycloak 连接
-curl http://localhost:8180/realms/ps-bmp/.well-known/openid_configuration
+curl http://localhost:8180/realms/ps-realm/.well-known/openid_configuration
 ```
 
 **问题2: JWT Token 验证失败**
 ```bash
 # 检查公钥获取
-curl http://localhost:8180/realms/ps-bmp/protocol/openid-connect/certs
+curl http://localhost:8180/realms/ps-realm/protocol/openid-connect/certs
 
 # 检查应用日志
 docker-compose logs ps-bmp-backend | grep "JWT"
@@ -536,7 +536,7 @@ docker-compose exec -T postgres psql -U keycloak keycloak < keycloak_backup.sql
 **配置备份**
 ```bash
 # 导出 Keycloak Realm 配置
-curl -X GET "http://localhost:8180/admin/realms/ps-bmp" \
+curl -X GET "http://localhost:8180/admin/realms/ps-realm" \
      -H "Authorization: Bearer $ADMIN_TOKEN" > realm_backup.json
 ```
 

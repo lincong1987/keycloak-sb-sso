@@ -25,6 +25,7 @@ import {
 	hasPermission,
 } from '../directive/permission/permission'
 import { uuid } from '../util/utils'
+import { getKeycloakInstance } from '../util/keycloak'
 
 // console.log(
 // 	`%c fb-core v${pkg.version}  %c docs: http://10.10.0.36/fb/fb-docs/#/fb-core/ `,
@@ -284,6 +285,9 @@ class Application {
 		utils.hasPermission = hasPermission
 		utils.hasPermissionSync = hasPermissionSync
 		this.$utils = utils
+		
+		// 注册 Keycloak 单例方法
+		this.$kc = projectVue.prototype.$kc = getKeycloakInstance
 	}
 
 	installService () {

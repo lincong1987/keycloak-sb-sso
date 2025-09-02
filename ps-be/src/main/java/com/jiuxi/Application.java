@@ -3,6 +3,7 @@ package com.jiuxi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @ClassName: Application
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
  * @Copyright: 2025 www.tuxun.net Inc. All rights reserved.
  */
 @SpringBootApplication(scanBasePackages = {"com.jiuxi", "com.jiuxi.security.sso", "com.ps"})
+@EnableAsync
 public class Application {
 
     public static void main(String[] args) {

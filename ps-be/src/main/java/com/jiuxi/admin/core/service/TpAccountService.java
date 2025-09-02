@@ -219,5 +219,15 @@ public interface TpAccountService {
      */
     void deleteByPersonId(String personId);
 
+    /**
+     * 同步账号到Keycloak
+     *
+     * @param accountId 账号ID
+     * @return boolean 同步是否成功
+     * @author system
+     * @date 2025-01-21
+     */
+    boolean syncAccountToKeycloak(String accountId);
+
 }
 

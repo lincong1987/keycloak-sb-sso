@@ -13,6 +13,7 @@ import SystemApplicationRoot from './App'
 import { setRouterBefore } from '@fb/fb-core/src/util/routerConfig'
 import { eventBuryPointMonitor, mountedAppEvent } from '@fb/admin-base/util/buryPointMonitor'
 import { setServiceReqRes } from '@fb/admin-base/util/serviceConfig'
+import { setKeycloakConfig } from '@fb/fb-core/src/util/keycloak'
 
 import TpComponents, { Page } from '@fb/tp-components/src/index'
 import TpSchedule from '@fb/schedule-ui/src/index'
@@ -21,6 +22,7 @@ import './assets/styles/main.less';
 //import MonitorUi from '@fb/monitor-ui'
 // 导入组件
 import LogCenterUi from '@fb/log-center-ui'
+import { setKeycloakInitConfig } from '../@fb/fb-core/src/util/keycloak'
 
 window.app = new Application({
 	projectConfig: projectConfig,
@@ -38,7 +40,7 @@ window.app = new Application({
 			}
 		},
 		// 添加组件
-		LogCenterUi:{
+		LogCenterUi: {
 			plugin: LogCenterUi,
 			options: {
 
@@ -133,4 +135,18 @@ window.app = new Application({
 	// 设置 axios 请求头和响应头
 	setServiceReqRes(this)
 
+	// 配置 Keycloak
+	setKeycloakConfig({
+		url: 'http://localhost:8180/',
+		
+		realm: 'ps-realm',
+		clientId: 'ps-be'
+	})
+	setKeycloakInitConfig({
+		responseMode: 'fragment',
+		onLoad: 'check-sso',
+		silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+		checkLoginIframe: false,
+		
+	})
 })

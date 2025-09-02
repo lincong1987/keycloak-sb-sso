@@ -32,7 +32,7 @@
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
-    "typeRoots": ["node_modules/@types", "@fb/*"],
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]
     },
@@ -41,6 +41,7 @@
     ]
   },
   "include": [
+    "@fb/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",
     "screen/**/*.ts",

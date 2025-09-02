@@ -34,11 +34,16 @@ export default {
     if (token) {
       this.$svc.platform.checkToken(token).then(data => {
         if (data.code == -1) {
+          // token无效，跳转到登录页
           if (this.$route.path != this.$datax.GLOBAL_CONFIG.loginPath) {
             this.$router.replace(this.$datax.GLOBAL_CONFIG.loginPath)
           }
         } else {
-          this.$router.replace(this.$datax.GLOBAL_CONFIG.mainPath)
+          // token有效，保持当前路由，不强制跳转到mainPath
+          // 只有当前路由是根路径或登录页时才跳转到mainPath
+          if (this.$route.path === '/' || this.$route.path === this.$datax.GLOBAL_CONFIG.loginPath) {
+            this.$router.replace(this.$datax.GLOBAL_CONFIG.mainPath)
+          }
         }
       })
     }

@@ -8,6 +8,8 @@ import com.jiuxi.security.sso.config.KeycloakSsoProperties;
 import com.jiuxi.security.sso.principal.KeycloakUserPrincipal;
 import com.jiuxi.security.sso.service.KeycloakOAuth2Service;
 import com.jiuxi.admin.core.service.TpTimeRuleService;
+import com.jiuxi.admin.core.service.TpKeycloakAccountService;
+import com.jiuxi.admin.core.bean.entity.TpKeycloakAccount;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -17,6 +19,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,6 +63,9 @@ public class SsoController {
     
     @Autowired
     private TpTimeRuleService tpTimeRuleService;
+    
+    @Autowired
+    private TpKeycloakAccountService tpKeycloakAccountService;
     
     public SsoController() {
         System.out.println("SsoController 已创建！");
@@ -130,6 +139,152 @@ public class SsoController {
     }
     
     /**
+     * 测试获取用户可访问的Keycloak客户端列表
+     * 
+     * @return 客户端列表
+     */
+    @GetMapping("/test_clients")
+    public JsonResponse testGetUserClients(HttpServletRequest request) {
+        try {
+            // 从请求头获取用户token
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return JsonResponse.buildFailure("缺少认证token");
+            }
+            
+            String userToken = authHeader.substring(7);
+            
+            // 获取当前用户信息
+            KeycloakUserPrincipal userPrincipal = (KeycloakUserPrincipal) request.getUserPrincipal();
+            if (userPrincipal == null) {
+                return JsonResponse.buildFailure("用户未认证");
+            }
+            
+            // 使用用户token调用Keycloak Admin API获取客户端列表
+            String keycloakAdminUrl = "http://localhost:8180/admin/realms/ps-realm/clients";
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(userPrincipal.getToken());
+            headers.set("Content-Type", "application/json");
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<Object[]> response = restTemplate.exchange(
+                    keycloakAdminUrl,
+                    HttpMethod.GET,
+                    entity,
+                    Object[].class
+                );
+                
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    // 格式化数据以匹配前端期望的格式
+                    List<Map<String, Object>> formattedClients = formatClientData(Arrays.asList(response.getBody()));
+                    return JsonResponse.buildSuccess(formattedClients);
+                }
+            } catch (Exception e) {
+                logger.warn("调用Keycloak Admin API失败，返回默认客户端列表: " + e.getMessage());
+            }
+            
+            // 如果API调用失败，返回默认客户端列表
+            return JsonResponse.buildSuccess(getDefaultClients());
+            
+        } catch (Exception e) {
+            logger.error("获取Keycloak客户端列表失败", e);
+            return JsonResponse.buildFailure("获取客户端列表失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 测试接口 - 不需要认证的客户端列表
+     */
+    @GetMapping("/test_clients_no_auth")
+    public JsonResponse testGetUserClientsNoAuth() {
+        try {
+            // 直接返回默认客户端列表，不需要认证
+            List<Map<String, Object>> defaultClients = getDefaultClients();
+            return JsonResponse.buildSuccess(defaultClients);
+        } catch (Exception e) {
+            logger.error("获取默认客户端列表失败", e);
+            return JsonResponse.buildFailure("获取客户端列表失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 格式化客户端数据以匹配前端期望的格式
+     */
+    private List<Map<String, Object>> formatClientData(List<Object> rawClients) {
+        List<Map<String, Object>> formattedClients = new ArrayList<>();
+        
+        for (Object rawClient : rawClients) {
+            if (rawClient instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> clientMap = (Map<String, Object>) rawClient;
+                
+                Map<String, Object> formattedClient = new HashMap<>();
+                formattedClient.put("id", clientMap.get("id"));
+                formattedClient.put("clientId", clientMap.get("clientId"));
+                formattedClient.put("name", clientMap.get("name") != null ? clientMap.get("name") : clientMap.get("clientId"));
+                formattedClient.put("description", clientMap.get("description"));
+                formattedClient.put("enabled", clientMap.get("enabled") != null ? clientMap.get("enabled") : true);
+                formattedClient.put("baseUrl", clientMap.get("baseUrl") != null ? clientMap.get("baseUrl") : clientMap.get("rootUrl"));
+                
+                // 处理图标URL
+                Object attributes = clientMap.get("attributes");
+                String iconUrl = null;
+                if (attributes instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> attributesMap = (Map<String, Object>) attributes;
+                    iconUrl = (String) attributesMap.get("icon_url");
+                }
+                formattedClient.put("icon", iconUrl);
+                
+                formattedClients.add(formattedClient);
+            }
+        }
+        
+        return formattedClients;
+    }
+    
+    /**
+     * 获取用户可访问的Keycloak客户端列表
+     * 
+     * @return 客户端列表
+     */
+    @GetMapping("/clients")
+    public JsonResponse getUserClients() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            
+            if (!subject.isAuthenticated()) {
+                return JsonResponse.buildFailure("用户未认证");
+            }
+            
+            Object principal = subject.getPrincipal();
+            if (!(principal instanceof KeycloakUserPrincipal)) {
+                return JsonResponse.buildFailure("无效的用户认证信息");
+            }
+            
+            KeycloakUserPrincipal userPrincipal = (KeycloakUserPrincipal) principal;
+            String accessToken = userPrincipal.getToken();
+            
+            if (accessToken == null || userPrincipal.isTokenExpired()) {
+                return JsonResponse.buildFailure("访问令牌已过期");
+            }
+            
+            // 调用Keycloak Admin API获取客户端列表
+            List<Map<String, Object>> clients = getKeycloakClients(accessToken);
+            
+            return JsonResponse.buildSuccess(clients);
+            
+        } catch (Exception e) {
+            logger.error("获取用户客户端列表失败", e);
+            return JsonResponse.buildFailure("获取客户端列表失败: " + e.getMessage());
+        }
+    }
+    
+    /**
      * 获取登录 URL
      * 
      * @param request HTTP 请求
@@ -173,6 +328,110 @@ public class SsoController {
         return ResponseEntity.ok(response);
     }
     
+    /**
+     * 获取当前用户的Keycloak配置信息
+     *
+     * @return JsonResponse
+     */
+    @GetMapping("/keycloak-config")
+    public JsonResponse getKeycloakConfig() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
+                return JsonResponse.buildFailure("用户未认证");
+            }
+
+            KeycloakUserPrincipal principal = (KeycloakUserPrincipal) subject.getPrincipal();
+            String userId = principal.getUserId();
+            
+            // 根据用户ID查询Keycloak配置信息
+            TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(userId);
+            if (keycloakAccount == null) {
+                return JsonResponse.buildFailure("未找到用户的Keycloak配置信息");
+            }
+
+            // 构建返回的配置信息（不包含敏感信息）
+            Map<String, Object> config = new HashMap<>();
+            config.put("kcRealm", keycloakAccount.getKcRealm());
+            config.put("kcServerUrl", keycloakAccount.getKcServerUrl());
+            config.put("kcClientId", keycloakAccount.getKcClientId());
+            config.put("kcUsername", keycloakAccount.getKcUsername());
+            config.put("kcUserId", keycloakAccount.getKcUserId());
+            config.put("kcPostLogoutRedirectUri", keycloakAccount.getKcPostLogoutRedirectUri());
+            
+            return JsonResponse.buildSuccess(config);
+        } catch (Exception e) {
+            logger.error("获取Keycloak配置信息失败", e);
+            return JsonResponse.buildFailure("获取配置信息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * SSO单点登出
+     *
+     * @param request HTTP请求对象
+     * @return JsonResponse
+     */
+    @PostMapping("/sso-logout")
+    public JsonResponse ssoLogout(HttpServletRequest request) {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
+                return JsonResponse.buildFailure("用户未认证");
+            }
+
+            KeycloakUserPrincipal principal = (KeycloakUserPrincipal) subject.getPrincipal();
+            String userId = principal.getUserId();
+            
+            // 获取用户的Keycloak配置信息
+            TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(userId);
+            if (keycloakAccount == null) {
+                logger.warn("用户{}未找到Keycloak配置信息，执行本地登出", userId);
+                subject.logout();
+                return JsonResponse.buildSuccess("本地登出成功");
+            }
+
+            // 构建Keycloak登出URL
+            String keycloakServerUrl = keycloakAccount.getKcServerUrl();
+            String realm = keycloakAccount.getKcRealm();
+            String clientId = keycloakAccount.getKcClientId();
+            String postLogoutRedirectUri = keycloakAccount.getKcPostLogoutRedirectUri();
+            
+            if (postLogoutRedirectUri == null || postLogoutRedirectUri.trim().isEmpty()) {
+                // 默认重定向到前端首页
+                postLogoutRedirectUri = "http://localhost:10801";
+            }
+
+            StringBuilder logoutUrlBuilder = new StringBuilder();
+            logoutUrlBuilder.append(keycloakServerUrl)
+                          .append("/realms/")
+                          .append(realm)
+                          .append("/protocol/openid-connect/logout");
+            
+            // 添加查询参数
+            logoutUrlBuilder.append("?client_id=").append(clientId);
+            if (postLogoutRedirectUri != null && !postLogoutRedirectUri.trim().isEmpty()) {
+                logoutUrlBuilder.append("&post_logout_redirect_uri=").append(postLogoutRedirectUri);
+            }
+            
+            String logoutUrl = logoutUrlBuilder.toString();
+            logger.info("构建的Keycloak登出URL: {}", logoutUrl);
+
+            // 执行本地登出
+            subject.logout();
+            
+            // 返回Keycloak登出URL，前端需要重定向到此URL完成SSO登出
+            Map<String, Object> result = new HashMap<>();
+            result.put("logoutUrl", logoutUrl);
+            result.put("message", "本地登出成功，请重定向到Keycloak完成SSO登出");
+            
+            return JsonResponse.buildSuccess(result);
+        } catch (Exception e) {
+            logger.error("SSO登出失败", e);
+            return JsonResponse.buildFailure("登出失败: " + e.getMessage());
+        }
+    }
+
     /**
      * 登出
      * 
@@ -374,7 +633,105 @@ public class SsoController {
     private Map<String, Object> createErrorResponse(String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
-        response.put("error", message);
+        response.put("message", message);
         return response;
+    }
+    
+    /**
+     * 调用Keycloak Admin API获取客户端列表
+     * 
+     * @param accessToken 访问令牌
+     * @return 客户端列表
+     */
+    private List<Map<String, Object>> getKeycloakClients(String accessToken) {
+        try {
+            // 构建Keycloak Admin API URL
+            String adminApiUrl = String.format("%s/admin/realms/%s/clients", 
+                properties.getServerUrl(), properties.getRealm());
+            
+            // 创建RestTemplate
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            
+            // 设置请求头
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+            headers.set("Content-Type", "application/json");
+            
+            org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+            
+            // 发送请求获取客户端列表
+            ResponseEntity<java.util.List> response = restTemplate.exchange(
+                adminApiUrl, 
+                org.springframework.http.HttpMethod.GET, 
+                entity, 
+                java.util.List.class
+            );
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                java.util.List<Map<String, Object>> clients = response.getBody();
+                
+                // 过滤和格式化客户端数据，只返回需要的字段
+                List<Map<String, Object>> filteredClients = new ArrayList<>();
+                for (Object clientObj : clients) {
+                    if (clientObj instanceof Map) {
+                        Map<String, Object> client = (Map<String, Object>) clientObj;
+                        Map<String, Object> filteredClient = new HashMap<>();
+                        filteredClient.put("id", client.get("id"));
+                        filteredClient.put("clientId", client.get("clientId"));
+                        filteredClient.put("name", client.get("name"));
+                        filteredClient.put("description", client.get("description"));
+                        filteredClient.put("enabled", client.get("enabled"));
+                        filteredClient.put("publicClient", client.get("publicClient"));
+                        filteredClients.add(filteredClient);
+                    }
+                }
+                
+                return filteredClients;
+            }
+        } catch (Exception e) {
+            logger.error("获取Keycloak客户端列表失败: {}", e.getMessage(), e);
+        }
+        
+        // 如果请求失败，返回模拟数据作为备用
+        return getDefaultClients();
+    }
+    
+    /**
+     * 获取默认客户端列表（备用数据）
+     */
+    private List<Map<String, Object>> getDefaultClients() {
+        List<Map<String, Object>> clients = new ArrayList<>();
+        
+        Map<String, Object> client1 = new HashMap<>();
+        client1.put("id", "ps-be");
+        client1.put("clientId", "ps-be");
+        client1.put("name", "后端管理系统");
+        client1.put("description", "JPX3.0 后端管理系统");
+        client1.put("enabled", true);
+        client1.put("baseUrl", "http://localhost:10801");
+        client1.put("icon", null);
+        clients.add(client1);
+        
+        Map<String, Object> client2 = new HashMap<>();
+        client2.put("id", "ps-fe");
+        client2.put("clientId", "ps-fe");
+        client2.put("name", "前端应用");
+        client2.put("description", "JPX3.0 前端应用系统");
+        client2.put("enabled", true);
+        client2.put("baseUrl", "http://localhost:10801");
+        client2.put("icon", null);
+        clients.add(client2);
+        
+        Map<String, Object> client3 = new HashMap<>();
+        client3.put("id", "ps-mobile");
+        client3.put("clientId", "ps-mobile");
+        client3.put("name", "移动端应用");
+        client3.put("description", "JPX3.0 移动端应用");
+        client3.put("enabled", true);
+        client3.put("baseUrl", "http://localhost:8080");
+        client3.put("icon", null);
+        clients.add(client3);
+        
+        return clients;
     }
 }

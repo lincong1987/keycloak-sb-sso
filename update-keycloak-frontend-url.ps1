@@ -17,7 +17,7 @@ $headers = @{
 
 try {
     # Get current realm config
-    $currentRealm = Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-bmp" `
+    $currentRealm = Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-realm" `
         -Method GET `
         -Headers $headers
     
@@ -30,7 +30,7 @@ try {
     $realmUpdate = $currentRealm | ConvertTo-Json -Depth 10
     
     # Update the realm
-    Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-bmp" `
+    Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-realm" `
         -Method PUT `
         -Headers $headers `
         -Body $realmUpdate
@@ -47,6 +47,6 @@ try {
 }
 
 # Verify the update
-$realmInfo = Invoke-WebRequest -Uri 'http://localhost:8180/realms/ps-bmp' | ConvertFrom-Json
+$realmInfo = Invoke-WebRequest -Uri 'http://localhost:8180/realms/ps-realm' | ConvertFrom-Json
 Write-Host "Current frontend URL: $($realmInfo.frontendUrl)"
 Write-Host "Current auth server URL: $($realmInfo.authServerUrl)"

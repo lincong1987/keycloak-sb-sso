@@ -161,4 +161,13 @@
           and tpb.ACTIVED = 1
     </select>
 
+    <!-- 更新账号的Keycloak ID -->
+    <update id="updateKeycloakId">
+        UPDATE tp_account
+        SET keycloak_id = #{keycloakId},
+            UPDATE_TIME = NOW()
+        WHERE ACCOUNT_ID = #{accountId}
+          AND ACTIVED = 1
+    </update>
+
 </mapper>

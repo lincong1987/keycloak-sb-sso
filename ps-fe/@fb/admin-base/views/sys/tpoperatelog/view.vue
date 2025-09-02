@@ -5,14 +5,14 @@
 				<fb-row>
 					<fb-col span="12">
 						<fb-property-item label="操作人员id">
-							{{formData.username}}
+							{{formData.personId}}
 						</fb-property-item>
 					</fb-col>
-					<!-- <fb-col span="12">
+					<fb-col span="12">
 						<fb-property-item label="操作记录ID">
 							{{formData.operterRid}}
 						</fb-property-item>
-					</fb-col> -->
+					</fb-col>
 				</fb-row>
 				<fb-row>
 					<fb-col span="12">
@@ -28,7 +28,14 @@
 				</fb-row>
 				<fb-row>
 					<fb-col span="12">
- 						<fb-property-item label="操作IP">
+						<fb-property-item label="操作结果">
+							{{operterResultName}}
+						</fb-property-item>
+					</fb-col>
+				</fb-row>
+				<fb-row>
+					<fb-col span="12">
+name						<fb-property-item label="操作IP">
 							{{formData.operterIp}}
 						</fb-property-item>
 					</fb-col>
@@ -38,7 +45,27 @@
 						</fb-property-item>
 					</fb-col>
 				</fb-row>
-			 
+				<fb-row>
+					<fb-col span="12">
+						<fb-property-item label="操作信息">
+							{{formData.operterMsg}}
+						</fb-property-item>
+					</fb-col>
+				</fb-row>
+				<fb-row>
+					<fb-col span="12">
+						<fb-property-item label="原始数据">
+							{{formData.extend01}}
+						</fb-property-item>
+					</fb-col>
+				</fb-row>
+				<fb-row>
+					<fb-col span="12">
+						<fb-property-item label="异常信息">
+							{{formData.extend02}}
+						</fb-property-item>
+					</fb-col>
+				</fb-row>
 			</fb-property>
 		</div>
 		<div class="tp-dialog-bottom">

@@ -511,6 +511,30 @@ export default {
 			return e
 		})
 	},
+
+	// 同步账号到Keycloak
+	syncAccountToKeycloak(formData) {
+		return app.service.request({
+			url: '/sys/person/sync-account-to-keycloak',
+			method: 'post',
+			transformRequest: [
+				// 把json数据序列化成xxx=?&xx=?的格式
+				function (data) {
+					let ret = ''
+					for (let it in data) {
+						ret += encodeURIComponent(it) + '=' +
+							encodeURIComponent(data[it]) + '&'
+					}
+					ret = ret.substring(0, ret.lastIndexOf('&'))
+					return ret
+				},
+			],
+			data: formData,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			responseType: 'json',
+			timeout: 10000,
+		})
+	},
 }
 
 

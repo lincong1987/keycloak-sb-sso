@@ -82,6 +82,7 @@
 
 		<div class="tp-dialog-bottom">
 			<fb-button style="margin-right: 12px" type="primary" @on-click="add">保存</fb-button>
+			<fb-button style="margin-right: 12px" type="default" v-if="deptShowFlag" @on-click="syncToSSO">同步SSO</fb-button>
 			<fb-button style="margin-right: 12px" type="primary" v-if="deptShowFlag" @on-click="resetpwd">密码重置
 			</fb-button>
 			<fb-button style="margin-right: 12px" v-if="this.formData.locked === 0 && deptShowFlag" danger
@@ -309,6 +310,32 @@
 					// 服务器返回失败
 					console.log(err);
 				})
+			},
+
+			// 同步到SSO
+			syncToSSO() {
+				if (!this.formData.accountId) {
+					this.$message.warning('请先保存账号信息');
+					return;
+				}
+
+				this.$confirm('确认将此账号同步到Keycloak SSO系统吗？',   () => {
+					// 调用同步接口
+					this.service.syncAccountToKeycloak({
+						"accountId": this.formData.accountId,
+						"passKey": this.param.passKey
+					}).then((result) => {
+						if (result.code == 1) {
+							this.$message.success('同步SSO成功！');
+							this.logInfo('sync_sso', '同步SSO');
+						} else {
+							this.$message.error(result.message || '同步SSO失败');
+						}
+					}).catch((err) => {
+						console.log(err);
+						this.$message.error('同步SSO失败');
+					});
+				});
 			},
 
 			view(personId) {

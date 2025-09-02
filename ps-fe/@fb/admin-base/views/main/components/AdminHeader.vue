@@ -451,7 +451,20 @@ clearTimeout(this.heartbeatTimer)
 				removeStore.forEach((key) => {
 					this.$store.dispatch(key)
 				})
-				this.$router.replace(this.$datax.get('GLOBAL_CONFIG').loginPath)
+
+				// 检查Keycloak登录状态，如果已登录则先退出
+				if (this.$kc && this.$kc().authenticated) {
+					this.$kc().clearToken()
+					this.$kc().logout(`${window.location.origin}${this.$datax.get('GLOBAL_CONFIG').loginPath}`).then(() => {
+						this.$router.replace(this.$datax.get('GLOBAL_CONFIG').loginPath)
+					}).catch((error) => {
+						console.error('Keycloak logout failed:', error)
+						// 即使Keycloak退出失败，也继续跳转到登录页
+						this.$router.replace(this.$datax.get('GLOBAL_CONFIG').loginPath)
+					})
+				} else {
+					this.$router.replace(this.$datax.get('GLOBAL_CONFIG').loginPath)
+				}
 			})
 
 		},

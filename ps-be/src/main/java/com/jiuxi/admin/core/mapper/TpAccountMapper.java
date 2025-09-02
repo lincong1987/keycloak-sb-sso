@@ -91,4 +91,15 @@ public interface TpAccountMapper {
      */
     List<TpAccount> selectByEmail(String email);
 
+    /**
+     * 更新账号的Keycloak ID
+     *
+     * @param accountId 账号ID
+     * @param keycloakId Keycloak用户ID
+     * @return 更新行数
+     * @author system
+     * @date 2024-01-21
+     */
+    int updateKeycloakId(@Param("accountId") String accountId, @Param("keycloakId") String keycloakId);
+
 }

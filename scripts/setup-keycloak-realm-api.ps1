@@ -5,8 +5,8 @@ param(
     [string]$KeycloakUrl = "http://localhost:8180",
     [string]$AdminUser = "admin",
     [string]$AdminPassword = "admin123",
-    [string]$RealmName = "ps-bmp",
-    [string]$ClientId = "ps-bmp-client"
+    [string]$RealmName = "ps-realm",
+    [string]$ClientId = "ps-realm-client"
 )
 
 # Function: Get admin access token

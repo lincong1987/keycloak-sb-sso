@@ -111,7 +111,7 @@ let index = [
 			{
 				path: '/refresh',
 				name: 'refresh',
-				component: () => import('../views/main/common/refresh'),
+				component: () => import('../views/main/common/refresh.vue'),
 			},
 
 			{

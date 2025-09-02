@@ -4,8 +4,8 @@
 $keycloakUrl = "http://localhost:8180"
 $adminUser = "admin"
 $adminPassword = "admin123"
-$realmName = "ps-bmp"
-$clientId = "ps-bmp-client"
+$realmName = "ps-realm"
+$clientId = "ps-realm-client"
 $redirectUri = "http://localhost/*"
 
 Write-Host "开始配置 Keycloak..."

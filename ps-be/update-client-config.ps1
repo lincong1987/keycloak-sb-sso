@@ -9,11 +9,11 @@ try {
     Write-Host "Successfully obtained admin token"
     
     # Get client information
-    $clients = Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-bmp/clients" -Method Get -Headers @{"Authorization"="Bearer $adminToken"}
-    $client = $clients | Where-Object {$_.clientId -eq "ps-bmp-client"}
+    $clients = Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-realm/clients" -Method Get -Headers @{"Authorization"="Bearer $adminToken"}
+$client = $clients | Where-Object {$_.clientId -eq "ps-realm-client"}
     
     if ($client) {
-        Write-Host "Found client: ps-bmp-client"
+        Write-Host "Found client: ps-realm-client"
         
         # Update redirect URIs
         $client.redirectUris = @(
@@ -26,13 +26,13 @@ try {
         
         # Update client configuration
         $clientJson = $client | ConvertTo-Json -Depth 10
-        Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-bmp/clients/$($client.id)" -Method Put -Body $clientJson -Headers @{"Authorization"="Bearer $adminToken"; "Content-Type"="application/json"}
+        Invoke-RestMethod -Uri "http://localhost:8180/admin/realms/ps-realm/clients/$($client.id)" -Method Put -Body $clientJson -Headers @{"Authorization"="Bearer $adminToken"; "Content-Type"="application/json"}
         
         Write-Host "Client configuration updated successfully"
         Write-Host "Redirect URIs: http://localhost/callback, http://localhost/*"
         Write-Host "Web Origins: http://localhost"
     } else {
-        Write-Host "Client ps-bmp-client not found"
+        Write-Host "Client ps-realm-client not found"
     }
 } catch {
     Write-Host "Configuration update failed: $($_.Exception.Message)"

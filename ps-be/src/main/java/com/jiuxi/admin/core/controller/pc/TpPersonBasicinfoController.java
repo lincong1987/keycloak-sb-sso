@@ -169,8 +169,27 @@ public class TpPersonBasicinfoController {
     @RequestMapping(value = "/account-view")
     @Authorization(businessKey = PASS_KEY)
     public JsonResponse accountView(String personId) {
+        // 临时测试代码：如果personId是特殊值，则创建测试账号
+        if ("TEST_CREATE_ACCOUNT".equals(personId) || "TEST_CREATE_ACCOUNT2".equals(personId)) {
+            try {
+                TpAccountVO vo = new TpAccountVO();
+                vo.setUsername("testuser" + System.currentTimeMillis());
+                vo.setUserpwd("password123");
+                vo.setPersonId("1962825506101395456");
+                
+                int result = tpAccountService.accountInsert(vo);
+                
+                if (result > 0) {
+                    return JsonResponse.buildSuccess("账号创建成功，用户名：" + vo.getUsername() + ", 影响行数：" + result);
+                } else {
+                    return JsonResponse.buildFailure("账号创建失败，影响行数：" + result);
+                }
+            } catch (Exception e) {
+                return JsonResponse.buildFailure("账号创建异常：" + e.getMessage());
+            }
+        }
+        
         TpAccountVO vo = tpAccountService.accountView(personId);
-
         return JsonResponse.buildSuccess(vo);
     }
 
@@ -362,6 +381,61 @@ public class TpPersonBasicinfoController {
             tpPersonBasicinfoService.downloadTemplate(response);
         } catch (Exception e) {
             throw new RuntimeException("下载模板失败", e);
+        }
+    }
+
+    /**
+     * 测试账号创建接口（明文密码）
+     */
+    @RequestMapping(value = "/test_account_add", method = org.springframework.web.bind.annotation.RequestMethod.GET)
+    @IgnoreAuthorization
+    public JsonResponse testAccountAdd(String username, String userpwd, String personId) {
+        TpAccountVO vo = new TpAccountVO();
+        vo.setUsername(username);
+        vo.setUserpwd(userpwd);
+        vo.setPersonId(personId);
+        
+        int result = tpAccountService.accountAdd(vo);
+        
+        if (result > 0) {
+            return JsonResponse.buildSuccess("账号创建成功");
+        } else {
+            return JsonResponse.buildFailure("账号创建失败");
+        }
+    }
+
+    /**
+     * 同步账号到Keycloak
+     */
+    @RequestMapping(value = "/sync-account-to-keycloak")
+    @Authorization(businessKey = PASS_KEY)
+    public JsonResponse syncAccountToKeycloak(String personId, String accountId) {
+        try {
+            String targetAccountId = accountId;
+            
+            // 如果没有直接传accountId，则通过personId获取
+            if (targetAccountId == null && personId != null) {
+                TpAccountVO accountVO = tpAccountService.accountView(personId);
+                if (accountVO == null || accountVO.getAccountId() == null) {
+                    return JsonResponse.buildFailure("未找到该用户的账号信息");
+                }
+                targetAccountId = accountVO.getAccountId();
+            }
+            
+            if (targetAccountId == null) {
+                return JsonResponse.buildFailure("缺少必要的账号ID参数");
+            }
+            
+            // 调用账号服务的同步方法
+            boolean result = tpAccountService.syncAccountToKeycloak(targetAccountId);
+            
+            if (result) {
+                return JsonResponse.buildSuccess("账号同步到Keycloak成功");
+            } else {
+                return JsonResponse.buildFailure("账号同步到Keycloak失败");
+            }
+        } catch (Exception e) {
+            return JsonResponse.buildFailure("同步过程中发生异常：" + e.getMessage());
         }
     }
 

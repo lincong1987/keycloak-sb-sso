@@ -1,6 +1,6 @@
 {
-  "id": "ps-bmp",
-  "realm": "ps-bmp",
+  "id": "ps-realm",
+  "realm": "ps-realm",
   "displayName": "PS BMP Realm",
   "displayNameHtml": "<div class=\"kc-logo-text\"><span>PS BMP Realm</span></div>",
   "notBefore": 0,
@@ -48,8 +48,8 @@
   "roles": {
     "realm": [
       {
-        "id": "default-roles-ps-bmp",
-        "name": "default-roles-ps-bmp",
+        "id": "default-roles-ps-realm",
+      "name": "default-roles-ps-realm",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
@@ -59,7 +59,7 @@
           }
         },
         "clientRole": false,
-        "containerId": "ps-bmp",
+        "containerId": "ps-realm",
         "attributes": {}
       },
       {
@@ -68,7 +68,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "ps-bmp",
+        "containerId": "ps-realm",
         "attributes": {}
       },
       {
@@ -85,8 +85,8 @@
   },
   "groups": [],
   "defaultRole": {
-    "id": "default-roles-ps-bmp",
-    "name": "default-roles-ps-bmp",
+    "id": "default-roles-ps-realm",
+        "name": "default-roles-ps-realm",
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
@@ -142,7 +142,7 @@
       ],
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-ps-bmp"],
+      "realmRoles": ["default-roles-ps-realm"],
       "notBefore": 0,
       "groups": []
     }
@@ -150,8 +150,8 @@
   "scopeMappings": [],
   "clients": [
     {
-      "id": "ps-bmp-client-id",
-      "clientId": "ps-bmp-client",
+      "id": "ps-realm-client-id",
+      "clientId": "ps-realm-client",
       "name": "PS BMP Client",
       "description": "OAuth2 client for PS BMP System",
       "rootUrl": "http://localhost",
@@ -161,7 +161,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "ps-bmp-client-secret",
+      "secret": "ps-realm-client-secret",
       "redirectUris": [
         "http://localhost/callback",
         "http://localhost/*",
@@ -229,7 +229,7 @@
     "xRobotsTag": "none",
     "xFrameOptions": "SAMEORIGIN",
     "xXSSProtection": "1; mode=block",
-    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "contentSecurityPolicy": "frame-src 'self' http://localhost:10801; frame-ancestors 'self' http://localhost:10801; object-src 'none';",
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {},

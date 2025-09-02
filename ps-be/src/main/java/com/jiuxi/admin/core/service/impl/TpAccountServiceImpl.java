@@ -16,8 +16,10 @@ import com.jiuxi.admin.core.listener.service.TpAccountEventService;
 import com.jiuxi.admin.core.mapper.TpAccountMapper;
 import com.jiuxi.admin.core.mapper.TpPersonBasicinfoMapper;
 import com.jiuxi.admin.core.service.EmailService;
+import com.jiuxi.admin.core.service.KeycloakSyncService;
 import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.admin.core.service.TpAccountService;
+import com.jiuxi.admin.core.service.TpKeycloakAccountService;
 import com.jiuxi.common.exception.ExceptionUtils;
 import com.jiuxi.common.util.*;
 import com.jiuxi.common.util.PhoneEncryptionUtils;
@@ -31,8 +33,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.event.TransactionPhase;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +86,12 @@ public class TpAccountServiceImpl implements TpAccountService {
 
     @Autowired(required = false)
     private EmailService emailService;
+
+    @Autowired(required = false)
+    private KeycloakSyncService keycloakSyncService;
+
+    @Autowired(required = false)
+    private TpKeycloakAccountService tpKeycloakAccountService;
 
 
 
@@ -226,6 +239,12 @@ public class TpAccountServiceImpl implements TpAccountService {
                 applicationContext.publishEvent(new TpAccountEvent("账号信息新增同步监听", tpAccountEventService, bean, OpertionTypeEnum.ADD.getOpertionType()));
             }
 
+            // 发布Keycloak同步事件，在事务提交后异步处理
+            if (null != keycloakSyncService) {
+                KeycloakSyncEvent keycloakEvent = new KeycloakSyncEvent(accountId, vo.getUsername(), denUserpwd, "system");
+                applicationContext.publishEvent(keycloakEvent);
+            }
+
             return count;
         } catch (Exception e) {
             LOGGER.error("新增账号信息失败！vo:{}, 错误:{}", JSONObject.toJSONString(vo), ExceptionUtils.getStackTrace(e));
@@ -318,6 +337,26 @@ public class TpAccountServiceImpl implements TpAccountService {
             // 发布事件，修改账号给第三方系统
             if (null != tpAccountEventService) {
                 applicationContext.publishEvent(new TpAccountEvent("账号信息修改同步监听", tpAccountEventService, bean, OpertionTypeEnum.UPDATE.getOpertionType()));
+            }
+
+            // 同步账号信息到Keycloak（不包括密码）
+            if (null != keycloakSyncService) {
+                try {
+                    // 由于TpAccountVO没有creator字段，使用系统默认值
+                    String creator = "system"; // 默认创建者
+                    KeycloakSyncService.KeycloakSyncResult syncResult = keycloakSyncService.updateKeycloakUser(
+                            vo.getAccountId(), vo.getUsername(), null, creator); // 密码传null，不更新密码
+                    if (syncResult.isSuccess()) {
+                        LOGGER.info("账号信息同步到Keycloak成功: accountId={}, username={}", 
+                                vo.getAccountId(), vo.getUsername());
+                    } else {
+                        LOGGER.warn("账号信息同步到Keycloak失败: accountId={}, username={}, message={}", 
+                                vo.getAccountId(), vo.getUsername(), syncResult.getMessage());
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("同步账号信息到Keycloak时发生异常: accountId={}, username={}, error={}", 
+                            vo.getAccountId(), vo.getUsername(), e.getMessage(), e);
+                }
             }
 
             return count;
@@ -909,6 +948,157 @@ public class TpAccountServiceImpl implements TpAccountService {
         }
 
         return count;
+    }
+
+    /**
+     * 异步处理Keycloak同步
+     * 在事务提交后执行，避免外键约束问题
+     */
+    @Async
+    @EventListener
+    public void handleKeycloakSync(KeycloakSyncEvent event) {
+        System.out.println("=== handleKeycloakSync方法被调用 === accountId=" + event.getAccountId() + ", username=" + event.getUsername());
+        LOGGER.info("=== handleKeycloakSync方法被调用 === accountId={}, username={}", 
+                event.getAccountId(), event.getUsername());
+        
+        if (null != keycloakSyncService) {
+            try {
+                LOGGER.info("开始异步同步账号到Keycloak: accountId={}, username={}", 
+                        event.getAccountId(), event.getUsername());
+                
+                KeycloakSyncService.KeycloakSyncResult syncResult = keycloakSyncService.syncAccountToKeycloak(
+                        event.getAccountId(), event.getUsername(), event.getPassword(), event.getCreator());
+                
+                LOGGER.info("Keycloak同步结果: accountId={}, username={}, success={}, keycloakUserId={}, message={}", 
+                        event.getAccountId(), event.getUsername(), syncResult.isSuccess(), 
+                        syncResult.getKeycloakUserId(), syncResult.getMessage());
+                
+                if (syncResult.isSuccess()) {
+                    // 同步成功后，创建或更新tp_keycloak_account表记录
+                    String keycloakUserId = syncResult.getKeycloakUserId();
+                    LOGGER.info("准备创建或更新tp_keycloak_account表记录: accountId={}, keycloakUserId={}", 
+                            event.getAccountId(), keycloakUserId);
+                    
+                    if (StrUtil.isNotBlank(keycloakUserId) && tpKeycloakAccountService != null) {
+                        try {
+                            LOGGER.info("开始执行tp_keycloak_account表操作: accountId={}, username={}, keycloakUserId={}", 
+                                    event.getAccountId(), event.getUsername(), keycloakUserId);
+                            
+                            // 使用TpKeycloakAccountService创建或更新Keycloak账号关联信息
+                            boolean success = tpKeycloakAccountService.createOrUpdateKeycloakAccount(
+                                    event.getAccountId(), event.getUsername(), event.getPassword(), event.getCreator());
+                            
+                            if (success) {
+                                LOGGER.info("tp_keycloak_account表操作成功: accountId={}, username={}, keycloakUserId={}", 
+                                        event.getAccountId(), event.getUsername(), keycloakUserId);
+                            } else {
+                                LOGGER.warn("tp_keycloak_account表操作失败: accountId={}, username={}, keycloakUserId={}", 
+                                        event.getAccountId(), event.getUsername(), keycloakUserId);
+                            }
+                        } catch (Exception updateException) {
+                            LOGGER.error("操作tp_keycloak_account表失败: accountId={}, username={}, keycloakUserId={}, error={}", 
+                                    event.getAccountId(), event.getUsername(), keycloakUserId, updateException.getMessage(), updateException);
+                        }
+                    } else {
+                        if (StrUtil.isBlank(keycloakUserId)) {
+                            LOGGER.warn("keycloakUserId为空，跳过tp_keycloak_account表操作: accountId={}", event.getAccountId());
+                        }
+                        if (tpKeycloakAccountService == null) {
+                            LOGGER.warn("tpKeycloakAccountService为空，跳过tp_keycloak_account表操作: accountId={}", event.getAccountId());
+                        }
+                    }
+                    
+                    LOGGER.info("账号异步同步到Keycloak成功: accountId={}, username={}, keycloakUserId={}", 
+                            event.getAccountId(), event.getUsername(), syncResult.getKeycloakUserId());
+                } else {
+                    LOGGER.warn("账号异步同步到Keycloak失败: accountId={}, username={}, message={}", 
+                            event.getAccountId(), event.getUsername(), syncResult.getMessage());
+                }
+            } catch (Exception e) {
+                LOGGER.error("异步同步账号到Keycloak时发生异常: accountId={}, username={}, error={}", 
+                        event.getAccountId(), event.getUsername(), e.getMessage(), e);
+            }
+        } else {
+            LOGGER.warn("keycloakSyncService为空，跳过Keycloak同步: accountId={}, username={}", 
+                    event.getAccountId(), event.getUsername());
+        }
+    }
+
+    /**
+     * 同步账号到Keycloak
+     *
+     * @param accountId 账号ID
+     * @return boolean 同步是否成功
+     */
+    @Override
+    public boolean syncAccountToKeycloak(String accountId) {
+        try {
+            // 根据账号ID获取账号信息
+            TpAccountVO accountVO = selectByAccountId(accountId);
+            if (accountVO == null) {
+                LOGGER.error("未找到账号信息，accountId: {}", accountId);
+                return false;
+            }
+
+            // 检查是否已经同步到Keycloak
+            if (tpKeycloakAccountService != null) {
+                // 检查是否已存在Keycloak账号记录
+                boolean exists = tpKeycloakAccountService.existsByAccountId(accountId);
+                if (exists) {
+                    LOGGER.info("账号已同步到Keycloak，accountId: {}", accountId);
+                    return true;
+                }
+            }
+
+            // 发布Keycloak同步事件
+            KeycloakSyncEvent event = new KeycloakSyncEvent(
+                accountVO.getAccountId(),
+                accountVO.getUsername(),
+                accountVO.getUserpwd(), // 这里传入的是加密后的密码，在事件处理中会生成新密码
+                "system" // 使用默认创建者，因为TpAccountVO没有creator字段
+            );
+            applicationContext.publishEvent(event);
+            
+            LOGGER.info("已发布Keycloak同步事件，accountId: {}, username: {}", accountId, accountVO.getUsername());
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("同步账号到Keycloak失败，accountId: {}, error: {}", accountId, ExceptionUtils.getStackTrace(e));
+            return false;
+        }
+    }
+
+    /**
+     * Keycloak同步事件
+     */
+    public static class KeycloakSyncEvent extends ApplicationEvent {
+        private final String accountId;
+        private final String username;
+        private final String password;
+        private final String creator;
+
+        public KeycloakSyncEvent(String accountId, String username, String password, String creator) {
+            super(accountId);
+            this.accountId = accountId;
+            this.username = username;
+            this.password = password;
+            this.creator = creator;
+        }
+
+        public String getAccountId() {
+            return accountId;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getCreator() {
+            return creator;
+        }
     }
 
 }

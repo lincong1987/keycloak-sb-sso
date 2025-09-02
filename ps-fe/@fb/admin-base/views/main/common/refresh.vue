@@ -6,6 +6,8 @@
 	export default {
 		name: 'refresh',
 		beforeRouteEnter (to, from, next) {
+ 
+
 			next(vm => {
 				if (Object.keys(to.params).length) {
 					vm.$router.replace({

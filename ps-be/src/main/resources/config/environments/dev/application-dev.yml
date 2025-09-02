@@ -19,6 +19,15 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+  # DevTools配置 - 启用热重载
+  devtools:
+    restart:
+      enabled: true
+      # 排除不需要重启的目录
+      exclude: static/**,public/**
+    livereload:
+      enabled: true
+      port: 35729
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://alilaoba.cn:13307/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
@@ -265,15 +274,15 @@ localtion:
   hisDataUrl: /api/td/getDataHis
   nowDataUrl: /api/td/getData
 
-# Keycloak SSO 配置
+# Keycloak 配置
 keycloak:
+  # Keycloak 服务器地址
+  server-url: http://localhost:8180
+  # Realm 名称
+  realm: ps-realm
   sso:
     # 启用 Keycloak SSO
     enabled: true
-    # Keycloak 服务器地址
-    server-url: http://localhost:8180
-    # Realm 名称
-    realm: ps-realm
     # 客户端 ID
     client-id: ps-be
     # 客户端密钥（如果需要）
@@ -308,3 +317,12 @@ keycloak:
       roles-header: X-User-Roles
       # 权限头名称
       permissions-header: X-User-Permissions
+
+  # 管理员配置
+  admin:
+    # 管理员客户端ID
+    client-id: admin-cli
+    # 管理员用户名
+    username: admin
+    # 管理员密码
+    password: admin123

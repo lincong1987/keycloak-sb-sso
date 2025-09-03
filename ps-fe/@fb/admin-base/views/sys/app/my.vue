@@ -1,6 +1,6 @@
 <template>
 	<div class="app-list-container">
-		<div class="button-group">
+		<div class="button-group"  >
 			<fb-button type="primary" @on-click="getSsoUserStatus">获取SSO登录状态</fb-button>
 			<fb-button type="primary" @on-click="getClients">获取客户端列表</fb-button>
 			<fb-button type="primary" @on-click="getRoles">获取角色列表</fb-button>
@@ -63,6 +63,7 @@ export default {
 	},
 
 	mounted() {
+		// 直接获取
 		this.getClients();
 	},
 	methods: {
@@ -94,11 +95,11 @@ export default {
 						return !systemClients.includes(client.clientId);
 					});
 				} else {
-					this.clientsError = res.message || '获取客户端列表失败';
+					this.clientsError = (res && res.message) || '获取客户端列表失败';
 				}
 			}).catch(err => {
 				console.error('获取客户端列表失败', err);
-				this.clientsError = err.message || '网络请求失败';
+				this.clientsError =   '网络请求失败';
 			}).finally(() => {
 				this.clientsLoading = false;
 			});

@@ -159,6 +159,10 @@ export default {
 	},
 
 	mounted() {
+
+		//this.$message.info(this.$route.params)
+
+	 
 		this.initCardCode()
 		// 加载系统配置
 		this.loadSystemConfig()

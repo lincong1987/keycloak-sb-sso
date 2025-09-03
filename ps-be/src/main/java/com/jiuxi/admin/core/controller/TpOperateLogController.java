@@ -125,7 +125,28 @@ public class TpOperateLogController {
             String ip = getClientIpAddress(request);
             String userAgent = request.getHeader("User-Agent");
             
-            tpOperateLogService.collection(moduleCode, operterType, operterRid, username, category, jt, ip, userAgent, null, null, null);
+            // 获取operterMsg和appName参数
+            String operterMsg = request.getParameter("operterMsg");
+            operterMsg = Optional.ofNullable(operterMsg).orElse("");
+            if (!operterMsg.isEmpty()) {
+                operterMsg = URLDecoder.decode(operterMsg, Charset.forName("UTF-8"));
+            }
+            
+            String appName = request.getParameter("appName");
+            appName = Optional.ofNullable(appName).orElse("");
+            if (!appName.isEmpty()) {
+                appName = URLDecoder.decode(appName, Charset.forName("UTF-8"));
+            }
+            
+            String extend03 = request.getParameter("extend03");
+            extend03 = Optional.ofNullable(extend03).orElse("");
+            if (!extend03.isEmpty()) {
+                extend03 = URLDecoder.decode(extend03, Charset.forName("UTF-8"));
+            }
+            
+            System.out.println("===collection operterMsg: " + operterMsg + ", appName: " + appName);
+            
+            tpOperateLogService.collection(moduleCode, operterType, operterRid, username, category, jt, ip, userAgent, operterMsg, appName, extend03);
             return JsonResponse.buildSuccess("操作日志记录成功");
         } catch (Exception e) {
             return JsonResponse.buildFailure("操作日志记录失败：" + e.getMessage());

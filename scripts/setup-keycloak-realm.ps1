@@ -191,7 +191,7 @@ function Create-User {
 }
 
 # Main execution
-$KeycloakUrl = "http://localhost:8180"
+$KeycloakUrl = "http://localhost:18080"
 
 Write-ColorOutput "=== Starting Keycloak Realm Setup ===" "Cyan"
 

@@ -52,6 +52,7 @@
 				scroll: false,
 				toolShow: false,
 				currentTabIndex: 0,
+				refreshing: false, // 防抖标志
 				toolList: [
 					{label: '刷新', icon: 'refresh', func: 'refresh'},
 					{label: '关闭左侧', icon: 'left-arrow', func: 'removeLeft'},
@@ -207,21 +208,32 @@
 			},
 
 			refresh (tab, index) {
-				// 清理当前标签页的keep-alive缓存
-				this.clearCurrentTabCache(index)
-				
-				// 使用路由刷新机制
-				const currentRoute = this.$route
-				if (Object.keys(currentRoute.params).length) {
-					this.$router.replace({
-						name: 'refresh',
-						params: currentRoute.params
-					})
-				} else {
-					this.$router.replace({
-						path: '/refresh',
-						query: currentRoute.query
-					})
+				try {
+					// 获取当前标签页索引，如果没有传入则使用当前激活的标签页
+					const targetIndex = index !== undefined ? index : this.currentTabIndex
+					
+					// 显示刷新提示
+					// this.$message.info('正在刷新页面...', 1)
+					
+					// 清理当前标签页的keep-alive缓存
+					this.clearCurrentTabCache(targetIndex)
+					
+					// 使用路由刷新机制
+					const currentRoute = this.$route
+					if (Object.keys(currentRoute.params).length) {
+						this.$router.replace({
+							name: 'refresh',
+							params: currentRoute.params
+						})
+					} else {
+						this.$router.replace({
+							path: '/refresh',
+							query: currentRoute.query
+						})
+					}
+				} catch (error) {
+					console.error('页面刷新失败:', error)
+					this.$message.error('页面刷新失败，请重试')
 				}
 			},
 
@@ -304,6 +316,22 @@
 			},
 
 			handleTabDblclick (tab, index) {
+				// 防抖处理，避免快速双击导致多次刷新
+				if (this.refreshing) {
+					return
+				}
+				
+				this.refreshing = true
+				
+				// 延迟重置防抖标志
+				setTimeout(() => {
+					this.refreshing = false
+				}, 1000)
+				
+				// 更新当前标签页索引
+				this.currentTabIndex = index
+				
+				// 执行刷新
 				this.refresh(tab, index)
 			},
 

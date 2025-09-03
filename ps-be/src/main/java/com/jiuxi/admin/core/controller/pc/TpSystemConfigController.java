@@ -95,6 +95,15 @@ public class TpSystemConfigController {
     }
 
     /**
+     * 保存配置（新增或更新）
+     */
+    @RequestMapping("/save")
+    public JsonResponse save(@RequestBody TpSystemConfig config) {
+        tpSystemConfigService.setConfigValue(config.getConfigKey(), config.getConfigValue(), config.getDescription());
+        return JsonResponse.buildSuccess();
+    }
+
+    /**
      * 删除配置
      */
     @RequestMapping("/delete")
@@ -102,6 +111,15 @@ public class TpSystemConfigController {
         for (String configKey : configKeys) {
             tpSystemConfigService.deleteConfig(configKey);
         }
+        return JsonResponse.buildSuccess();
+    }
+
+    /**
+     * 根据配置键删除单个配置
+     */
+    @RequestMapping("/delete/{configKey}")
+    public JsonResponse deleteByKey(@PathVariable String configKey) {
+        tpSystemConfigService.deleteConfig(configKey);
         return JsonResponse.buildSuccess();
     }
 

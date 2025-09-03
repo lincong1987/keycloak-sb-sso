@@ -9,6 +9,7 @@ import com.jiuxi.security.sso.principal.KeycloakUserPrincipal;
 import com.jiuxi.security.sso.service.KeycloakOAuth2Service;
 import com.jiuxi.admin.core.service.TpTimeRuleService;
 import com.jiuxi.admin.core.service.TpKeycloakAccountService;
+import com.jiuxi.admin.core.service.TpSystemConfigService;
 import com.jiuxi.admin.core.bean.entity.TpKeycloakAccount;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -66,6 +67,9 @@ public class SsoController {
     
     @Autowired
     private TpKeycloakAccountService tpKeycloakAccountService;
+    
+    @Autowired
+    private TpSystemConfigService tpSystemConfigService;
     
     public SsoController() {
         System.out.println("SsoController 已创建！");
@@ -294,12 +298,26 @@ public class SsoController {
     public ResponseEntity<Map<String, Object>> getLoginUrl(HttpServletRequest request) {
         System.out.println("=== getLoginUrl 方法被调用 ===");
         logger.info("收到 SSO 登录 URL 请求");
-        logger.info("Keycloak SSO 配置 - enabled: {}, serverUrl: {}, realm: {}, clientId: {}", 
-                   properties.isEnabled(), properties.getServerUrl(), properties.getRealm(), properties.getClientId());
+        
+        // 从系统配置表获取SSO配置
+        String serverUrl = tpSystemConfigService.getConfigValue("sso.keycloak.server.url");
+        String realm = tpSystemConfigService.getConfigValue("sso.keycloak.realm");
+        String clientId = tpSystemConfigService.getConfigValue("sso.keycloak.client.id");
+        String defaultRedirectUri = tpSystemConfigService.getConfigValue("sso.keycloak.redirect.uri");
+        
+        logger.info("从系统配置获取的 SSO 配置 - serverUrl: {}, realm: {}, clientId: {}", 
+                   serverUrl, realm, clientId);
+        
+        // 检查必要的配置是否存在
+        if (serverUrl == null || realm == null || clientId == null) {
+            logger.error("SSO配置不完整，请检查系统配置表中的SSO相关配置");
+            Map<String, Object> errorResponse = createErrorResponse("SSO配置不完整，请联系管理员");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
         
         String redirectUri = request.getParameter("redirect_uri");
         if (redirectUri == null || redirectUri.trim().isEmpty()) {
-            redirectUri = request.getHeader("Referer");
+            redirectUri = defaultRedirectUri != null ? defaultRedirectUri : request.getHeader("Referer");
         }
         if (redirectUri == null || redirectUri.trim().isEmpty()) {
             redirectUri = "/";
@@ -308,9 +326,9 @@ public class SsoController {
         // 构建 Keycloak 登录 URL
         String loginUrl = String.format(
             "%s/realms/%s/protocol/openid-connect/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=openid",
-            properties.getServerUrl(),
-            properties.getRealm(),
-            properties.getClientId(),
+            serverUrl,
+            realm,
+            clientId,
             redirectUri
         );
         

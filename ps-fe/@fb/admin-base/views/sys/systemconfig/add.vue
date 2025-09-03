@@ -8,7 +8,8 @@
 							<fb-input 
 								v-model="formData.configKey" 
 								placeholder="请输入配置键，如：system.name"
-								readonly>
+								readonly
+								>
 							</fb-input>
 						</fb-form-item>
 					</fb-col>
@@ -37,6 +38,7 @@
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
+				
 			</fb-form>
 		</div>
 		<div class="tp-dialog-bottom">
@@ -122,7 +124,8 @@ export default {
 					const saveData = {
 						configKey: this.formData.configKey,
 						configValue: this.formData.configValue,
-						description: this.formData.description
+						description: this.formData.description,
+						
 					}
 
 					let savePromise

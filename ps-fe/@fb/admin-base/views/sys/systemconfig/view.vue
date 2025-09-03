@@ -108,7 +108,7 @@ export default {
 		// 加载数据
 		loadData(configKey) {
 			this.$svc.sys.config.get(configKey).then(data => {
-				debugger
+				 
 				if (data.code == 1) {
 					this.formData = {
 						configKey: data.data.configKey || '',

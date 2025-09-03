@@ -42,23 +42,10 @@ services:
       KC_HTTP_ENABLED: true
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
-      
-      # CSP配置 - 允许前端应用iframe嵌入
-      KC_SPI_X_FRAME_OPTIONS_FRAME_OPTIONS: SAMEORIGIN
-      KC_SPI_CONTENT_SECURITY_POLICY_FRAME_SRC: "'self' http://localhost:10801"
-      KC_SPI_CONTENT_SECURITY_POLICY_FRAME_ANCESTORS: "'self' http://localhost:10801"
-      
-      # CORS配置 - 允许前端应用跨域请求
-      KC_SPI_CORS_CORS_ALLOWED_ORIGINS: "http://localhost:10801"
-      KC_SPI_CORS_CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
-      KC_SPI_CORS_CORS_ALLOWED_HEADERS: "Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization"
-      KC_SPI_CORS_CORS_EXPOSED_HEADERS: "Access-Control-Allow-Origin,Access-Control-Allow-Credentials"
-      KC_SPI_CORS_CORS_ALLOW_CREDENTIALS: "true"
-      KC_SPI_CORS_CORS_MAX_AGE: "1800"
     command:
       - start-dev
     ports:
-      - "8180:8080"
+      - "18080:8080"
     networks:
       - keycloak-network
     depends_on:

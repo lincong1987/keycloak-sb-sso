@@ -15,7 +15,7 @@
         :close-on-click-shadow="false"
         @on-close="closeTpDialog">
 
-      <component :is="currentComponent" :param="dialog.param" :parentPage="currentPage"></component>
+      <component v-if="currentComponent" :is="currentComponent" :param="dialog.param" :parentPage="currentPage"></component>
       <!-- 失活的组件将会被缓存！-->
       <!--
       <keep-alive>
@@ -39,7 +39,7 @@ export default {
   components: {
     // 'component-a': ComponentA,
     defaultComponent: {
-      template: '',
+      render: h => h('div'),
     },
   },
   // 创建方法
@@ -114,10 +114,10 @@ export default {
           // 加载失败时使用的组件
           error: {template: '<div>加载组件失败</div>'},
           // 展示加载时组件的延时时间。默认值是 200 (毫秒)
-          delay: 200,
+          delay: 1000,
           // 如果提供了超时时间且组件加载也超时了，
           // 则使用加载失败时使用的组件。默认值是：`Infinity`
-          timeout: 3000
+          timeout: 10000
         })
 
 

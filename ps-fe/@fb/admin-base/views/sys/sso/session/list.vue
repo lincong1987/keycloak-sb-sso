@@ -109,49 +109,49 @@
 					primaryKey: "id",
 					columns: [
 						{
-							name: 'id',
-							label: '会话ID',
-							sortable: false,
-							width: 200,
-							ellipsis: true,
-						}, {
 							name: 'username',
 							label: '用户',
 							slot: 'username',
-							sortable: false,
+							sortable: true,
 							width: 120,
-						}, {
+						},  {
+							name: 'status',
+							label: '状态',
+							slot: 'status',
+							sortable: false,
+							width: 80,
+						},{
 							name: 'clientId',
 							label: '客户端',
-							sortable: false,
-							width: 150,
+							sortable: true,
 						}, {
 							name: 'ipAddress',
 							label: 'IP地址',
-							sortable: false,
+							sortable: true,
 							width: 120,
 						}, {
 							name: 'loginTime',
 							label: '登录时间',
-							sortable: false,
+							sortable: true,
 							width: 150,
 						}, {
 							name: 'lastAccessTime',
 							label: '最后访问',
-							sortable: false,
+							sortable: true,
 							width: 150,
 						}, {
 							name: 'duration',
 							label: '会话时长',
 							sortable: false,
 							width: 120,
-						}, {
-							name: 'status',
-							label: '状态',
-							slot: 'status',
-							sortable: false,
-							width: 80,
 						},
+						{
+							name: 'id',
+							label: '会话ID',
+							sortable: true,
+							width: 200,
+							ellipsis: true,
+						}, 
 						{
 							freeze: "right",
 							name: '',
@@ -201,7 +201,7 @@
 
 			// 执行单个会话注销
 			logoutSession(sessionId) {
-				app.service.request('/sys/sso/admin/session/logout', {
+				app.service.request('/sso/admin/session/logout', {
 					method: 'post',
 					data: { sessionId: sessionId },
 					headers: {'Content-Type': 'application/json'},
@@ -221,7 +221,7 @@
 
 			// 执行批量会话注销
 			batchLogoutSessions(sessionIds) {
-				app.service.request('/sys/sso/admin/session/batch-logout', {
+				app.service.request('/sso/admin/session/batch-logout', {
 					method: 'post',
 					data: { sessionIds: sessionIds },
 					headers: {'Content-Type': 'application/json'},

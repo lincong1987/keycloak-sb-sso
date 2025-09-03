@@ -277,12 +277,16 @@ localtion:
 # Keycloak 配置
 keycloak:
   # Keycloak 服务器地址
-  server-url: http://localhost:8180
+  server-url: http://localhost:18080
   # Realm 名称
   realm: ps-realm
   sso:
     # 启用 Keycloak SSO
     enabled: true
+    # Keycloak 服务器地址
+    server-url: http://localhost:18080
+    # Realm 名称
+    realm: ps-realm
     # 客户端 ID
     client-id: ps-be
     # 客户端密钥（如果需要）

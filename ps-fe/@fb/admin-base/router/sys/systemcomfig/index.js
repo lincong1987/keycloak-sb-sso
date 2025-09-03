@@ -9,7 +9,7 @@ export default [
 		meta: {
 			title: '系统配置管理',
 		},
-		component: () => import('@fb/admin-base/views/sys/systemconfig/list.vue'),
+		component: () => import('../../../views/sys/systemconfig/list.vue'),
 	},
  
  

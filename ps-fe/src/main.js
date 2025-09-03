@@ -53,6 +53,7 @@ window.app = new Application({
 				// 隐藏table的loading效果
 				defaultProps: {
 					showLoading: false,
+					
 				},
 			},
 		},

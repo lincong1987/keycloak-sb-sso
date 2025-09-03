@@ -13,7 +13,7 @@ let index = [
 	},
 
 	{
-		path: projectConfig.router.loginPath,
+		path: projectConfig.router.loginPath,// + "?a=a&:error_detail?",
 		name: 'login',
 		meta: {
 			title: '登录',

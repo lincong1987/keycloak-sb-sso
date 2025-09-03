@@ -72,7 +72,7 @@ spring boot 的配置文件为 `application-dev.yml`，请不要使用 `applicat
 
 
 # keycloak 
-服务地址为 `http://localhost:8180`
+服务地址为 `http://localhost:18080`
 realm 为 `ps-realm`
 客户端ID 为 `ps-be`
 admin账号为 `admin`

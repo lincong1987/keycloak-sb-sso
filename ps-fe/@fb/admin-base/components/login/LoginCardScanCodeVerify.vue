@@ -180,24 +180,61 @@ export default {
 			console.log('开始SSO登录流程')
 			// window.location.href = window._puclicConfig.ssoLoginUrl
 			// return
-			// 获取Keycloak登录URL
-			app.service.get('/api/sso/login-url', {
+			// 先获取redirect_uri配置，然后获取Keycloak登录URL
+			app.service.get('/sys/config/get', {
 				params: {
-					redirect_uri: 'http://localhost:8082/ps-be/api/sso/callback'
+					configKey: 'sso.keycloak.redirect.uri'
 				}
-			}).then(result => {
-				console.log('SSO登录URL响应:', result)
-				if (result.success && result.data && result.data.loginUrl) {
-					// 跳转到Keycloak登录页面
-					console.log('跳转到Keycloak登录页面:', result.data.loginUrl)
-					window.location.href = result.data.loginUrl
-				} else {
-					console.error('SSO登录URL响应格式错误:', result)
-					this.$message.error('获取SSO登录地址失败')
+			}).then(configResult => {
+				console.log('获取redirect_uri配置响应:', configResult)
+				let redirectUri = 'http://localhost:8082/ps-be/api/sso/callback' // 默认值
+				if (configResult.success && configResult.data) {
+					redirectUri = configResult.data
 				}
+				
+				// 获取Keycloak登录URL
+				app.service.get('/api/sso/login-url', {
+					params: {
+						redirect_uri: redirectUri
+					}
+				}).then(result => {
+					console.log('SSO登录URL响应:', result)
+					if (result.success && result.data && result.data.loginUrl) {
+						// 跳转到Keycloak登录页面
+						console.log('跳转到Keycloak登录页面:', result.data.loginUrl)
+						window.location.href = result.data.loginUrl
+					} else {
+						console.error('SSO登录URL响应格式错误:', result)
+						this.$message.error('获取SSO登录地址失败')
+					}
+				}).catch(error => {
+					console.error('SSO登录失败:', error)
+					this.$message.error('SSO登录服务暂时不可用')
+				})
 			}).catch(error => {
-				console.error('SSO登录失败:', error)
-				this.$message.error('SSO登录服务暂时不可用')
+				console.error('获取redirect_uri配置失败:', error)
+				// 使用默认值继续执行
+				const redirectUri = 'http://localhost:8082/ps-be/api/sso/callback'
+				
+				// 获取Keycloak登录URL
+				app.service.get('/api/sso/login-url', {
+					params: {
+						redirect_uri: redirectUri
+					}
+				}).then(result => {
+					console.log('SSO登录URL响应:', result)
+					if (result.success && result.data && result.data.loginUrl) {
+						// 跳转到Keycloak登录页面
+						console.log('跳转到Keycloak登录页面:', result.data.loginUrl)
+						window.location.href = result.data.loginUrl
+					} else {
+						console.error('SSO登录URL响应格式错误:', result)
+						this.$message.error('获取SSO登录地址失败')
+					}
+				}).catch(error => {
+					console.error('SSO登录失败:', error)
+					this.$message.error('SSO登录服务暂时不可用')
+				})
 			})
 		}
 	},

@@ -3,6 +3,7 @@ package com.jiuxi.admin.core.controller.pc;
 import com.jiuxi.common.bean.JsonResponse;
 import com.jiuxi.admin.core.service.TpKeycloakAccountService;
 import com.jiuxi.admin.core.service.TpAccountService;
+import com.jiuxi.admin.core.service.TpSystemConfigService;
 import com.jiuxi.admin.core.bean.entity.TpKeycloakAccount;
 import com.jiuxi.admin.core.bean.vo.TpAccountVO;
 import com.jiuxi.security.sso.config.KeycloakSsoProperties;
@@ -43,25 +44,48 @@ public class TpSsoController {
     private TpAccountService tpAccountService;
     
     @Autowired
+    private TpSystemConfigService tpSystemConfigService;
+    
+    @Autowired
     private KeycloakSsoProperties keycloakSsoProperties;
     
     @Autowired
     private RestTemplate restTemplate;
     
-    @Value("${keycloak.server-url:http://localhost:8180}")
-    private String keycloakServerUrl;
+    /**
+     * 获取Keycloak服务器地址
+     */
+    private String getKeycloakServerUrl() {
+        return tpSystemConfigService.getConfigValue("keycloak.server-url", "http://localhost:18080");
+    }
     
-    @Value("${keycloak.realm:ps-realm}")
-    private String keycloakRealm;
+    /**
+     * 获取Keycloak Realm
+     */
+    private String getKeycloakRealm() {
+        return tpSystemConfigService.getConfigValue("keycloak.realm", "ps-realm");
+    }
     
-    @Value("${keycloak.admin.client-id:admin-cli}")
-    private String adminClientId;
+    /**
+     * 获取Keycloak管理员客户端ID
+     */
+    private String getAdminClientId() {
+        return tpSystemConfigService.getConfigValue("keycloak.admin.client-id", "admin-cli");
+    }
     
-    @Value("${keycloak.admin.username:admin}")
-    private String adminUsername;
+    /**
+     * 获取Keycloak管理员用户名
+     */
+    private String getAdminUsername() {
+        return tpSystemConfigService.getConfigValue("keycloak.admin.username", "admin");
+    }
     
-    @Value("${keycloak.admin.password:admin123}")
-    private String adminPassword;
+    /**
+     * 获取Keycloak管理员密码
+     */
+    private String getAdminPassword() {
+        return tpSystemConfigService.getConfigValue("keycloak.admin.password", "admin123");
+    }
     
     /**
      * 获取用户状态信息
@@ -92,45 +116,45 @@ public class TpSsoController {
             String accountId = accountVO.getAccountId();
             logger.debug("通过personId获取到accountId: {}", accountId);
             
-            // 查询用户的Keycloak账号信息
+            // 查询用户的SSO账号信息
             TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(accountId);
             if (keycloakAccount == null) {
-                logger.info("用户未绑定Keycloak账号，accountId: {}", accountId);
+                logger.info("用户未绑定SSO账号，accountId: {}", accountId);
                 Map<String, Object> userStatus = new HashMap<>();
                 userStatus.put("authenticated", false);
                 userStatus.put("keycloakBound", false);
-                userStatus.put("message", "用户未绑定Keycloak账号");
+                userStatus.put("message", "用户未绑定SSO账号");
                 userStatus.put("personId", personId);
                 userStatus.put("accountId", accountId);
                 return JsonResponse.buildSuccess(userStatus);
             }
             
-            logger.debug("找到Keycloak账号信息，accountId: {}, Keycloak用户ID: {}, Keycloak用户名: {}", 
+            logger.debug("找到SSO账号信息，accountId: {}, SSO用户ID: {}, SSO用户名: {}", 
                         accountId, keycloakAccount.getKcUserId(), keycloakAccount.getKcUsername());
             
             // 获取管理员访问令牌
-            logger.debug("正在获取Keycloak管理员访问令牌");
+            logger.debug("正在获取SSO管理员访问令牌");
             String adminToken = getAdminAccessToken();
             if (adminToken == null) {
-                logger.error("无法获取Keycloak管理员令牌，accountId: {}", accountId);
-                return JsonResponse.buildFailure("无法获取Keycloak管理员令牌");
+                logger.error("无法获取SSO管理员令牌，accountId: {}", accountId);
+                return JsonResponse.buildFailure("无法获取SSO管理员令牌");
             }
-            logger.debug("成功获取Keycloak管理员访问令牌");
+            logger.debug("成功获取SSO管理员访问令牌");
             
             // 通过Keycloak REST API获取用户信息
-            logger.debug("正在通过Keycloak REST API获取用户信息，Keycloak用户ID: {}", keycloakAccount.getKcUserId());
+            logger.debug("正在通过Keycloak REST API获取用户信息，SSO用户ID: {}", keycloakAccount.getKcUserId());
             Map<String, Object> keycloakUserInfo = getKeycloakUserInfo(adminToken, keycloakAccount.getKcUserId());
             if (keycloakUserInfo == null) {
-                logger.warn("Keycloak用户不存在或已被删除，账号ID: {}, Keycloak用户ID: {}", 
+                logger.warn("SSO用户不存在或已被删除，账号ID: {}, SSO用户ID: {}", 
                            accountId, keycloakAccount.getKcUserId());
                 Map<String, Object> userStatus = new HashMap<>();
                 userStatus.put("authenticated", false);
                 userStatus.put("keycloakBound", true);
-                userStatus.put("message", "Keycloak用户不存在或已被删除");
+                userStatus.put("message", "SSO用户不存在或已被删除");
                 return JsonResponse.buildSuccess(userStatus);
             }
             
-            logger.debug("成功获取Keycloak用户信息，账号ID: {}, 用户状态: enabled={}, emailVerified={}", 
+            logger.debug("成功获取SSO用户信息，账号ID: {}, 用户状态: enabled={}, emailVerified={}", 
                         accountId, keycloakUserInfo.get("enabled"), keycloakUserInfo.get("emailVerified"));
             
             // 构建用户状态响应
@@ -146,7 +170,7 @@ public class TpSsoController {
             userStatus.put("email", keycloakUserInfo.get("email"));
             userStatus.put("createdTimestamp", keycloakUserInfo.get("createdTimestamp"));
             
-            logger.info("成功获取用户状态信息，账号ID: {}, Keycloak用户名: {}, 状态: authenticated=true", 
+            logger.info("成功获取用户状态信息，账号ID: {}, SSO用户名: {}, 状态: authenticated=true", 
                        accountId, keycloakAccount.getKcUsername());
             return JsonResponse.buildSuccess(userStatus);
         } catch (Exception e) {
@@ -156,23 +180,23 @@ public class TpSsoController {
     }
     
     /**
-     * 获取Keycloak管理员访问令牌
+     * 获取SSO管理员访问令牌
      * 
      * @return 访问令牌
      */
     private String getAdminAccessToken() {
         try {
             // 使用master realm获取管理员令牌
-            String tokenUrl = keycloakServerUrl + "/realms/master/protocol/openid-connect/token";
+            String tokenUrl = getKeycloakServerUrl() + "/realms/master/protocol/openid-connect/token";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "password");
-            params.add("client_id", adminClientId);
-            params.add("username", adminUsername);
-            params.add("password", adminPassword);
+            params.add("client_id", getAdminClientId());
+        params.add("username", getAdminUsername());
+        params.add("password", getAdminPassword());
             
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
             
@@ -184,7 +208,7 @@ public class TpSsoController {
             
             return null;
         } catch (Exception e) {
-            logger.error("获取Keycloak管理员令牌失败", e);
+            logger.error("获取SSO管理员令牌失败", e);
             return null;
         }
     }
@@ -198,7 +222,7 @@ public class TpSsoController {
      */
     private Map<String, Object> getKeycloakUserInfo(String adminToken, String userId) {
         try {
-            String userUrl = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/users/" + userId;
+            String userUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users/" + userId;
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -214,7 +238,7 @@ public class TpSsoController {
             
             return null;
         } catch (Exception e) {
-            logger.error("获取Keycloak用户信息失败", e);
+            logger.error("获取SSO用户信息失败", e);
             return null;
         }
     }
@@ -241,16 +265,16 @@ public class TpSsoController {
             }
             
             String accountId = accountVO.getAccountId();
-            // 查询用户的Keycloak账号信息
+            // 查询用户的SSO账号信息
             TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(accountId);
             if (keycloakAccount == null) {
-                return JsonResponse.buildFailure("用户未绑定Keycloak账号");
+                return JsonResponse.buildFailure("用户未绑定SSO账号");
             }
             
             // 获取管理员访问令牌
             String adminToken = getAdminAccessToken();
             if (adminToken == null) {
-                return JsonResponse.buildFailure("无法获取Keycloak管理员令牌");
+                return JsonResponse.buildFailure("无法获取SSO管理员令牌");
             }
             
             // 通过Keycloak REST API获取客户端列表
@@ -271,7 +295,7 @@ public class TpSsoController {
      */
     private List<Map<String, Object>> getKeycloakClients(String adminToken) {
         try {
-            String clientsUrl = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/clients";
+            String clientsUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -314,16 +338,16 @@ public class TpSsoController {
             }
             
             String accountId = accountVO.getAccountId();
-            // 查询用户的Keycloak账号信息
+            // 查询用户的SSO账号信息
             TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(accountId);
             if (keycloakAccount == null) {
-                return JsonResponse.buildFailure("用户未绑定Keycloak账号");
+                return JsonResponse.buildFailure("用户未绑定SSO账号");
             }
             
             // 获取管理员访问令牌
             String adminToken = getAdminAccessToken();
             if (adminToken == null) {
-                return JsonResponse.buildFailure("无法获取Keycloak管理员令牌");
+                return JsonResponse.buildFailure("无法获取SSO管理员令牌");
             }
             
             // 通过Keycloak REST API获取用户角色
@@ -345,7 +369,7 @@ public class TpSsoController {
      */
     private List<Map<String, Object>> getKeycloakUserRoles(String adminToken, String userId) {
         try {
-            String rolesUrl = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/users/" + userId + "/role-mappings/realm";
+            String rolesUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users/" + userId + "/role-mappings/realm";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -361,7 +385,7 @@ public class TpSsoController {
             
             return new ArrayList<>();
         } catch (Exception e) {
-            logger.error("获取Keycloak用户角色失败", e);
+            logger.error("获取SSO用户角色失败", e);
             return new ArrayList<>();
         }
     }
@@ -388,16 +412,16 @@ public class TpSsoController {
             }
             
             String accountId = accountVO.getAccountId();
-            // 查询用户的Keycloak账号信息
+            // 查询用户的SSO账号信息
             TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(accountId);
             if (keycloakAccount == null) {
-                return JsonResponse.buildFailure("用户未绑定Keycloak账号");
+                return JsonResponse.buildFailure("用户未绑定SSO账号");
             }
             
             // 获取管理员访问令牌
             String adminToken = getAdminAccessToken();
             if (adminToken == null) {
-                return JsonResponse.buildFailure("无法获取Keycloak管理员令牌");
+                return JsonResponse.buildFailure("无法获取SSO管理员令牌");
             }
             
             // 通过Keycloak REST API获取用户资源
@@ -460,7 +484,7 @@ public class TpSsoController {
      */
     private List<Map<String, Object>> getKeycloakUserResources(String adminToken, String userId) {
         try {
-            String resourcesUrl = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/users/" + userId + "/role-mappings/realm";
+            String resourcesUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users/" + userId + "/role-mappings/realm";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -476,7 +500,7 @@ public class TpSsoController {
             
             return new ArrayList<>();
         } catch (Exception e) {
-            logger.error("获取Keycloak用户资源失败", e);
+            logger.error("获取SSO用户资源失败", e);
             return new ArrayList<>();
         }
     }
@@ -490,7 +514,7 @@ public class TpSsoController {
      */
     private boolean logoutKeycloakUser(String adminToken, String userId) {
         try {
-            String logoutUrl = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/users/" + userId + "/logout";
+            String logoutUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users/" + userId + "/logout";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -542,45 +566,45 @@ public class TpSsoController {
             String accountId = accountVO.getAccountId();
             logger.debug("通过personId获取到accountId: {}", accountId);
             
-            // 查询用户的Keycloak账号信息
+            // 查询用户的SSO账号信息
             TpKeycloakAccount keycloakAccount = tpKeycloakAccountService.getByAccountId(accountId);
             if (keycloakAccount == null) {
-                logger.info("用户未绑定Keycloak账号，执行本地退出，accountId: {}", accountId);
+                logger.info("用户未绑定SSO账号，执行本地退出，accountId: {}", accountId);
                 Map<String, Object> result = new HashMap<>();
                 result.put("logoutType", "local");
                 result.put("message", "本地退出成功");
                 return JsonResponse.buildSuccess(result);
             }
             
-            logger.debug("找到Keycloak账号信息，accountId: {}, Keycloak用户ID: {}, Keycloak用户名: {}", 
+            logger.debug("找到SSO账号信息，accountId: {}, SSO用户ID: {}, SSO用户名: {}", 
                         accountId, keycloakAccount.getKcUserId(), keycloakAccount.getKcUsername());
             
             // 获取管理员访问令牌
-            logger.debug("正在获取Keycloak管理员访问令牌");
+            logger.debug("正在获取SSO管理员访问令牌");
             String adminToken = getAdminAccessToken();
             if (adminToken == null) {
-                logger.error("无法获取Keycloak管理员令牌，执行本地退出，accountId: {}", accountId);
+                logger.error("无法获取SSO管理员令牌，执行本地退出，accountId: {}", accountId);
                 Map<String, Object> result = new HashMap<>();
                 result.put("logoutType", "local");
                 result.put("message", "无法连接Keycloak，执行本地退出");
                 return JsonResponse.buildSuccess(result);
             }
-            logger.debug("成功获取Keycloak管理员访问令牌");
+            logger.debug("成功获取SSO管理员访问令牌");
             
             // 通过Keycloak REST API注销用户的所有会话
-            logger.debug("正在通过Keycloak REST API注销用户会话，Keycloak用户ID: {}", keycloakAccount.getKcUserId());
+            logger.debug("正在通过Keycloak REST API注销用户会话，SSO用户ID: {}", keycloakAccount.getKcUserId());
             boolean logoutSuccess = logoutKeycloakUser(adminToken, keycloakAccount.getKcUserId());
             
             Map<String, Object> result = new HashMap<>();
             if (logoutSuccess) {
                 result.put("logoutType", "sso");
                 result.put("message", "SSO退出成功，用户会话已从Keycloak注销");
-                logger.info("成功通过Keycloak REST API注销用户会话，accountId: {}, Keycloak用户ID: {}", 
+                logger.info("成功通过Keycloak REST API注销用户会话，accountId: {}, SSO用户ID: {}", 
                            accountId, keycloakAccount.getKcUserId());
             } else {
                 result.put("logoutType", "partial");
                 result.put("message", "Keycloak注销失败，但本地会话已清除");
-                logger.warn("Keycloak REST API注销失败，但继续执行本地退出，accountId: {}, Keycloak用户ID: {}", 
+                logger.warn("Keycloak REST API注销失败，但继续执行本地退出，accountId: {}, SSO用户ID: {}", 
                            accountId, keycloakAccount.getKcUserId());
             }
             
@@ -648,18 +672,18 @@ public class TpSsoController {
             return JsonResponse.buildSuccess(result);
             
         } catch (Exception e) {
-            logger.error("获取Keycloak全局会话列表失败", e);
+            logger.error("获取SSO全局会话列表失败", e);
             return JsonResponse.buildFailure("获取会话列表失败: " + e.getMessage());
         }
     }
     
     /**
-     * 强制注销Keycloak全局会话
+     * 强制注销SSO全局会话
      * 
      * @param sessionId 会话ID
      * @return JsonResponse
      */
-    @PostMapping("/sys/sso/admin/session/logout")
+    @PostMapping("/admin/session/logout")
     public JsonResponse logoutSession(@RequestBody Map<String, String> request) {
         try {
             String sessionId = request.get("sessionId");
@@ -667,7 +691,7 @@ public class TpSsoController {
                 return JsonResponse.buildFailure("会话ID不能为空");
             }
             
-            logger.info("强制注销Keycloak会话，sessionId: {}", sessionId);
+            logger.info("强制注销SSO会话，sessionId: {}", sessionId);
             
             // 获取管理员访问令牌
             String adminToken = getAdminAccessToken();
@@ -679,26 +703,26 @@ public class TpSsoController {
             boolean success = logoutKeycloakSession(adminToken, sessionId);
             
             if (success) {
-                logger.info("成功注销Keycloak会话，sessionId: {}", sessionId);
+                logger.info("成功注销SSO会话，sessionId: {}", sessionId);
                 return JsonResponse.buildSuccess("会话注销成功");
             } else {
-                logger.warn("注销Keycloak会话失败，sessionId: {}", sessionId);
+                logger.warn("注销SSO会话失败，sessionId: {}", sessionId);
                 return JsonResponse.buildFailure("会话注销失败");
             }
             
         } catch (Exception e) {
-            logger.error("强制注销Keycloak会话失败", e);
+            logger.error("强制注销SSO会话失败", e);
             return JsonResponse.buildFailure("注销会话失败: " + e.getMessage());
         }
     }
     
     /**
-     * 批量强制注销Keycloak会话
+     * 批量强制注销SSO会话
      * 
      * @param request 包含会话ID列表的请求
      * @return JsonResponse
      */
-    @PostMapping("/sys/sso/admin/session/batch-logout")
+    @PostMapping("/admin/session/batch-logout")
     public JsonResponse batchLogoutSessions(@RequestBody Map<String, List<String>> request) {
         try {
             List<String> sessionIds = request.get("sessionIds");
@@ -706,7 +730,7 @@ public class TpSsoController {
                 return JsonResponse.buildFailure("会话ID列表不能为空");
             }
             
-            logger.info("批量强制注销Keycloak会话，sessionIds: {}", sessionIds);
+            logger.info("批量强制注销SSO会话，sessionIds: {}", sessionIds);
             
             // 获取管理员访问令牌
             String adminToken = getAdminAccessToken();
@@ -736,26 +760,80 @@ public class TpSsoController {
             result.put("success", successCount);
             result.put("fail", failCount);
             
-            logger.info("批量注销Keycloak会话完成，总数: {}, 成功: {}, 失败: {}", 
+            logger.info("批量注销SSO会话完成，总数: {}, 成功: {}, 失败: {}", 
                        sessionIds.size(), successCount, failCount);
             
             return JsonResponse.buildSuccess(result);
             
         } catch (Exception e) {
-            logger.error("批量强制注销Keycloak会话失败", e);
+            logger.error("批量强制注销SSO会话失败", e);
             return JsonResponse.buildFailure("批量注销会话失败: " + e.getMessage());
         }
     }
     
     /**
-     * 获取Keycloak会话列表
+     * 获取SSO会话列表
      * 
      * @param adminToken 管理员访问令牌
      * @return 会话列表
      */
     private List<Map<String, Object>> getKeycloakSessions(String adminToken) {
         try {
-            String url = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/sessions";
+            List<Map<String, Object>> allSessions = new ArrayList<>();
+            
+            // 首先获取所有用户
+            String usersUrl = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users";
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<List> usersResponse = restTemplate.exchange(usersUrl, HttpMethod.GET, entity, List.class);
+            
+            if (usersResponse.getStatusCode() == HttpStatus.OK && usersResponse.getBody() != null) {
+                List<Map<String, Object>> users = usersResponse.getBody();
+                
+                // 为每个用户获取其会话
+                for (Map<String, Object> user : users) {
+                    String userId = (String) user.get("id");
+                    if (StringUtils.hasText(userId)) {
+                        List<Map<String, Object>> userSessions = getUserSessions(adminToken, userId);
+                        if (userSessions != null && !userSessions.isEmpty()) {
+                            // 为每个会话添加用户信息
+                            for (Map<String, Object> session : userSessions) {
+                                session.put("userId", userId);
+                                session.put("username", user.get("username"));
+                                session.put("email", user.get("email"));
+                                session.put("firstName", user.get("firstName"));
+                                session.put("lastName", user.get("lastName"));
+                                enrichSessionData(adminToken, session);
+                            }
+                            allSessions.addAll(userSessions);
+                        }
+                    }
+                }
+            }
+            
+            return allSessions;
+            
+        } catch (Exception e) {
+            logger.error("获取SSO会话列表失败", e);
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
+     * 获取特定用户的会话列表
+     * 
+     * @param adminToken 管理员访问令牌
+     * @param userId 用户ID
+     * @return 用户会话列表
+     */
+    private List<Map<String, Object>> getUserSessions(String adminToken, String userId) {
+        try {
+            String url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/users/" + userId + "/sessions";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -766,20 +844,13 @@ public class TpSsoController {
             ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
             
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                List<Map<String, Object>> sessions = response.getBody();
-                
-                // 处理会话数据，添加用户信息
-                for (Map<String, Object> session : sessions) {
-                    enrichSessionData(adminToken, session);
-                }
-                
-                return sessions;
+                return response.getBody();
             }
             
             return new ArrayList<>();
             
         } catch (Exception e) {
-            logger.error("获取Keycloak会话列表失败", e);
+            logger.warn("获取用户会话失败，用户ID: " + userId, e);
             return new ArrayList<>();
         }
     }
@@ -826,7 +897,7 @@ public class TpSsoController {
     }
     
     /**
-     * 注销Keycloak会话
+     * 注销SSO会话
      * 
      * @param adminToken 管理员访问令牌
      * @param sessionId 会话ID
@@ -834,7 +905,7 @@ public class TpSsoController {
      */
     private boolean logoutKeycloakSession(String adminToken, String sessionId) {
         try {
-            String url = keycloakServerUrl + "/admin/realms/" + keycloakRealm + "/sessions/" + sessionId;
+            String url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/sessions/" + sessionId;
             
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(adminToken);
@@ -846,7 +917,7 @@ public class TpSsoController {
             return response.getStatusCode() == HttpStatus.NO_CONTENT || response.getStatusCode() == HttpStatus.OK;
             
         } catch (Exception e) {
-            logger.error("注销Keycloak会话失败，sessionId: {}", sessionId, e);
+            logger.error("注销SSO会话失败，sessionId: {}", sessionId, e);
             return false;
         }
     }

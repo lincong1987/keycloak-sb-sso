@@ -62,7 +62,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      * @date 2020-11-26 14:12
      */
     @Override
-    @Cacheable(cacheNames = "platform.{TpMenuService}$[86400]", key = "#root.methodName + ':' + #menuId")
     public List<TreeNode> tree(String menuId) {
 
         // 超管查询所有菜单
@@ -104,7 +103,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      * @date 2020-12-07 16:58
      */
     @Override
-    @Cacheable(cacheNames = "platform.{TpMenuService}$[86400]", key = "#root.methodName + ':' + #rids", condition = "#pid != '1111111111111111111'")
     public List<MenuTreeNode> mainTree(String pid, String rids) {
         Set<MenuTreeNode> set;
         if (StrUtil.equals(pid, TpConstant.ADMIN.PERSONID)) {
@@ -156,7 +154,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      * @date 2020-12-07 16:58
      */
     @Override
-    @Cacheable(cacheNames = "platform.{TpMenuService}$[86400]", key = "#root.methodName + ':App:' + #rids", condition = "#pid != '1111111111111111111'")
     public Set<MenuTreeNode> mainAppTree(String pid, String rids) {
         Set<MenuTreeNode> set;
         if (StrUtil.equals(pid, TpConstant.ADMIN.PERSONID)) {
@@ -222,7 +219,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      */
     @Override
     @Transactional(rollbackFor = TopinfoRuntimeException.class)
-    @CacheEvict(cacheNames = "platform.{TpMenuService}$[86400]", allEntries = true)
     public TpMenuVO save(TpMenuVO vo, String pid) {
 
         // 父级节点为空则添加顶级节点id
@@ -341,7 +337,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      * @date 2020-11-24 20:13
      */
     @Override
-    @CacheEvict(cacheNames = "platform.{TpMenuService}$[86400]", allEntries = true)
     public TpMenuVO update(TpMenuVO vo, String pid) {
 
         try {
@@ -431,7 +426,6 @@ public class TpMenuServiceImpl implements TpMenuService {
      * @date 2020-11-26 15:22
      */
     @Override
-    @CacheEvict(cacheNames = "platform.{TpMenuService}$[86400]", allEntries = true)
     public int delete(String menuId, String pid) {
         try {
             int countChildren = tpMenuMapper.countChildren(menuId);

@@ -772,7 +772,7 @@ clearTimeout(this.heartbeatTimer)
 		font-size: clamp(16px, 2.5vw, 22px);
 		font-weight: 700;
 		color: #FFFFFF;
-		line-height: 34px;
+		line-height: 24px;
 		text-shadow: 0px 0px 6px rgba(0, 21, 41, 0.1);
 		padding-top: 0px;
 		//padding-left: 72px;
@@ -823,9 +823,9 @@ clearTimeout(this.heartbeatTimer)
 	width: unset;
 	clear: both;
 	overflow: hidden;
-	mix-blend-mode: lighten;
+	//mix-blend-mode: lighten;
 	// background: linear-gradient(#183fbf 0px, #183fbf 64px, #13297e);
-	background: linear-gradient(#0284FE 0px, #0284FE 64px, #3858d1);
+	//background: linear-gradient(#0284FE 0px, #0284FE 64px, #3858d1);
 	border-radius: 0 0 8px 8px;
 
 	.fb-admin-header__nav__item {

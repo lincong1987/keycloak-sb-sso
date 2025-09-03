@@ -31,6 +31,24 @@ export default {
 			batchLogout(sessionIds) {
 				return app.service.post('/sso/admin/session/batch-logout', { sessionIds })
 			}
+		},
+		client: {
+			// 获取keycloak的客户端列表
+			list(params) {
+				return app.service.get('/sso/admin/client/list', {params})
+			},
+			// 获取单个客户端信息
+			get(clientId) {
+				return app.service.get('/sso/admin/client/get',{ params:{clientId} })
+			},
+			// 保存客户端信息（新增或更新）
+			save(params) {
+				return app.service.post('/sso/admin/client/save', params)
+			},
+			// 删除客户端
+			delete(clientId) {
+				return app.service.delete('/sso/admin/client/delete', { clientId })
+			}
 		}
 	}
 }

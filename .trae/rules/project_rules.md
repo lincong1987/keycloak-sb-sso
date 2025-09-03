@@ -56,6 +56,17 @@ JSON返回都是使用 `JsonResponse`，可以使用 `buildSuccess` 和 `buildFa
         return JsonResponse.buildSuccess(page);
     }
 ```
+如果没有使用IPage，那么请返回类似IPage的格式，最终将对象用 JsonResponse.buildSuccess包裹后返回：
+``` json
+
+{
+  "records": [...],  // 数据列表
+  "total": 100,      // 总记录数
+  "current": 1,      // 当前页码
+  "size": 10,        // 每页大小
+  "pages": 10        // 总页数
+}
+```
 spring boot 的配置文件为 `application-dev.yml`，请不要使用 `application.yml`，否则会报错, 位置在 `D:\projects\ps-bmp\keycloak-sb-sso\ps-be\src\main\resources\config\environments\dev\application-dev.yml`
 
 # 前端
@@ -69,6 +80,27 @@ spring boot 的配置文件为 `application-dev.yml`，请不要使用 `applicat
 常用组件易错点：
 `fb-button` 组件的点击事件名是 `@on-click`
 表格组件是 `fb-simple-table`
+许多 fb-ui 组件，数据源绑定的数据源为 `data`，而不是组件嵌套：
+例如 `fb-select` 组件：
+错误的绑定
+``` vue template
+	<fb-select v-model="formData.publicClient" placeholder="请选择客户端类型" :disabled="readonly">
+								<fb-select-option  :value="false" label="机密客户端"></fb-select-option>
+								<fb-select-option :value="true" label="公共客户端"></fb-select-option>
+							</fb-select>
+```
+正确的绑定
+``` vue template
+	<fb-select v-model="formData.publicClient" placeholder="请选择客户端类型" :disabled="readonly" :data="[{
+								value: false,
+								label: '机密客户端'
+							},{
+								value: true,
+								label: '公共客户端'
+							}]">
+							</fb-select>
+```
+
 
 
 # keycloak 

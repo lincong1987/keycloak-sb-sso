@@ -4,7 +4,7 @@
 			<template slot="query">
 				<fb-form ref="query-form" mode="query">
 					<fb-row>
-						<fb-col span="6">
+						<fb-col span="24">
 							<fb-form-item label="用户名">
 								<fb-input v-model="formData.search" placeholder="请输入用户名、客户端ID或IP地址"></fb-input>
 							</fb-form-item>

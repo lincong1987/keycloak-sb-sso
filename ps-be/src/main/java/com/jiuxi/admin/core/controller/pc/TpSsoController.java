@@ -921,4 +921,198 @@ public class TpSsoController {
             return false;
         }
     }
+
+    // ==================== Keycloak 客户端管理接口 ====================
+
+    /**
+     * 获取Keycloak客户端列表
+     * 
+     * @param page 页码
+     * @param size 每页大小
+     * @param search 搜索关键词
+     * @return 客户端列表
+     */
+    @GetMapping("/admin/client/list")
+    public JsonResponse getClientList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            String url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients";
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                List<Map<String, Object>> clients = response.getBody();
+                
+                // 过滤搜索条件
+                if (StringUtils.hasText(search)) {
+                    clients = clients.stream()
+                        .filter(client -> {
+                            String clientId = (String) client.get("clientId");
+                            String name = (String) client.get("name");
+                            return (clientId != null && clientId.toLowerCase().contains(search.toLowerCase())) ||
+                                   (name != null && name.toLowerCase().contains(search.toLowerCase()));
+                        })
+                        .collect(java.util.stream.Collectors.toList());
+                }
+                
+                // 手动分页
+                int total = clients.size();
+                int start = (page - 1) * size;
+                int end = Math.min(start + size, total);
+                
+                List<Map<String, Object>> pageData = clients.subList(start, end);
+                
+                Map<String, Object> result = new HashMap<>();
+                result.put("records", pageData);
+                result.put("total", total);
+                result.put("current", page);
+                result.put("size", size);
+                result.put("pages", (int) Math.ceil((double) total / size));
+                
+                return JsonResponse.buildSuccess(result);
+            } else {
+                return JsonResponse.buildFailure("获取客户端列表失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("获取客户端列表失败", e);
+            return JsonResponse.buildFailure("获取客户端列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取单个Keycloak客户端信息
+     * 
+     * @param clientId 客户端ID
+     * @return 客户端信息
+     */
+    @GetMapping("/admin/client/get")
+    public JsonResponse getClient(@RequestParam String clientId) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            String url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients/" + clientId;
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return JsonResponse.buildSuccess(response.getBody());
+            } else {
+                return JsonResponse.buildFailure("获取客户端信息失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("获取客户端信息失败，clientId: {}", clientId, e);
+            return JsonResponse.buildFailure("获取客户端信息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 保存Keycloak客户端信息（新增或更新）
+     * 
+     * @param clientData 客户端数据
+     * @return 保存结果
+     */
+    @PostMapping("/admin/client/save")
+    public JsonResponse saveClient(@RequestBody Map<String, Object> clientData) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            String clientId = (String) clientData.get("id");
+            boolean isUpdate = StringUtils.hasText(clientId);
+            
+            String url;
+            HttpMethod method;
+            
+            if (isUpdate) {
+                // 更新客户端
+                url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients/" + clientId;
+                method = HttpMethod.PUT;
+            } else {
+                // 新增客户端
+                url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients";
+                method = HttpMethod.POST;
+            }
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(clientData, headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(url, method, entity, String.class);
+            
+            if (response.getStatusCode() == HttpStatus.CREATED || response.getStatusCode() == HttpStatus.NO_CONTENT) {
+                return JsonResponse.buildSuccess(isUpdate ? "客户端更新成功" : "客户端创建成功");
+            } else {
+                return JsonResponse.buildFailure("保存客户端失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("保存客户端失败", e);
+            return JsonResponse.buildFailure("保存客户端失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除Keycloak客户端
+     * 
+     * @param clientId 客户端ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/admin/client/delete")
+    public JsonResponse deleteClient(@RequestParam String clientId) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            String url = getKeycloakServerUrl() + "/admin/realms/" + getKeycloakRealm() + "/clients/" + clientId;
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+            
+            if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+                return JsonResponse.buildSuccess("客户端删除成功");
+            } else {
+                return JsonResponse.buildFailure("删除客户端失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("删除客户端失败，clientId: {}", clientId, e);
+            return JsonResponse.buildFailure("删除客户端失败: " + e.getMessage());
+        }
+    }
 }

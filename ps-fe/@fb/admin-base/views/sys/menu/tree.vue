@@ -183,9 +183,7 @@ export default {
 	methods: {
 		// 初始化树数据
 		initMenuTreeData(menuId, selectMenuId) {
-			// 添加时间戳参数强制刷新，避免缓存问题
-			const timestamp = new Date().getTime();
-			this.service.tree({ menuId: menuId, _t: timestamp }).then((result) => {
+			this.service.tree({ menuId: menuId }).then((result) => {
 				if (result.code == 1) {
 					this.menuData = result.data;
 					// 默认选中根节点

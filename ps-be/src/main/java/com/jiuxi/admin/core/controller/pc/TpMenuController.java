@@ -10,8 +10,7 @@ import com.jiuxi.core.core.annotation.IgnoreAuthorization;
 import com.jiuxi.core.core.validator.group.AddGroup;
 import com.jiuxi.core.core.validator.group.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -36,8 +35,7 @@ public class TpMenuController {
     @Autowired
     private TpMenuService tpMenuService;
     
-    @Autowired
-    private CacheManager cacheManager;
+
 
     /**
      * 自定义参数绑定，处理Boolean类型的'null'字符串
@@ -120,23 +118,6 @@ public class TpMenuController {
         return JsonResponse.buildSuccess();
     }
     
-    /**
-     * 清除菜单缓存
-     */
-    @RequestMapping("/clear-cache")
-    public JsonResponse clearCache() {
-        try {
-            // 清除菜单服务的所有缓存
-            String cacheName = "platform.{TpMenuService}$[86400]";
-            Cache cache = cacheManager.getCache(cacheName);
-            if (cache != null) {
-                cache.clear();
-                return JsonResponse.buildSuccess("菜单缓存清除成功");
-            }
-            return JsonResponse.buildFailure("缓存不存在");
-        } catch (Exception e) {
-            return JsonResponse.buildFailure("菜单缓存清除失败: " + e.getMessage());
-        }
-    }
+
 
 }

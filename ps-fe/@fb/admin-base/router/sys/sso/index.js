@@ -21,4 +21,11 @@ export default [
 		},
 		component: () => import('../../../views/sys/sso/client/list.vue'),
 	},
+	{
+		path: '/sys/sso/log/list',
+		meta: {
+			title: '用户日志管理',
+		},
+		component: () => import('../../../views/sys/sso/log/index.vue'),
+	},
 ]

@@ -396,7 +396,6 @@ public class TpRoleServiceImpl implements TpRoleService {
      */
     @Override
     @Transactional(rollbackFor = TopinfoRuntimeException.class)
-    @CacheEvict(cacheNames = "platform.{TpMenuService}$[86400]", allEntries = true)
     public int roleMenus(String roleId, String menuIds) {
         try {
 

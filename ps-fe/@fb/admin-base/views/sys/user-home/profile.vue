@@ -1,4 +1,4 @@
-<template1>
+<template>
   <div class="user-profile">
     <div class="profile-container">
       <!-- 个人资料头部 -->
@@ -283,10 +283,8 @@
 
 
   </div>
-</template1>
-<template>
-  <div>aaa</div>
 </template>
+ 
 <script>
 export default {
   name: 'Profile',

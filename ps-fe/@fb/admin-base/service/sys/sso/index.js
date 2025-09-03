@@ -49,6 +49,18 @@ export default {
 			delete(clientId) {
 				return app.service.delete('/sso/admin/client/delete', { clientId })
 			}
+		},
+		userEvent: {
+			// 获取keycloak用户事件列表
+			list(params) {
+				return app.service.get('/sso/admin/user-event/list', {params})
+			}
+		},
+		adminEvent: {
+			// 获取keycloak管理员事件列表
+			list(params) {
+				return app.service.get('/sso/admin/admin-event/list', {params})
+			}
 		}
 	}
 }

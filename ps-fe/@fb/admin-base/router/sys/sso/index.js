@@ -24,7 +24,7 @@ export default [
 	{
 		path: '/sys/sso/log/list',
 		meta: {
-			title: '用户日志管理',
+			title: '应用日志管理',
 		},
 		component: () => import('../../../views/sys/sso/log/index.vue'),
 	},

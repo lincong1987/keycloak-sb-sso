@@ -1,11 +1,68 @@
-<!-- 
-这是一个 日志 TAB页
-可以使用 <fb-tabs :data="tabs" > 加 <component is="userLogList" /> 
-布局可以使用 fb-flex 的 gird 能力
-tabs有用户日志、管理员日志
-以下是选项组件
-用户日志：ps-fe\@fb\admin-base\views\sys\sso\log\user\list.vue
-管理员日志：ps-fe\@fb\admin-base\views\sys\sso\log\admin\list.vue
+<template>
+    <fb-flex direction-column gap="8px" style="  padding: 8px; ">
 
-默认选项是 用户日志
--->
+        <fb-flex style=" background: #FFFFFF;
+    border-radius: 4px;
+    padding: 0 8px;">
+            <fb-tabs :data="tabs" v-model="currentComponent"> </fb-tabs>
+        </fb-flex>
+        <fb-flex style="height: 100%;  ">
+            <component if="currentComponent" :is="currentComponent" />
+        </fb-flex>
+        <!-- -->
+    </fb-flex>
+</template>
+
+<script>
+import UserLogList from './user/list.vue'
+import AdminLogList from './admin/list.vue'
+
+export default {
+    name: 'SsoLogIndex',
+    components: {
+        UserLogList,
+        AdminLogList,
+    },
+    data() {
+        return {
+            currentComponent: 'UserLogList',
+            tabs: [
+                {
+                    value: 'UserLogList',
+                    label: '用户日志',
+                    icon: 'user'
+                },
+                {
+                    value: 'AdminLogList',
+                    label: '管理员日志',
+                    icon: 'admin'
+                }
+            ]
+        }
+    },
+    computed: {
+
+    },
+    methods: {
+        closeDialog() {
+            debugger
+         //   this.parentPage.closeDialog()
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.sso-log-page {
+    height: 100%;
+
+    :deep(.fb-tabs) {
+        height: 100%;
+
+        .fb-tabs-content {
+            height: calc(100% - 50px);
+            overflow: hidden;
+        }
+    }
+}
+</style>

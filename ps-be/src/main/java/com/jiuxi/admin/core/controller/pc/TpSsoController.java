@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
  * SSO 用户信息控制器
@@ -1113,6 +1115,196 @@ public class TpSsoController {
         } catch (Exception e) {
             logger.error("删除客户端失败，clientId: {}", clientId, e);
             return JsonResponse.buildFailure("删除客户端失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取Keycloak用户事件列表
+     * 
+     * @param page 页码
+     * @param size 每页大小
+     * @param username 用户名（可选）
+     * @param type 事件类型（可选）
+     * @param clientId 客户端ID（可选）
+     * @param dateFrom 开始时间（可选）
+     * @param dateTo 结束时间（可选）
+     * @return 用户事件列表
+     */
+    @GetMapping("/admin/user-event/list")
+    public JsonResponse getUserEventList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String clientId,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            // 构建查询参数
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(getKeycloakServerUrl())
+                     .append("/admin/realms/")
+                     .append(getKeycloakRealm())
+                     .append("/events");
+            
+            List<String> params = new ArrayList<>();
+            
+            // 计算偏移量
+            int offset = (page - 1) * size;
+            params.add("first=" + offset);
+            params.add("max=" + size);
+            
+            if (StringUtils.hasText(username)) {
+                params.add("user=" + username);
+            }
+            if (StringUtils.hasText(type)) {
+                params.add("type=" + type);
+            }
+            if (StringUtils.hasText(clientId)) {
+                params.add("client=" + clientId);
+            }
+            if (StringUtils.hasText(dateFrom)) {
+                params.add("dateFrom=" + dateFrom);
+            }
+            if (StringUtils.hasText(dateTo)) {
+                params.add("dateTo=" + dateTo);
+            }
+            
+            if (!params.isEmpty()) {
+                urlBuilder.append("?").append(String.join("&", params));
+            }
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<List> response = restTemplate.exchange(
+                urlBuilder.toString(), HttpMethod.GET, entity, List.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                List<Map<String, Object>> events = response.getBody();
+                if (events == null) {
+                    events = new ArrayList<>();
+                }
+                
+                // 构建分页结果
+                Map<String, Object> result = new HashMap<>();
+                result.put("records", events);
+                result.put("total", events.size()); // Keycloak API不直接返回总数，这里使用当前页数据量
+                result.put("current", page);
+                result.put("size", size);
+                result.put("pages", (events.size() + size - 1) / size);
+                
+                return JsonResponse.buildSuccess(result);
+            } else {
+                return JsonResponse.buildFailure("获取用户事件列表失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("获取用户事件列表失败", e);
+            return JsonResponse.buildFailure("获取用户事件列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取Keycloak管理员事件列表
+     * 
+     * @param page 页码
+     * @param size 每页大小
+     * @param authUser 操作用户（可选）
+     * @param operationType 操作类型（可选）
+     * @param resourceType 资源类型（可选）
+     * @param dateFrom 开始时间（可选）
+     * @param dateTo 结束时间（可选）
+     * @return 管理员事件列表
+     */
+    @GetMapping("/admin/admin-event/list")
+    public JsonResponse getAdminEventList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String authUser,
+            @RequestParam(required = false) String operationType,
+            @RequestParam(required = false) String resourceType,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo) {
+        
+        try {
+            String adminToken = getAdminAccessToken();
+            if (adminToken == null) {
+                return JsonResponse.buildFailure("获取管理员访问令牌失败");
+            }
+            
+            // 构建查询参数
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(getKeycloakServerUrl())
+                     .append("/admin/realms/")
+                     .append(getKeycloakRealm())
+                     .append("/admin-events");
+            
+            List<String> params = new ArrayList<>();
+            
+            // 计算偏移量
+            int offset = (page - 1) * size;
+            params.add("first=" + offset);
+            params.add("max=" + size);
+            
+            if (StringUtils.hasText(authUser)) {
+                params.add("authUser=" + authUser);
+            }
+            if (StringUtils.hasText(operationType)) {
+                params.add("operationType=" + operationType);
+            }
+            if (StringUtils.hasText(resourceType)) {
+                params.add("resourceType=" + resourceType);
+            }
+            if (StringUtils.hasText(dateFrom)) {
+                params.add("dateFrom=" + dateFrom);
+            }
+            if (StringUtils.hasText(dateTo)) {
+                params.add("dateTo=" + dateTo);
+            }
+            
+            if (!params.isEmpty()) {
+                urlBuilder.append("?").append(String.join("&", params));
+            }
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<List> response = restTemplate.exchange(
+                urlBuilder.toString(), HttpMethod.GET, entity, List.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                List<Map<String, Object>> events = response.getBody();
+                if (events == null) {
+                    events = new ArrayList<>();
+                }
+                
+                // 构建分页结果
+                Map<String, Object> result = new HashMap<>();
+                result.put("records", events);
+                result.put("total", events.size()); // Keycloak API不直接返回总数，这里使用当前页数据量
+                result.put("current", page);
+                result.put("size", size);
+                result.put("pages", (events.size() + size - 1) / size);
+                
+                return JsonResponse.buildSuccess(result);
+            } else {
+                return JsonResponse.buildFailure("获取管理员事件列表失败");
+            }
+            
+        } catch (Exception e) {
+            logger.error("获取管理员事件列表失败", e);
+            return JsonResponse.buildFailure("获取管理员事件列表失败: " + e.getMessage());
         }
     }
 }

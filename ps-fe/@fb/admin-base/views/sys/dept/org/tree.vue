@@ -110,7 +110,7 @@
 					</fb-row>
 				</fb-property>
 
-				<fb-fieldset label="机构扩展信息" />
+				<!-- <fb-fieldset label="机构扩展信息" />
 				<fb-property bordered label-width="120px" mode="form" v-autoheight="152">
 					<fb-row>
 						<fb-col span="12">
@@ -160,7 +160,7 @@
 						</fb-col>
 					</fb-row>
 
-				</fb-property>
+				</fb-property> -->
 			</template>
 		</fb-page-tree>
 		<tp-dialog ref="TpDialog" @closeTpDialog="closeDialog"></tp-dialog>

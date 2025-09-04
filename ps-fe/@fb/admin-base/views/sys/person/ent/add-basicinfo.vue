@@ -133,7 +133,6 @@
 									   :param="{'pcityId': '-1','cityLevel': 'SYS1702'}"
 									   :reader="{value:'cityId', label: 'cityFullName'}"
 									   :placeholder="'请选择'"
-									   :header-format="cityTreeHeaderFormat"
 									   clearable/>
 						</fb-form-item>
 					</fb-col>

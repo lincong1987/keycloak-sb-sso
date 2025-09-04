@@ -7,21 +7,15 @@
         <div class="header-content">
           <div class="avatar-section">
             <div class="avatar-wrapper">
-<tp-upload
-    readonly
-    view="avatar"
-    v-model="file.fileList"
-    :service="$svc.sys.file"
-    :param="{referType: file.referType}"
-    :referid="userInfo.personId"
-    :accept="'.png,.jpeg,.jpg'"
-></tp-upload>
+              <tp-upload readonly view="avatar" v-model="file.fileList" :service="$svc.sys.file"
+                :param="{ referType: file.referType }" :referid="userInfo.personId"
+                :accept="'.png,.jpeg,.jpg'"></tp-upload>
             </div>
             <div class="user-info">
               <h1 class="user-name">
-                {{ userInfo.personName || userInfo.realName || userInfo.username }}
+                {{ userInfo.personName || userInfo.username }}
                 <span v-if="userInfo.userRoles && userInfo.userRoles.length > 0" class="role-name">
-                  （{{ userInfo.userRoles.map(role => role.roleName).join('，') }}）
+                  （{{userInfo.userRoles.map(role => role.roleName).join('，')}}）
                 </span>
               </h1>
               <div class="user-details">
@@ -61,7 +55,7 @@
                 <i class="iconfont jpx-icon-user-fill label-icon"></i>
                 <span>姓名</span>
               </div>
-              <div class="info-value">{{ userInfo.personName || userInfo.realName || '-' }}</div>
+              <div class="info-value">{{ userInfo.personName   || '-' }}</div>
             </div>
             <div class="info-row">
               <div class="info-label">
@@ -284,22 +278,21 @@
 
   </div>
 </template>
- 
+
 <script>
 export default {
   name: 'Profile',
   data() {
     return {
 
-       file: {
-                referType: 'SYS1014',
-                fileList: []
-            },
+      file: {
+        referType: 'SYS1014',
+        fileList: []
+      },
       // 请求的 service
       service: this.$svc.sys.person,
       userInfo: {
         username: '',
-        realName: '',
         personName: '',
         personId: '',
         email: '',
@@ -367,14 +360,14 @@ export default {
       let userInfo = app.$datax.get('userInfo') || {}
       let personId = userInfo.personId
       let deptId = userInfo.deptId || ''
-      
+
       if (!personId) {
         this.$message.error('无法获取用户ID，请重新登录')
         return
       }
-      
+
       // 调用person service的view方法获取用户信息
-      this.service.view({"personId": personId, "deptId": deptId}).then((result) => {
+      this.service.view({ "personId": personId, "deptId": deptId }).then((result) => {
         // 判断code
         if (result.code == 1) {
           // 合并数据而不是直接覆盖，保留预定义的userRoles数组
@@ -391,10 +384,10 @@ export default {
         this.$message.error('获取用户信息失败')
       })
     },
-    
+
     // 加载用户角色信息
     loadUserRoles(personId, deptId) {
-      this.service.personRoles({"personId": personId, "deptId": deptId}).then((result) => {
+      this.service.personRoles({ "personId": personId, "deptId": deptId }).then((result) => {
         if (result.code == 1 && result.data && result.data.length > 0) {
           // 保存所有角色信息用于标签显示
           this.userInfo.userRoles = result.data
@@ -405,7 +398,7 @@ export default {
         console.error('获取用户角色失败:', err);
       })
     },
-    
+
     // 上传头像
     uploadAvatar() {
       // 创建文件输入元素
@@ -420,12 +413,12 @@ export default {
       }
       input.click()
     },
-    
+
     // 处理头像上传
     async handleAvatarUpload(file) {
       const formData = new FormData()
       formData.append('file', file)
-      
+
       try {
         const response = await app.api.post('/sys/user/upload-avatar', formData)
         if (response.success) {
@@ -436,21 +429,21 @@ export default {
         this.$message.error('头像上传失败')
       }
     },
-    
+
     // 编辑个人信息
     editProfile() {
-      let param = {"userInfo": this.userInfo};
-      let options = {"height": 600, "width": 900};
-      
+      let param = { "userInfo": this.userInfo };
+      let options = { "height": 600, "width": 900 };
+
       this.$refs.TpDialog.show(import('./profile_edit.vue'), param, "编辑个人信息", options);
     },
-    
+
     // 处理保存成功
     handleSaveSuccess(data) {
       this.loadUserInfo() // 重新加载用户信息
       this.$message.success('个人信息保存成功')
     },
-    
+
     // 格式化日期
     formatDate(dateStr) {
       if (!dateStr) return ''
@@ -460,7 +453,7 @@ export default {
       }
       return dateStr
     },
-    
+
     // 获取性别文本
     getSexText(sex) {
       const sexMap = {
@@ -469,7 +462,7 @@ export default {
       }
       return sexMap[sex] || sex
     },
-    
+
     // 获取证件类型文本
     getIdTypeText(idtype) {
       const idTypeMap = {
@@ -480,13 +473,13 @@ export default {
       }
       return idTypeMap[idtype] || idtype
     },
-    
+
     // 获取民族文本
     getNationText(nation) {
       // 这里可以根据实际的字典数据进行映射
       return nation
     },
-    
+
     // 获取政治面貌文本
     getPoliticsText(politics) {
       const politicsMap = {
@@ -506,7 +499,7 @@ export default {
       }
       return politicsMap[politics] || politics
     },
-    
+
     // 获取职称文本
     getTitleText(title) {
       const titleMap = {
@@ -518,7 +511,7 @@ export default {
       }
       return titleMap[title] || title
     },
-    
+
     // 获取学历文本
     getDiplomaText(diploma) {
       const diplomaMap = {

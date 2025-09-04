@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.topinfo.basic.platform.plugin.data.permission.core.mapper.TpDataPermissionScopeMapper">
+
+    <insert id="add" parameterType="com.topinfo.basic.platform.plugin.data.permission.core.bean.entity.TpDataPermissionScope">
+        INSERT INTO tp_data_permission_scope
+            (perm_id, person_id, dept_id, data_scope, tenant_id, creator, create_time, updator, update_time, extend01, extend02, extend03)
+        VALUES
+            (#{permId}, #{personId}, #{deptId}, #{dataScope}, #{tenantId}, #{creator}, #{createTime}, #{updator}, #{updateTime}, #{extend01}, #{extend02}, #{extend03})
+    </insert>
+
+    <update id="update" parameterType="com.topinfo.basic.platform.plugin.data.permission.core.bean.entity.TpDataPermissionScope">
+        UPDATE tp_data_permission_scope
+        <set>
+            <if test="null != dataScope">data_scope = #{dataScope},</if>
+            <if test="null != updator">updator = #{updator},</if>
+            <if test="null != updateTime">update_time = #{updateTime},</if>
+            <if test="null != extend01">extend01 = #{extend01},</if>
+            <if test="null != extend02">extend02 = #{extend02},</if>
+            <if test="null != extend03">extend03 = #{extend03},</if>
+        </set>
+        WHERE perm_id = #{permId}
+    </update>
+
+    <select id="view"
+            resultType="com.topinfo.basic.platform.plugin.data.permission.core.bean.vo.TpDataPermissionScopeVO">
+        SELECT
+            tdps.*
+        FROM tp_data_permission_scope tdps
+        WHERE tdps.person_id = #{personId}
+          AND tdps.dept_id = #{deptId}
+    </select>
+
+    <!--    根据部门id，查询部门层级编码 -->
+    <select id="getDeptLevelcode" resultType="java.lang.String" parameterType="java.lang.String">
+        select DEPT_LEVELCODE from tp_dept_basicinfo where DEPT_ID = #{deptId}
+    </select>
+
+</mapper>

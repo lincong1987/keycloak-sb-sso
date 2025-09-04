@@ -21,7 +21,7 @@
               <div class="user-details">
                 <div class="detail-item">
                   <fb-icon name="team-fill" class="detail-icon"></fb-icon>
-                  <span>{{ userInfo.deptFullName || userInfo.deptName || '暂无部门' }}</span>
+                  <span>{{ userInfo.deptFullName || '暂无部门' }}</span>
                 </div>
                 <div class="detail-item">
                   <fb-icon name="user" class="detail-icon"></fb-icon>
@@ -150,19 +150,13 @@
                 <i class="iconfont jpx-icon-home-fill label-icon"></i>
                 <span>部门</span>
               </div>
-              <div class="info-value">{{ userInfo.deptName || '-' }}</div>
+              <div class="info-value">{{ userInfo.deptFullName || '-' }}</div>
             </div>
-            <div class="info-row">
-              <div class="info-label">
-                <i class="iconfont jpx-icon-user-business-fill label-icon"></i>
-                <span>职位</span>
-              </div>
-              <div class="info-value">{{ userInfo.position || '-' }}</div>
-            </div>
+           
             <div class="info-row">
               <div class="info-label">
                 <i class="iconfont jpx-icon-work-parameter-fill label-icon"></i>
-                <span>岗位</span>
+                <span>职位</span>
               </div>
               <div class="info-value">{{ userInfo.office || '-' }}</div>
             </div>
@@ -239,20 +233,20 @@
             <h3 class="card-title">其他信息</h3>
           </div>
           <div class="card-body">
-            <div class="info-row">
+            <!-- <div class="info-row">
               <div class="info-label">
                 <i class="iconfont jpx-icon-user-police-fill label-icon"></i>
                 <span>执法证号</span>
               </div>
               <div class="info-value">{{ userInfo.checkcardNo || '-' }}</div>
-            </div>
-            <div class="info-row">
+            </div> -->
+            <!-- <div class="info-row">
               <div class="info-label">
                 <i class="iconfont jpx-icon-user-police label-icon"></i>
                 <span>执法证有效期</span>
               </div>
               <div class="info-value">{{ formatDate(userInfo.checkcardLimitdate) }}</div>
-            </div>
+            </div> -->
             <div class="info-row">
               <div class="info-label">
                 <i class="iconfont jpx-icon-user-government-fill label-icon"></i>
@@ -260,12 +254,12 @@
               </div>
               <div class="info-value">{{ getPoliticsText(userInfo.politicsCode) }}</div>
             </div>
-            <div class="resume-section">
-              <div class="resume-header">
+            <div class="info-row full-width">
+              <div class="info-label">
                 <i class="iconfont jpx-icon-information-fill label-icon"></i>
                 <span>个人简介</span>
               </div>
-              <div class="resume-content">{{ userInfo.resume || '暂无个人简介' }}</div>
+              <div class="info-value address">{{ userInfo.resume || '暂无个人简介' }}</div>
             </div>
           </div>
         </div>
@@ -273,7 +267,7 @@
     </div>
 
     <!-- 编辑弹框 -->
-    <tp-dialog ref="TpDialog"></tp-dialog>
+    <tp-dialog ref="TpDialog" @closeTpDialog="closeDialog"></tp-dialog>
 
 
   </div>
@@ -298,7 +292,6 @@ export default {
         email: '',
         phone: '',
         tel: '',
-        deptName: '',
         deptFullName: '',
         deptId: '',
         position: '',
@@ -316,7 +309,6 @@ export default {
         safeprinNation: '',
         safeprinNationName: '',
         nativePlace: '',
-        nativePlaceName: '',
         politicsCode: '',
         personNo: '',
         partWorkDate: '',
@@ -342,7 +334,6 @@ export default {
         extend02: '',
         extend03: '',
         defaultDept: '',
-        defaultDeptName: '',
         passKey: '',
         deptIds: '',
         deptFullNames: ''
@@ -366,7 +357,7 @@ export default {
         return
       }
 
-      // 调用person service的view方法获取用户信息
+      // 调用person service的view方法获取用户基本信息
       this.service.view({ "personId": personId, "deptId": deptId }).then((result) => {
         // 判断code
         if (result.code == 1) {
@@ -374,6 +365,8 @@ export default {
           Object.assign(this.userInfo, result.data)
           // 查询用户角色信息
           this.loadUserRoles(personId, deptId)
+          // 查询用户扩展信息
+          this.loadUserExpInfo(personId)
         } else {
           // 服务器返回失败
           this.$message.error('获取用户信息失败: ' + result.message)
@@ -396,6 +389,18 @@ export default {
         }
       }).catch((err) => {
         console.error('获取用户角色失败:', err);
+      })
+    },
+
+    // 加载用户扩展信息
+    loadUserExpInfo(personId) {
+      this.service.expView({ "personId": personId }).then((result) => {
+        if (result.code == 1 && result.data) {
+          // 合并扩展信息到userInfo中
+          Object.assign(this.userInfo, result.data)
+        }
+      }).catch((err) => {
+        console.error('获取用户扩展信息失败:', err);
       })
     },
 
@@ -433,7 +438,10 @@ export default {
     // 编辑个人信息
     editProfile() {
       let param = { "userInfo": this.userInfo };
-      let options = { "height": 600, "width": 900 };
+      let options = { 
+        "height": 600, 
+        "width": 900
+      };
 
       this.$refs.TpDialog.show(import('./profile_edit.vue'), param, "编辑个人信息", options);
     },
@@ -441,8 +449,15 @@ export default {
     // 处理保存成功
     handleSaveSuccess(data) {
       this.loadUserInfo() // 重新加载用户信息
-      this.$message.success('个人信息保存成功')
     },
+
+    // 处理弹框关闭事件
+        closeDialog(param) { 
+            // 如果有参数传递，说明是保存成功后关闭，需要刷新数据
+            if (param) {
+                this.loadUserInfo()
+            }
+        },
 
     // 格式化日期
     formatDate(dateStr) {

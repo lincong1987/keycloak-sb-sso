@@ -51,18 +51,18 @@
 				</div>
 			</div>
 
-			<div class="fb-admin-header__nav__toggle"
+			<!-- <div class="fb-admin-header__nav__toggle"
 
 			>
 				<fb-icon size="12" :name="showFullMenus ? 'up' : 'down'"></fb-icon>
-			</div>
+			</div> -->
 		</nav>
 		<div class="fb-admin-header__actions">
-			<div class="fb-admin-header__actions-home">
+			<!-- <div class="fb-admin-header__actions-home">
 				<fb-button v-permission="'BIG_SCREEN'" @on-click="backScreen" icon="chart-gauge-fill" round size="l"
 						   style="background: linear-gradient(90deg, #5AAF52, #3E8E58);border: none;color: #fff">驾驶舱
 				</fb-button>
-			</div>
+			</div> -->
 			<div class="fb-admin-header__actions-item" v-if="false">
 				<div @click="openHelp" class="c-box">
 					<fb-icon :name="'map'" size="16"></fb-icon>

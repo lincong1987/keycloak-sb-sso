@@ -95,9 +95,42 @@
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
+                        <fb-form-item label="职称" prop="titleCode">
+                        
+                        <fb-select v-model="formData.titleCode"
+									   :service="$svc.sys.dict.select"
+									   :param="{'pdicCode': 'SYS12'}"
+									   placeholder="请选择"
+									   clearable>
+			</fb-select>
+                        </fb-form-item>
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
+                        <fb-form-item label="政治面貌" prop="politicsCode">
+                            <fb-select v-model="formData.politicsCode"
+                                       :service="$svc.sys.dict.select"
+                                       :param="{'pdicCode': 'SYS13'}"
+                                       placeholder="请选择"
+                                       clearable>
+                            </fb-select>
+                        </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
                         <fb-form-item label="人员编号" prop="personNo">
                             <fb-input v-model="formData.personNo" placeholder="请输入人员编号"></fb-input>
                         </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
                     </fb-col>
                 </fb-row>
 
@@ -135,9 +168,25 @@
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
+                        <fb-form-item label="学历" prop="diplomaCode">
+                            <fb-select v-model="formData.diplomaCode"
+                                       :service="$svc.sys.dict.select"
+                                       :param="{'pdicCode': 'SYS14'}"
+                                       placeholder="请选择"
+                                       clearable>
+                            </fb-select>
+                        </fb-form-item>
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
                         <fb-form-item label="执法证号" prop="checkcardNo">
                             <fb-input v-model="formData.checkcardNo" placeholder="请输入执法证号"></fb-input>
                         </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
                     </fb-col>
                 </fb-row>
 
@@ -174,7 +223,12 @@ export default {
         dialogParams: {
             type: Object,
             default: () => ({})
-        }
+        },
+        	 
+			parentPage: {
+				type: Object,
+				default: null
+			}
     },
     data() {
         return {
@@ -189,7 +243,7 @@ export default {
                 personId: '',
                 personName: '',
                 sex: '',
-                idtype: 'Y2401',
+                idtype: '',
                 idcard: '',
                 birthday: '',
                 safeprinNation: '',
@@ -199,11 +253,14 @@ export default {
                 maddress: '',
                 position: '',
                 office: '',
+                titleCode: '',
+                politicsCode: '',
                 personNo: '',
                 partWorkDate: '',
                 school: '',
                 sepcSubject: '',
                 degree: '',
+                diplomaCode: '',
                 checkcardNo: '',
                 resume: ''
             },
@@ -247,7 +304,7 @@ export default {
             if (userInfo && Object.keys(userInfo).length > 0) {
                 this.formData = {
                     personId: userInfo.personId || '',
-                    realName: userInfo.personName || userInfo.realName || '',
+                    personName: userInfo.personName || userInfo.realName || '',
                     sex: userInfo.sex + "" || '',
                     idtype: userInfo.idtype || '',
                     idcard: userInfo.idcard || '',
@@ -259,11 +316,14 @@ export default {
                     maddress: userInfo.maddress || '',
                     position: userInfo.position || '',
                     office: userInfo.office || '',
+                    titleCode: userInfo.titleCode || '',
+                    politicsCode: userInfo.politicsCode || '',
                     personNo: userInfo.personNo || '',
                     partWorkDate: userInfo.partWorkDate || '',
                     school: userInfo.school || '',
                     sepcSubject: userInfo.sepcSubject || '',
                     degree: userInfo.degree || '',
+                    diplomaCode: userInfo.diplomaCode || '',
                     checkcardNo: userInfo.checkcardNo || '',
                     resume: userInfo.resume || ''
                 }
@@ -297,24 +357,55 @@ export default {
                 if (valid) {
                     this.saving = true
 
-                    // 准备提交数据
-                    const submitData = {
-                        ...this.formData,
+                    // 准备基本信息数据
+                    const basicData = {
+                        personId: this.formData.personId,
+                        personName: this.formData.personName,
+                        sex: this.formData.sex,
+                        idtype: this.formData.idtype,
+                        idcard: this.formData.idcard,
+                        birthday: this.formData.birthday,
+                        safeprinNation: this.formData.safeprinNation,
+                        phone: this.formData.phone,
+                        tel: this.formData.tel,
+                        email: this.formData.email,
+                        position: this.formData.position,
+                        office: this.formData.office,
+                        personNo: this.formData.personNo,
                         file: this.file
                     }
 
-                    this.service.update(submitData).then((result) => {
-                        this.saving = false
+                    // 准备扩展信息数据
+                    const expData = {
+                        personId: this.formData.personId,
+                        titleCode: this.formData.titleCode,
+                        politicsCode: this.formData.politicsCode,
+                        maddress: this.formData.maddress,
+                        partWorkDate: this.formData.partWorkDate,
+                        school: this.formData.school,
+                        sepcSubject: this.formData.sepcSubject,
+                        degree: this.formData.degree,
+                        diplomaCode: this.formData.diplomaCode,
+                        checkcardNo: this.formData.checkcardNo,
+                        resume: this.formData.resume
+                    }
+
+                    // 先保存基本信息，再保存扩展信息
+                    this.service.update(basicData).then((result) => {
                         if (result.code === 1) {
-                            this.$message.success('保存成功')
-                            // 关闭弹框
-                            if (this.$parent && this.$parent.$parent && this.$parent.$parent.close) {
-                                this.$parent.$parent.close()
-                            }
-                            // 通知父组件刷新数据
-                            this.$emit('save-success', result.data)
+                            // 基本信息保存成功，继续保存扩展信息
+                            return this.service.expAdd(expData)
                         } else {
-                            this.$message.error('保存失败：' + (result.message || '未知错误'))
+                            throw new Error(result.message || '基本信息保存失败')
+                        }
+                    }).then((expResult) => {
+                        this.saving = false
+                        if (expResult.code === 1) {
+                            this.$message.success('保存成功')
+                            // 使用 closeTpDialog 方法关闭弹框并传递数据给父组件
+                            this.closeTpDialog(expResult.data)
+                        } else {
+                            this.$message.error('扩展信息保存失败：' + (expResult.message || '未知错误'))
                         }
                     }).catch((error) => {
                         this.saving = false

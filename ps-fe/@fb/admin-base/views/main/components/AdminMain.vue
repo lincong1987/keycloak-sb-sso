@@ -1,11 +1,15 @@
 <template>
 	<div class="fb-admin-main" :style="getLayoutMainStyle">
+		<!-- <fb-watermark :content="content" color="rgba(255, 0, 0, 1)"  
+                                      :mask-opacity="1"  
+                        > -->
 		<transition name="admin-main-fade-transform" mode="out-in">
 				<!--  确保 flatMenus 为后台页面组件按钮权限  -->
 			<keep-alive :exclude="['refresh']"  >
 				<router-view :key="key" v-if="flatMenus && flatMenus.length > 0"/>
 			</keep-alive>
 		</transition>
+		<!-- </fb-watermark> -->
 	</div>
 </template>
 
@@ -27,7 +31,9 @@
 		},
 
 		data () {
-			return {}
+			return {
+				content: ['你的内容','15555555555']
+			}
 		},
 
 		computed: {
@@ -52,6 +58,6 @@
 </script>
 
 <style lang="less" scoped>
-@import ~"../../../assets/styles/layout/main";
+@import "../../../assets/styles/layout/main.less";
 
 </style>

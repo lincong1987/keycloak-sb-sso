@@ -28,7 +28,7 @@
 				</fb-row>
 				<fb-row>
 					<fb-col span="12">
-						<fb-property-item label="客户端ID">
+						<fb-property-item label="应用ID">
 							{{ data.clientId || '-' }}
 						</fb-property-item>
 					</fb-col>

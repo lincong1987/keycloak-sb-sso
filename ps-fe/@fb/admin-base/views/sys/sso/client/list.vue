@@ -5,8 +5,8 @@
 				<fb-form ref="query-form" mode="query">
 					<fb-row>
 						<fb-col span="24">
-							<fb-form-item label="客户端ID">
-								<fb-input v-model="formData.search" placeholder="请输入客户端ID或名称"></fb-input>
+							<fb-form-item label="应用ID">
+								<fb-input v-model="formData.search" placeholder="请输入应用ID或名称"></fb-input>
 							</fb-form-item>
 						</fb-col>
 					</fb-row>
@@ -15,7 +15,7 @@
 
 			<template slot="buttons">
 				<fb-button ref="buttonAdd" @on-click="handleAdd" icon="add-circle">
-					新增客户端
+					新增应用
 				</fb-button>
 			</template>
 
@@ -89,7 +89,7 @@
 						return val || 'openid-connect';
 					},
 					publicClient(val) {
-						return val ? '公共客户端' : '机密客户端';
+						return val ? '公共应用' : '机密应用';
 					}
 				},
 
@@ -110,17 +110,17 @@
 					columns: [
 						{
 							name: 'clientId',
-							label: '客户端ID',
+							label: '应用ID',
 							slot: 'view',
 							width: 200,
 						}, {
 							name: 'name',
-							label: '客户端名称',
+							label: '应用名称',
 							sortable: false,
 							width: 200,
 						}, {
 							name: 'description',
-							label: '描述',
+							label: '应用描述',
 							sortable: false,
 						}, {
 							name: 'protocol',
@@ -129,7 +129,7 @@
 							width: 120,
 						}, {
 							name: 'publicClient',
-							label: '客户端类型',
+							label: '应用类型',
 							sortable: false,
 							width: 120,
 						}, {
@@ -168,18 +168,18 @@
 				let param = {};
 				let options = {"width": 800, "height": 600};
 				// 打开新增界面弹出窗
-				this.$refs.TpDialog.show(import('./add.vue'), param, "新增客户端", options);
+				this.$refs.TpDialog.show(import('./add.vue'), param, "新增应用", options);
 			},
 			// 修改方法
 			handleEdit(row) {
 				let param = {"id": row.id, "clientId": row.clientId};
 				let options = {"width": 800, "height": 600};
 
-				this.$refs.TpDialog.show(import('./add.vue'), param, "修改客户端", options);
+				this.$refs.TpDialog.show(import('./add.vue'), param, "修改应用", options);
 			},
 			// 删除方法
 			handleDel(row) {
-				this.$confirm('确定要删除该客户端吗？删除后将无法恢复！', () => {
+				this.$confirm('确定要删除该应用吗？删除后将无法恢复！', () => {
 					this.delete(row.id);
 				})
 			},
@@ -200,7 +200,7 @@
 			handleView(row) {
 				let param = {"id": row.id, "clientId": row.clientId, "readonly": true}
 				let options = {"width": 800, "height": 600};
-				this.$refs.TpDialog.show(import('./add.vue'), param, "查看客户端", options);
+				this.$refs.TpDialog.show(import('./add.vue'), param, "查看应用", options);
 			},
 			// 下拉回调
 			onSelectChange(e) {

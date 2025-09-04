@@ -49,17 +49,24 @@
 					pk="rownum"
 					:columns="columns" 
 					:loading="loading"
-							:param="queryData"
+					:param="queryData"
 					:service="$svc.sys.sso.admin.adminEvent.list"
+					:pager="pagination"
+					:reader="{
+						pagerCurrent: 'page'
+					}"
 					:scroll="{
 						y: 380,
 						autoheight: true
 					}"
 				>
-					<template #authUserId="{ row }">
-						<fb-flex ellipsis width="100%" color="primary" 
-						@on-click="handleViewDetail(row)">{{ (row.authDetails && row.authDetails.userId) || '-' }}</fb-flex>
+				 
+				<template #authUserId="{ row }">
+						<fb-link-group>
+							<fb-link :click="()=>handleViewDetail(row)" :label="(row.authDetails && row.authDetails.userId) || '-' " type="primary"></fb-link>
+						</fb-link-group>
 					</template>
+
 					<template #time="{ row }">
 						{{ formatTime(row.time) }}
 					</template>
@@ -97,14 +104,15 @@ export default {
 				{
 					label: '时间',
 					name: 'time',
-					width: 180,
+					width: 140,
 					slot: 'time'
 				},
 				{
 					label: '操作用户',
 					name: 'authDetails.userId',
 					width: 150,
-					slot: 'authUserId'
+					slot: 'authUserId',
+					resizeable: true
 				},
 				{
 					label: '操作类型',
@@ -131,7 +139,7 @@ export default {
 					resize: true
 				},
 				{
-					label: '客户端ID',
+					label: '应用ID',
 					name: 'authDetails.clientId',
 					width: 150,
 					ellipsis: true
@@ -152,12 +160,12 @@ export default {
 			],
 			resourceTypes: [
 				{ value: 'USER', label: '用户' },
-				{ value: 'CLIENT', label: '客户端' },
+				{ value: 'CLIENT', label: '应用' },
 				{ value: 'REALM', label: '域' },
 				{ value: 'ROLE', label: '角色' },
 				{ value: 'GROUP', label: '组' },
 				{ value: 'IDENTITY_PROVIDER', label: '身份提供者' },
-				{ value: 'CLIENT_SCOPE', label: '客户端范围' }
+				{ value: 'CLIENT_SCOPE', label: '应用范围' }
 			]
 		}
 	},
@@ -188,7 +196,8 @@ export default {
 		// 查看详情
 		handleViewDetail(row) {
 			let param = {data: row, };
-			let options = {"height": 350, };
+		
+				let options = {"width": 800, "height": 600};
 
 			this.$refs.TpDialog.show(import('./view.vue'), param, "查看", options);
 			

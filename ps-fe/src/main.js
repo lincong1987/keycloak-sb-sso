@@ -24,6 +24,8 @@ import './assets/styles/main.less';
 import LogCenterUi from '@fb/log-center-ui'
 import { setKeycloakInitConfig } from '../@fb/fb-core/src/util/keycloak'
 
+import './assets/styles/shanxi-main.less';
+
 window.app = new Application({
 	projectConfig: projectConfig,
 	// 建议使用组件局部注册 --- 在 mixins: [Page]

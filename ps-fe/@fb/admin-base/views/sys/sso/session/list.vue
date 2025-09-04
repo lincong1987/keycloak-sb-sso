@@ -6,7 +6,7 @@
 					<fb-row>
 						<fb-col span="24">
 							<fb-form-item label="用户名">
-								<fb-input v-model="formData.search" placeholder="请输入用户名、客户端ID或IP地址"></fb-input>
+								<fb-input v-model="formData.search" placeholder="请输入用户名、应用ID或IP地址"></fb-input>
 							</fb-form-item>
 						</fb-col>
 					</fb-row>
@@ -122,7 +122,7 @@
 							width: 80,
 						},{
 							name: 'clientId',
-							label: '客户端',
+							label: '应用ID',
 							sortable: true,
 						}, {
 							name: 'ipAddress',

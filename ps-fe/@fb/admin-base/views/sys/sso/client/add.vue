@@ -4,13 +4,13 @@
 			<fb-form ref="fbform">
 				<fb-row>
 					<fb-col span="12">
-						<fb-form-item label="客户端ID" prop="clientId" :rule="[{required: true}]">
-							<fb-input v-model="formData.clientId" placeholder="请输入客户端ID" :disabled="isEdit || readonly"></fb-input>
+						<fb-form-item label="应用ID" prop="clientId" :rule="[{required: true}]">
+							<fb-input v-model="formData.clientId" placeholder="请输入应用ID" :disabled="isEdit || readonly"></fb-input>
 						</fb-form-item>
 					</fb-col>
 					<fb-col span="12">
-						<fb-form-item label="客户端名称" prop="name">
-							<fb-input v-model="formData.name" placeholder="请输入客户端名称" :disabled="readonly"></fb-input>
+						<fb-form-item label="应用名称" prop="name">
+							<fb-input v-model="formData.name" placeholder="请输入应用名称" :disabled="readonly"></fb-input>
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
@@ -20,7 +20,7 @@
 						<fb-form-item label="描述" prop="description">
 							<fb-textarea rows="2" v-model="formData.description"
 										 type="text"
-										 placeholder="请输入客户端描述"
+										 placeholder="请输入应用描述"
 										 :maxlength="200"
 										 :disabled="readonly">
 							</fb-textarea>
@@ -39,14 +39,14 @@
 						</fb-form-item>
 					</fb-col>
 					<fb-col span="12">
-						<fb-form-item label="客户端类型" prop="publicClient">
-							<fb-select v-model="formData.publicClient" placeholder="请选择客户端类型" :disabled="readonly"
+						<fb-form-item label="应用类型" prop="publicClient">
+							<fb-select v-model="formData.publicClient" placeholder="请选择应用类型" :disabled="readonly"
 							:data="[{
 								value: false,
-								label: '机密客户端'
+								label: '机密应用'
 							},{
 								value: true,
-								label: '公共客户端'
+								label: '公共应用'
 							}]"
 							>
 							</fb-select>
@@ -114,8 +114,8 @@
 
 				<fb-row v-if="!formData.publicClient">
 					<fb-col span="24">
-						<fb-form-item label="客户端密钥" prop="secret">
-							<fb-input v-model="formData.secret" placeholder="客户端密钥（机密客户端必填）" :disabled="readonly"></fb-input>
+						<fb-form-item label="应用密钥" prop="secret">
+							<fb-input v-model="formData.secret" placeholder="应用密钥（机密应用必填）" :disabled="readonly"></fb-input>
 						</fb-form-item>
 					</fb-col>
 				</fb-row>
@@ -209,7 +209,7 @@
 				}
 			},
 
-			// 加载客户端数据
+			// 加载应用数据
 			loadClientData(clientId) {
 				app.$svc.sys.sso.admin.client.get(clientId).then((result) => {
 					if (result.code == 1) {
@@ -235,11 +235,11 @@
 						this.redirectUrisText = (data.redirectUris || []).join('\n');
 						this.webOriginsText = (data.webOrigins || []).join('\n');
 					} else {
-						this.$message.error('获取客户端信息失败: ' + result.message);
+						this.$message.error('获取应用信息失败: ' + result.message);
 					}
 				}).catch((err) => {
-					console.error('获取客户端信息失败', err);
-					this.$message.error('获取客户端信息失败');
+					console.error('获取应用信息失败', err);
+					this.$message.error('获取应用信息失败');
 				});
 			},
 
@@ -273,8 +273,8 @@
 								this.$message.error((this.isEdit ? '修改' : '新增') + '失败: ' + result.message);
 							}
 						}).catch((err) => {
-							console.error('保存客户端失败', err);
-							this.$message.error('保存客户端失败');
+							console.error('保存应用失败', err);
+							this.$message.error('保存应用失败');
 						});
 					}
 				})

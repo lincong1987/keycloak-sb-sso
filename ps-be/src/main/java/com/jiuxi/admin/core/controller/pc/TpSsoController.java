@@ -450,12 +450,10 @@ public class TpSsoController {
                 return JsonResponse.buildFailure("SessionVO为空");
             }
 
-            return JsonResponse.buildSuccess(sessionVO);
-            
             Map<String, Object> tokenInfo = new HashMap<>();
             tokenInfo.put("accountId", sessionVO.getAccountId());
             tokenInfo.put("personId", sessionVO.getPersonId());
-            tokenInfo.put("username", sessionVO.getUsername());
+            tokenInfo.put("username", sessionVO.getPersonName());
             tokenInfo.put("tenantId", sessionVO.getTenantId());
             
             // 检查是否存在Keycloak绑定
@@ -467,6 +465,8 @@ public class TpSsoController {
                     tokenInfo.put("kcUsername", keycloakAccount.getKcUsername());
                     tokenInfo.put("kcUserId", keycloakAccount.getKcUserId());
                 }
+            } else {
+                tokenInfo.put("keycloakBound", false);
             }
             
             return JsonResponse.buildSuccess(tokenInfo);
@@ -1194,13 +1194,17 @@ public class TpSsoController {
                     events = new ArrayList<>();
                 }
                 
+                // 尝试获取总数 - 由于Keycloak API限制，我们需要通过其他方式获取总数
+                // 这里我们先获取一个较大的数据集来估算总数
+                int totalCount = getTotalUserEventCount(adminToken, username, type, clientId, dateFrom, dateTo);
+                
                 // 构建分页结果
                 Map<String, Object> result = new HashMap<>();
                 result.put("records", events);
-                result.put("total", events.size()); // Keycloak API不直接返回总数，这里使用当前页数据量
+                result.put("total", totalCount);
                 result.put("current", page);
                 result.put("size", size);
-                result.put("pages", (events.size() + size - 1) / size);
+                result.put("pages", (totalCount + size - 1) / size);
                 
                 return JsonResponse.buildSuccess(result);
             } else {
@@ -1210,6 +1214,64 @@ public class TpSsoController {
         } catch (Exception e) {
             logger.error("获取用户事件列表失败", e);
             return JsonResponse.buildFailure("获取用户事件列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取用户事件总数
+     * 由于Keycloak API不直接提供总数，这里通过获取大量数据来估算
+     */
+    private int getTotalUserEventCount(String adminToken, String username, String type, 
+                                     String clientId, String dateFrom, String dateTo) {
+        try {
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(getKeycloakServerUrl())
+                    .append("/admin/realms/")
+                    .append(getKeycloakRealm())
+                    .append("/events");
+            
+            List<String> params = new ArrayList<>();
+            // 获取大量数据来计算总数，设置一个较大的max值
+            params.add("first=0");
+            params.add("max=10000"); // 设置一个较大的值来获取更多数据
+            
+            if (StringUtils.hasText(username)) {
+                params.add("user=" + username);
+            }
+            if (StringUtils.hasText(type)) {
+                params.add("type=" + type);
+            }
+            if (StringUtils.hasText(clientId)) {
+                params.add("client=" + clientId);
+            }
+            if (StringUtils.hasText(dateFrom)) {
+                params.add("dateFrom=" + dateFrom);
+            }
+            if (StringUtils.hasText(dateTo)) {
+                params.add("dateTo=" + dateTo);
+            }
+            
+            if (!params.isEmpty()) {
+                urlBuilder.append("?").append(String.join("&", params));
+            }
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(adminToken);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<List> response = restTemplate.exchange(
+                urlBuilder.toString(), HttpMethod.GET, entity, List.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                List<Map<String, Object>> events = response.getBody();
+                return events != null ? events.size() : 0;
+            }
+            
+            return 0;
+        } catch (Exception e) {
+            logger.warn("获取用户事件总数失败，使用默认值: " + e.getMessage());
+            return 0;
         }
     }
 

@@ -19,8 +19,8 @@
 					</fb-row>
 					<fb-row>
 						<fb-col offset="1" span="10">
-							<fb-form-item label="客户端ID">
-								<fb-input v-model="queryData.clientId" placeholder="请输入客户端ID" clearable />
+							<fb-form-item label="应用ID">
+								<fb-input v-model="queryData.clientId" placeholder="请输入应用ID" clearable />
 							</fb-form-item>
 						</fb-col>
 						<fb-col offset="1" span="10">
@@ -42,21 +42,33 @@
 
 			<template slot="table">
 				<fb-simple-table ref="table" 
-					pk="rownum" :columns="columns" :loading="loading"
-					:param="queryData"
-					:service="$svc.sys.sso.admin.userEvent.list" :scroll="{
-						y: 380,
-						autoheight: true
-					}">
+				pk="rownum" :columns="columns" :loading="loading"
+				:param="queryData"
+				:service="$svc.sys.sso.admin.userEvent.list" 
+				:pager="pagination"
+				:reader="{
+							pagerSize: 'size',
+							pagerCurrent: 'current',
+							pagerTotal: 'total',
+							pagerPages: 'pages',
+				}"
+				:scroll="{
+					y: 380,
+					autoheight: true
+				}">
 					<template #userId="{ row }">
-						<fb-flex ellipsis width="100%" @on-click="handleViewDetail(row)">{{ row.userId || '-'
-							}}</fb-flex>
+						<fb-link-group>
+							<fb-link :click="()=>handleViewDetail(row)" :label="row.userId || '-'" type="primary"></fb-link>
+						</fb-link-group>
 					</template>
+
+
+					
 					<template #time="{ row }">
 						{{ formatTime(row.time) }}
 					</template>
 					<template #type="{ row }">
-						<fb-tag :type="getEventTypeColor(row.type)">{{ row.type }}</fb-tag>
+						<fb-tag :type="getEventTypeColor(row.type)">{{ getEventTypeLabel(row.type) }}</fb-tag>
 					</template>
 				</fb-simple-table>
 			</template>
@@ -93,7 +105,7 @@ export default {
 				{
 					label: '时间',
 					name: 'time',
-					width: 180,
+					width: 140,
 					slot: 'time'
 				},
 				{
@@ -109,7 +121,7 @@ export default {
 					slot: 'type'
 				},
 				{
-					label: '客户端ID',
+					label: '应用ID',
 					name: 'clientId',
 					width: 150
 				},
@@ -170,7 +182,8 @@ export default {
 		// 查看详情
 		handleViewDetail(row) {
 			let param = { data: row, };
-			let options = { "height": 350, };
+	
+				let options = {"width": 800, "height": 600};
 
 			this.$refs.TpDialog.show(import('./view.vue'), param, "查看", options);
 
@@ -195,6 +208,21 @@ export default {
 				'REFRESH_TOKEN': 'info'
 			}
 			return colorMap[type] || 'default'
+		},
+
+		// 获取事件类型中文标签
+		getEventTypeLabel(type) {
+			const labelMap = {
+				'LOGIN': '登录',
+				'LOGOUT': '登出',
+				'REGISTER': '注册',
+				'UPDATE_PROFILE': '更新资料',
+				'UPDATE_PASSWORD': '修改密码',
+				'LOGIN_ERROR': '登录失败',
+				'CODE_TO_TOKEN': '获取令牌',
+				'REFRESH_TOKEN': '刷新令牌'
+			}
+			return labelMap[type] || type
 		}
 		,
 		// 关闭弹窗

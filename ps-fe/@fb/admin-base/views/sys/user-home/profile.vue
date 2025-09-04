@@ -1,5 +1,5 @@
 <template>
-  <div class="user-profile">
+  <div class="user-profile" v-if="true">
     <div class="profile-container">
       <!-- 个人资料头部 -->
       <div class="profile-header">

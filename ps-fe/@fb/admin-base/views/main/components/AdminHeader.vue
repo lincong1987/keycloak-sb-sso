@@ -762,7 +762,7 @@ clearTimeout(this.heartbeatTimer)
 	top: 0;
 	left: 0;
 	height: 64px;
-	background: url("../../../assets/img/main/header_right_bg.png") right top no-repeat #183FBF;
+	//background: url("../../../assets/img/main/header_right_bg.png") right top no-repeat #183FBF;
 	display: flex;
 
 

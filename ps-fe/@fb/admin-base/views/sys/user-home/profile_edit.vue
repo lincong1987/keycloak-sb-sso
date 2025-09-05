@@ -1,42 +1,39 @@
 <template>
     <div class="tp-dialog">
         <div class="tp-dialog-top">
-            <fb-form ref="editForm" :model="formData" :rules="formRules">
+            <fb-form ref="editForm" :model="formData">
                 <!-- 基本信息和头像 -->
                 <fb-row>
                     <fb-col span="12">
                         <fb-row>
                             <fb-col span="24">
-                                <fb-form-item label="姓名" prop="realName">
-                                    <fb-input v-model="formData.realName" placeholder="请输入姓名"></fb-input>
+                                <fb-form-item label="姓名" prop="personName" :rule="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
+                                    <fb-input v-model="formData.personName" placeholder="请输入姓名"></fb-input>
                                 </fb-form-item>
                             </fb-col>
                         </fb-row>
                         <fb-row>
                             <fb-col span="24">
-                                <fb-form-item label="性别" prop="sex">
-                            <fb-select v-model="formData.sex"
-                                       :data="defaultForm.sex"
-                                       :placeholder="'请选择'"
-                                       clearable/>
-                        </fb-form-item>
+                                <fb-form-item label="性别" prop="sex" :rule="[{ required: true, message: '请选择性别', trigger: 'change' }]">
+                                    <fb-select v-model="formData.sex" :data="defaultForm.sex" :placeholder="'请选择'"
+                                        clearable />
+                                </fb-form-item>
                             </fb-col>
                         </fb-row>
                         <fb-row>
                             <fb-col span="24">
-                                <fb-form-item label="证件类型" prop="idtype">
-                            <fb-select v-model="formData.idtype"
-                                       :placeholder="'请选择证件类型'"
-                                       :service="$svc.sys.dict.select"
-                                       :param="{'pdicCode': 'Y24'}"
-                                       @on-change="idtypeChange"/>
-                        </fb-form-item>
+                                <fb-form-item label="证件类型" prop="idtype" :rule="[{ required: true, message: '请选择证件类型', trigger: 'change' }]">
+                                    <fb-select v-model="formData.idtype" :placeholder="'请选择证件类型'"
+                                        :service="$svc.sys.dict.select" :param="{ 'pdicCode': 'Y24' }"
+                                        @on-change="idtypeChange" />
+                                </fb-form-item>
                             </fb-col>
                         </fb-row>
                         <fb-row>
                             <fb-col span="24">
-                                <fb-form-item label="证件号" prop="idcard">
-                                    <fb-input v-model="formData.idcard" placeholder="请输入证件号" @on-blur="birthdayFormat"></fb-input>
+                                <fb-form-item label="证件号" prop="idcard" :rule="[{ required: true, message: '请输入证件号', trigger: 'blur' }]">
+                                    <fb-input v-model="formData.idcard" placeholder="请输入证件号"
+                                        @on-blur="birthdayFormat"></fb-input>
                                 </fb-form-item>
                             </fb-col>
                         </fb-row>
@@ -45,14 +42,9 @@
                         <fb-row>
                             <fb-col span="17">
                                 <fb-form-item label="头像">
-                                    <tp-upload
-                                        view="avatar"
-                                        v-model="file.fileList"
-                                        :service="$svc.sys.file"
-                                        :param="{'referType': file.referType}"
-                                        :referid="formData.personId"
-                                        :accept="'.png,.jpeg,.jpg'"
-                                    ></tp-upload>
+                                    <tp-upload view="avatar" v-model="file.fileList" :service="$svc.sys.file"
+                                        :param="{ 'referType': file.referType }" :referid="formData.personId"
+                                        :accept="'.png,.jpeg,.jpg'"></tp-upload>
                                 </fb-form-item>
                             </fb-col>
                         </fb-row>
@@ -62,29 +54,26 @@
                 <fb-row>
                     <fb-col span="12">
                         <fb-form-item label="出生日期" prop="birthday">
-                            <tp-datepicker v-model="formData.birthday" format="YYYY-MM-DD" value-format="YYYYMMDD" clearable></tp-datepicker>
+                            <tp-datepicker v-model="formData.birthday" format="YYYY-MM-DD" value-format="YYYYMMDD"
+                                clearable></tp-datepicker>
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
                         <fb-form-item label="民族" prop="safeprinNation">
-                            <fb-select v-model="formData.safeprinNation"
-                                       :placeholder="'请选择'"
-                                       :service="$svc.sys.dict.select"
-                                       :param="{'pdicCode': 'Y26'}"
-                                       filterable
-                                       clearable/>
+                            <fb-select v-model="formData.safeprinNation" :placeholder="'请选择'"
+                                :service="$svc.sys.dict.select" :param="{ 'pdicCode': 'Y26' }" filterable clearable />
                         </fb-form-item>
                     </fb-col>
                 </fb-row>
 
                 <fb-row>
                     <fb-col span="12">
-                        <fb-form-item label="手机号" prop="phone">
+                        <fb-form-item label="手机号" prop="phone" :rule="[{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }]">
                             <fb-input v-model="formData.phone" placeholder="请输入手机号"></fb-input>
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
-                        <fb-form-item label="联系电话" :rule="{required: false, type: 'telmobile'}">
+                        <fb-form-item label="联系电话" prop="tel" :rule="[{ required: false, type: 'telmobile' }]">
                             <fb-input v-model="formData.tel" placeholder="请输入联系电话"></fb-input>
                         </fb-form-item>
                     </fb-col>
@@ -92,7 +81,7 @@
 
                 <fb-row>
                     <fb-col span="24">
-                        <fb-form-item label="邮箱" prop="email">
+                        <fb-form-item label="邮箱" prop="email" :rule="[{ type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }]">
                             <fb-input v-model="formData.email" placeholder="请输入邮箱"></fb-input>
                         </fb-form-item>
                     </fb-col>
@@ -100,25 +89,56 @@
 
                 <fb-row>
                     <fb-col span="12">
-                        <fb-form-item label="职位">
-                            <fb-input
-                                type="text"
-                                v-model="formData.office"
-                                placeholder="请输入职位">
+                        <fb-form-item label="职位" prop="office">
+                            <fb-input type="text" v-model="formData.office" placeholder="请输入职位">
                             </fb-input>
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
-                        <fb-form-item label="人员编号" prop="personNo">
-                            <fb-input v-model="formData.personNo" placeholder="请输入人员编号"></fb-input>
+                        <fb-form-item label="职称" prop="titleCode">
+                        
+                        <fb-select v-model="formData.titleCode"
+									   :service="$svc.sys.dict.select"
+									   :param="{'pdicCode': 'SYS12'}"
+									   placeholder="请选择"
+									   clearable>
+			</fb-select>
                         </fb-form-item>
                     </fb-col>
                 </fb-row>
 
                 <fb-row>
                     <fb-col span="12">
+                        <fb-form-item label="政治面貌" prop="politicsCode">
+                            <fb-select v-model="formData.politicsCode"
+                                       :service="$svc.sys.dict.select"
+                                       :param="{'pdicCode': 'SYS13'}"
+                                       placeholder="请选择"
+                                       clearable>
+                            </fb-select>
+                        </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
+                        <fb-form-item label="人员编号" prop="personNo">
+                            <fb-input v-model="formData.personNo" placeholder="请输入人员编号"></fb-input>
+                        </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
                         <fb-form-item label="参加工作时间" prop="partWorkDate">
-                            <tp-datepicker v-model="formData.partWorkDate" format="YYYY-MM-DD" value-format="YYYYMMDD" clearable></tp-datepicker>
+                            <tp-datepicker v-model="formData.partWorkDate" format="YYYY-MM-DD" value-format="YYYYMMDD"
+                                clearable></tp-datepicker>
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
@@ -148,16 +168,33 @@
                         </fb-form-item>
                     </fb-col>
                     <fb-col span="12">
+                        <fb-form-item label="学历" prop="diplomaCode">
+                            <fb-select v-model="formData.diplomaCode"
+                                       :service="$svc.sys.dict.select"
+                                       :param="{'pdicCode': 'SYS14'}"
+                                       placeholder="请选择"
+                                       clearable>
+                            </fb-select>
+                        </fb-form-item>
+                    </fb-col>
+                </fb-row>
+
+                <fb-row>
+                    <fb-col span="12">
                         <fb-form-item label="执法证号" prop="checkcardNo">
                             <fb-input v-model="formData.checkcardNo" placeholder="请输入执法证号"></fb-input>
                         </fb-form-item>
+                    </fb-col>
+                    <fb-col span="12">
+                        <!-- 空列，保持布局平衡 -->
                     </fb-col>
                 </fb-row>
 
                 <fb-row>
                     <fb-col span="24">
                         <fb-form-item label="个人简介" prop="resume">
-                            <fb-textarea v-model="formData.resume" rows="2" placeholder="请输入个人简介" :maxlength="200"></fb-textarea>
+                            <fb-textarea v-model="formData.resume" rows="2" placeholder="请输入个人简介"
+                                :maxlength="200"></fb-textarea>
                         </fb-form-item>
                     </fb-col>
                 </fb-row>
@@ -186,21 +223,27 @@ export default {
         dialogParams: {
             type: Object,
             default: () => ({})
-        }
+        },
+        	 
+			parentPage: {
+				type: Object,
+				default: null
+			}
     },
     data() {
         return {
             service: this.$svc.sys.person,
             saving: false,
+            validationErrorShown: false, // 防止快速点击时出现多个验证错误提示
             file: {
                 referType: 'SYS1014',
                 fileList: []
             },
             formData: {
                 personId: '',
-                realName: '',
+                personName: '',
                 sex: '',
-                idtype: 'Y2401',
+                idtype: '',
                 idcard: '',
                 birthday: '',
                 safeprinNation: '',
@@ -210,11 +253,14 @@ export default {
                 maddress: '',
                 position: '',
                 office: '',
+                titleCode: '',
+                politicsCode: '',
                 personNo: '',
                 partWorkDate: '',
                 school: '',
                 sepcSubject: '',
                 degree: '',
+                diplomaCode: '',
                 checkcardNo: '',
                 resume: ''
             },
@@ -224,26 +270,7 @@ export default {
                     { value: '2', label: '女' }
                 ]
             },
-            formRules: {
-                realName: [
-                    { required: true, message: '请输入姓名', trigger: 'blur' }
-                ],
-                email: [
-                    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-                ],
-                phone: [
-                    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-                ],
-                sex: [
-                    { required: true, message: '请选择性别', trigger: 'change' }
-                ],
-                idtype: [
-                    { required: true, message: '请选择证件类型', trigger: 'change' }
-                ],
-                idcard: [
-                    { required: true, message: '请输入证件号', trigger: 'blur' }
-                ]
-            }
+
         }
     },
     mounted() {
@@ -277,8 +304,8 @@ export default {
             if (userInfo && Object.keys(userInfo).length > 0) {
                 this.formData = {
                     personId: userInfo.personId || '',
-                    realName: userInfo.personName || userInfo.realName || '',
-                    sex: userInfo.sex || '',
+                    personName: userInfo.personName || userInfo.realName || '',
+                    sex: userInfo.sex + "" || '',
                     idtype: userInfo.idtype || '',
                     idcard: userInfo.idcard || '',
                     birthday: userInfo.birthday || '',
@@ -289,11 +316,14 @@ export default {
                     maddress: userInfo.maddress || '',
                     position: userInfo.position || '',
                     office: userInfo.office || '',
+                    titleCode: userInfo.titleCode || '',
+                    politicsCode: userInfo.politicsCode || '',
                     personNo: userInfo.personNo || '',
                     partWorkDate: userInfo.partWorkDate || '',
                     school: userInfo.school || '',
                     sepcSubject: userInfo.sepcSubject || '',
                     degree: userInfo.degree || '',
+                    diplomaCode: userInfo.diplomaCode || '',
                     checkcardNo: userInfo.checkcardNo || '',
                     resume: userInfo.resume || ''
                 }
@@ -318,35 +348,79 @@ export default {
 
         // 保存个人信息
         saveProfile() {
+            // 防止重复提交
+            if (this.saving) {
+                return
+            }
+            
             this.$refs.editForm.validate((valid) => {
                 if (valid) {
                     this.saving = true
 
-                    // 准备提交数据
-                    const submitData = {
-                        ...this.formData,
+                    // 准备基本信息数据
+                    const basicData = {
+                        personId: this.formData.personId,
+                        personName: this.formData.personName,
+                        sex: this.formData.sex,
+                        idtype: this.formData.idtype,
+                        idcard: this.formData.idcard,
+                        birthday: this.formData.birthday,
+                        safeprinNation: this.formData.safeprinNation,
+                        phone: this.formData.phone,
+                        tel: this.formData.tel,
+                        email: this.formData.email,
+                        position: this.formData.position,
+                        office: this.formData.office,
+                        personNo: this.formData.personNo,
                         file: this.file
                     }
 
-                    this.service.update(submitData).then((result) => {
-                        this.saving = false
+                    // 准备扩展信息数据
+                    const expData = {
+                        personId: this.formData.personId,
+                        titleCode: this.formData.titleCode,
+                        politicsCode: this.formData.politicsCode,
+                        maddress: this.formData.maddress,
+                        partWorkDate: this.formData.partWorkDate,
+                        school: this.formData.school,
+                        sepcSubject: this.formData.sepcSubject,
+                        degree: this.formData.degree,
+                        diplomaCode: this.formData.diplomaCode,
+                        checkcardNo: this.formData.checkcardNo,
+                        resume: this.formData.resume
+                    }
+
+                    // 先保存基本信息，再保存扩展信息
+                    this.service.update(basicData).then((result) => {
                         if (result.code === 1) {
-                            this.$message.success('保存成功')
-                            // 关闭弹框
-                            if (this.$parent && this.$parent.$parent && this.$parent.$parent.close) {
-                                this.$parent.$parent.close()
-                            }
-                            // 通知父组件刷新数据
-                            this.$emit('save-success', result.data)
+                            // 基本信息保存成功，继续保存扩展信息
+                            return this.service.expAdd(expData)
                         } else {
-                            this.$message.error('保存失败：' + (result.message || '未知错误'))
+                            throw new Error(result.message || '基本信息保存失败')
+                        }
+                    }).then((expResult) => {
+                        this.saving = false
+                        if (expResult.code === 1) {
+                            this.$message.success('保存成功')
+                            // 使用 closeTpDialog 方法关闭弹框并传递数据给父组件
+                            this.closeTpDialog(expResult.data)
+                        } else {
+                            this.$message.error('扩展信息保存失败：' + (expResult.message || '未知错误'))
                         }
                     }).catch((error) => {
                         this.saving = false
                         this.$message.error('保存失败：' + error.message)
                     })
                 } else {
-                    this.$message.error('请检查表单填写是否正确')
+                    // 防止快速点击时出现多个错误提示
+                    if (!this.validationErrorShown) {
+                        this.validationErrorShown = true
+                        this.$message.error('请检查表单填写是否正确')
+                        // 1秒后重置标志，允许再次显示错误提示
+                        setTimeout(() => {
+                            this.validationErrorShown = false
+                        }, 1000)
+                    }
                 }
             })
         },

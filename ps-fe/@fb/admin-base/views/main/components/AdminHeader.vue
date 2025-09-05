@@ -50,8 +50,10 @@
 					</div>
 				</div>
 			</div>
-<!-- 
-			<div class="fb-admin-header__nav__toggle">
+
+			<!-- <div class="fb-admin-header__nav__toggle"
+
+			>
 				<fb-icon size="12" :name="showFullMenus ? 'up' : 'down'"></fb-icon>
 			</div> -->
 		</nav>

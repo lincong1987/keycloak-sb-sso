@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @Date: 2025-08-18
  * @Copyright: 2025 www.tuxun.net Inc. All rights reserved.
  */
-@SpringBootApplication(scanBasePackages = {"com.jiuxi", "com.jiuxi.security.sso", "com.ps"})
+@SpringBootApplication(scanBasePackages = {"com.jiuxi"})
 @EnableAsync
 public class Application {
 

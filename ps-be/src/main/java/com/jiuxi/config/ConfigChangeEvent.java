@@ -1,4 +1,4 @@
-package com.ps.common.config;
+package com.jiuxi.config;
 
 import org.springframework.context.ApplicationEvent;
 

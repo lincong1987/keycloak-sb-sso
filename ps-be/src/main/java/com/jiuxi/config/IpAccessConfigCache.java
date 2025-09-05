@@ -1,4 +1,4 @@
-package com.ps.common.config;
+package com.jiuxi.config;
 
 import com.jiuxi.admin.core.util.IpAccessControlUtil;
 import com.jiuxi.admin.core.service.TpSystemConfigService;

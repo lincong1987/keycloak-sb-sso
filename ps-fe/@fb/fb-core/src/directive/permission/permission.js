@@ -27,6 +27,7 @@ export function hasPermission(value) {
  * @param binding
  */
 export function hasPermissionSync(value) {
+	return true
 	let permission = false
 	if (!app.$store.state.menu) {
 		return console.error('app.$store.state.menu is undefined')

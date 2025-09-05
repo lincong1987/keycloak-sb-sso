@@ -9,7 +9,7 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ./ps-be/reverse-proxy-config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ps-be/nginx:/etc/nginx/conf.d:ro
       - nginx_logs:/var/log/nginx
     networks:
       - keycloak-network

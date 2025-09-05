@@ -1,4 +1,4 @@
-package com.jiuxi.module.user.domain.repository;
+package com.jiuxi.module.user.domain.repo;
 
 import com.jiuxi.module.user.domain.entity.User;
 import java.util.List;
@@ -21,60 +21,60 @@ public interface UserRepository {
     /**
      * 根据用户ID查找用户
      */
-    Optional<User> findById(String personId);
+    Optional<User> findById(String userId);
     
     /**
      * 根据用户名查找用户
      */
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUsername(String username, String tenantId);
     
     /**
      * 根据手机号查找用户
      */
-    Optional<User> findByPhone(String phone);
+    Optional<User> findByPhone(String phone, String tenantId);
     
     /**
      * 根据邮箱查找用户
      */
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email, String tenantId);
     
     /**
      * 根据身份证号查找用户
      */
-    Optional<User> findByIdCard(String idCard);
+    Optional<User> findByIdCard(String idCard, String tenantId);
     
     /**
      * 根据部门ID查找用户列表
      */
-    List<User> findByDepartmentId(String deptId);
+    List<User> findByDeptId(String deptId);
+    
+    /**
+     * 根据租户ID查找用户列表
+     */
+    List<User> findByTenantId(String tenantId);
     
     /**
      * 检查用户名是否存在
      */
-    boolean existsByUsername(String username);
+    boolean existsByUsername(String username, String tenantId, String excludeUserId);
     
     /**
      * 检查手机号是否存在
      */
-    boolean existsByPhone(String phone);
+    boolean existsByPhone(String phone, String tenantId, String excludeUserId);
     
     /**
      * 检查邮箱是否存在
      */
-    boolean existsByEmail(String email);
+    boolean existsByEmail(String email, String tenantId, String excludeUserId);
     
     /**
      * 检查身份证号是否存在
      */
-    boolean existsByIdCard(String idCard);
+    boolean existsByIdCard(String idCard, String tenantId, String excludeUserId);
     
     /**
      * 删除用户（逻辑删除）
      */
-    void deleteById(String personId);
-    
-    /**
-     * 批量删除用户（逻辑删除）
-     */
-    void deleteByIds(List<String> personIds);
+    void deleteById(String userId);
 }

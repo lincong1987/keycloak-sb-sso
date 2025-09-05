@@ -1,8 +1,8 @@
-package com.jiuxi.module.user.application.assembler;
+package com.jiuxi.module.user.app.assembler;
 
-import com.jiuxi.module.user.application.dto.UserCreateDTO;
-import com.jiuxi.module.user.application.dto.UserResponseDTO;
-import com.jiuxi.module.user.application.dto.UserUpdateDTO;
+import com.jiuxi.module.user.app.dto.UserCreateDTO;
+import com.jiuxi.module.user.app.dto.UserResponseDTO;
+import com.jiuxi.module.user.app.dto.UserUpdateDTO;
 import com.jiuxi.module.user.domain.entity.ContactInfo;
 import com.jiuxi.module.user.domain.entity.User;
 import com.jiuxi.module.user.domain.entity.UserCategory;

@@ -1,4 +1,4 @@
-package com.jiuxi.module.user.application.dto;
+package com.jiuxi.module.user.app.dto;
 
 /**
  * 用户查询条件DTO

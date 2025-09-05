@@ -2,7 +2,7 @@ package com.jiuxi.module.user.domain.service;
 
 import com.jiuxi.module.user.domain.entity.User;
 import com.jiuxi.module.user.domain.entity.UserProfile;
-import com.jiuxi.module.user.domain.repository.UserRepository;
+import com.jiuxi.module.user.domain.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,29 +22,29 @@ public class UserDomainService {
     /**
      * 验证用户创建规则
      */
-    public void validateUserCreation(UserProfile profile, String username) {
+    public void validateUserCreation(UserProfile profile, String username, String tenantId) {
         // 验证用户名唯一性
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsername(username, tenantId, null)) {
             throw new IllegalArgumentException("用户名已存在: " + username);
         }
         
         // 验证手机号唯一性
         if (profile.getContactInfo() != null && profile.getContactInfo().getPhone() != null) {
-            if (userRepository.existsByPhone(profile.getContactInfo().getPhone())) {
+            if (userRepository.existsByPhone(profile.getContactInfo().getPhone(), tenantId, null)) {
                 throw new IllegalArgumentException("手机号已存在: " + profile.getContactInfo().getPhone());
             }
         }
         
         // 验证邮箱唯一性
         if (profile.getContactInfo() != null && profile.getContactInfo().getEmail() != null) {
-            if (userRepository.existsByEmail(profile.getContactInfo().getEmail())) {
+            if (userRepository.existsByEmail(profile.getContactInfo().getEmail(), tenantId, null)) {
                 throw new IllegalArgumentException("邮箱已存在: " + profile.getContactInfo().getEmail());
             }
         }
         
         // 验证身份证号唯一性
         if (profile.getIdCard() != null) {
-            if (userRepository.existsByIdCard(profile.getIdCard())) {
+            if (userRepository.existsByIdCard(profile.getIdCard(), tenantId, null)) {
                 throw new IllegalArgumentException("身份证号已存在: " + profile.getIdCard());
             }
         }
@@ -69,14 +69,14 @@ public class UserDomainService {
     /**
      * 验证用户更新规则
      */
-    public void validateUserUpdate(User user, UserProfile newProfile) {
+    public void validateUserUpdate(User user, UserProfile newProfile, String tenantId) {
         // 验证手机号变更
         if (newProfile.getContactInfo() != null && newProfile.getContactInfo().getPhone() != null) {
             String oldPhone = user.getProfile().getContactInfo() != null ? 
                 user.getProfile().getContactInfo().getPhone() : null;
             String newPhone = newProfile.getContactInfo().getPhone();
             
-            if (!newPhone.equals(oldPhone) && userRepository.existsByPhone(newPhone)) {
+            if (!newPhone.equals(oldPhone) && userRepository.existsByPhone(newPhone, tenantId, user.getPersonId())) {
                 throw new IllegalArgumentException("手机号已被其他用户使用: " + newPhone);
             }
         }
@@ -87,7 +87,7 @@ public class UserDomainService {
                 user.getProfile().getContactInfo().getEmail() : null;
             String newEmail = newProfile.getContactInfo().getEmail();
             
-            if (!newEmail.equals(oldEmail) && userRepository.existsByEmail(newEmail)) {
+            if (!newEmail.equals(oldEmail) && userRepository.existsByEmail(newEmail, tenantId, user.getPersonId())) {
                 throw new IllegalArgumentException("邮箱已被其他用户使用: " + newEmail);
             }
         }
@@ -97,7 +97,7 @@ public class UserDomainService {
             String oldIdCard = user.getProfile().getIdCard();
             String newIdCard = newProfile.getIdCard();
             
-            if (!newIdCard.equals(oldIdCard) && userRepository.existsByIdCard(newIdCard)) {
+            if (!newIdCard.equals(oldIdCard) && userRepository.existsByIdCard(newIdCard, tenantId, user.getPersonId())) {
                 throw new IllegalArgumentException("身份证号已被其他用户使用: " + newIdCard);
             }
         }
@@ -106,7 +106,7 @@ public class UserDomainService {
     /**
      * 验证账户创建规则
      */
-    public void validateAccountCreation(User user, String username, String password) {
+    public void validateAccountCreation(User user, String username, String password, String tenantId) {
         // 检查用户是否已有账户
         if (user.hasAccount()) {
             throw new IllegalStateException("用户已存在账户，不能重复创建");
@@ -131,7 +131,7 @@ public class UserDomainService {
         }
         
         // 验证用户名唯一性
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsername(username, tenantId, null)) {
             throw new IllegalArgumentException("用户名已存在: " + username);
         }
     }

@@ -25,6 +25,11 @@ public class ContactInfo {
      */
     private String tel;
     
+    /**
+     * 通信地址
+     */
+    private String address;
+    
     // 构造器
     public ContactInfo() {
     }
@@ -33,6 +38,13 @@ public class ContactInfo {
         this.phone = phone;
         this.email = email;
         this.tel = tel;
+    }
+    
+    public ContactInfo(String phone, String email, String tel, String address) {
+        this.phone = phone;
+        this.email = email;
+        this.tel = tel;
+        this.address = address;
     }
     
     /**
@@ -102,6 +114,14 @@ public class ContactInfo {
         this.tel = tel;
     }
     
+    public String getAddress() {
+        return address;
+    }
+    
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,12 +129,13 @@ public class ContactInfo {
         ContactInfo that = (ContactInfo) o;
         return Objects.equals(phone, that.phone) &&
                 Objects.equals(email, that.email) &&
-                Objects.equals(tel, that.tel);
+                Objects.equals(tel, that.tel) &&
+                Objects.equals(address, that.address);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(phone, email, tel);
+        return Objects.hash(phone, email, tel, address);
     }
     
     @Override
@@ -123,6 +144,7 @@ public class ContactInfo {
                 "phone='" + getMaskedPhone() + '\'' +
                 ", email='" + getMaskedEmail() + '\'' +
                 ", tel='" + tel + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

@@ -1,15 +1,15 @@
-package com.jiuxi.module.user.application.service;
+package com.jiuxi.module.user.app.service;
 
-import com.jiuxi.module.user.application.assembler.UserAssembler;
-import com.jiuxi.module.user.application.dto.UserCreateDTO;
-import com.jiuxi.module.user.application.dto.UserQueryDTO;
-import com.jiuxi.module.user.application.dto.UserResponseDTO;
-import com.jiuxi.module.user.application.dto.UserUpdateDTO;
+import com.jiuxi.module.user.app.assembler.UserAssembler;
+import com.jiuxi.module.user.app.dto.UserCreateDTO;
+import com.jiuxi.module.user.app.dto.UserQueryDTO;
+import com.jiuxi.module.user.app.dto.UserResponseDTO;
+import com.jiuxi.module.user.app.dto.UserUpdateDTO;
 import com.jiuxi.module.user.domain.entity.User;
 import com.jiuxi.module.user.domain.event.UserCreatedEvent;
 import com.jiuxi.module.user.domain.event.UserDeletedEvent;
 import com.jiuxi.module.user.domain.event.UserUpdatedEvent;
-import com.jiuxi.module.user.domain.repository.UserRepository;
+import com.jiuxi.module.user.domain.repo.UserRepository;
 import com.jiuxi.module.user.domain.service.UserDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -47,7 +47,7 @@ public class UserApplicationService {
     /**
      * 创建用户
      */
-    public String createUser(UserCreateDTO createDTO, String operator) {
+    public String createUser(UserCreateDTO createDTO, String tenantId, String operator) {
         // 转换为领域对象
         User user = userAssembler.toUser(createDTO);
         
@@ -61,7 +61,7 @@ public class UserApplicationService {
         }
         
         // 领域验证
-        userDomainService.validateUserCreation(user.getProfile(), createDTO.getUsername());
+        userDomainService.validateUserCreation(user.getProfile(), createDTO.getUsername(), tenantId);
         
         // 创建账户
         user.createAccount(createDTO.getUsername(), createDTO.getPassword());
@@ -82,7 +82,7 @@ public class UserApplicationService {
     /**
      * 更新用户
      */
-    public void updateUser(UserUpdateDTO updateDTO, String operator) {
+    public void updateUser(UserUpdateDTO updateDTO, String tenantId, String operator) {
         // 查找用户
         Optional<User> userOpt = userRepository.findById(updateDTO.getPersonId());
         if (!userOpt.isPresent()) {
@@ -94,7 +94,7 @@ public class UserApplicationService {
         // 领域验证
         User tempUser = new User();
         userAssembler.updateUser(tempUser, updateDTO);
-        userDomainService.validateUserUpdate(user, tempUser.getProfile());
+        userDomainService.validateUserUpdate(user, tempUser.getProfile(), user.getTenantId());
         
         // 更新用户信息
         userAssembler.updateUser(user, updateDTO);
@@ -160,8 +160,8 @@ public class UserApplicationService {
      * 根据用户名查询用户
      */
     @Transactional(readOnly = true)
-    public UserResponseDTO getUserByUsername(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+    public UserResponseDTO getUserByUsername(String username, String tenantId) {
+        Optional<User> userOpt = userRepository.findByUsername(username, tenantId);
         if (!userOpt.isPresent()) {
             throw new IllegalArgumentException("用户不存在: " + username);
         }
@@ -184,7 +184,7 @@ public class UserApplicationService {
      */
     @Transactional(readOnly = true)
     public List<UserResponseDTO> getUsersByDepartment(String deptId) {
-        List<User> users = userRepository.findByDepartmentId(deptId);
+        List<User> users = userRepository.findByDeptId(deptId);
         return users.stream()
                 .map(userAssembler::toResponseDTO)
                 .collect(Collectors.toList());

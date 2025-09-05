@@ -1,4 +1,4 @@
-package com.jiuxi.module.user.application.dto;
+package com.jiuxi.module.user.app.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

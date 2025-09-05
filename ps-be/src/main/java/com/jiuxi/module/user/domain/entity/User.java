@@ -18,6 +18,11 @@ public class User {
     private String personId;
     
     /**
+     * 部门ID
+     */
+    private String deptId;
+    
+    /**
      * 用户基本信息
      */
     private UserProfile profile;
@@ -26,6 +31,11 @@ public class User {
      * 用户账户信息
      */
     private UserAccount account;
+    
+    /**
+     * 联系信息
+     */
+    private ContactInfo contactInfo;
     
     /**
      * 用户状态
@@ -192,6 +202,22 @@ public class User {
     
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+    
+    public String getDeptId() {
+        return deptId;
+    }
+    
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+    
+    public ContactInfo getContactInfo() {
+        return contactInfo;
+    }
+    
+    public void setContactInfo(ContactInfo contactInfo) {
+        this.contactInfo = contactInfo;
     }
     
     @Override

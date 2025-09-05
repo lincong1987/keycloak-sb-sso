@@ -1,4 +1,4 @@
-package com.jiuxi.module.user.infrastructure.persistence.entity;
+package com.jiuxi.module.user.infra.persistence.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

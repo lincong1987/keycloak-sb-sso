@@ -35,6 +35,13 @@ public enum UserStatus {
     }
     
     /**
+     * 检查是否为激活状态
+     */
+    public boolean isActive() {
+        return this == ACTIVE;
+    }
+    
+    /**
      * 根据值获取枚举
      */
     public static UserStatus fromValue(Integer value) {

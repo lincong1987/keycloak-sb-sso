@@ -16,13 +16,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication(scanBasePackages = {
     "com.jiuxi",
     "com.jiuxi.module.user",
-    "com.jiuxi.module.org"
+    "com.jiuxi.module.org",
+    "com.jiuxi.module.auth",
+    "com.jiuxi.module.system"
 })
 @MapperScan(basePackages = {
     "com.jiuxi.admin.core.mapper",
     "com.jiuxi.module.user.infra.persistence.mapper",
     "com.jiuxi.module.org.infra.persistence.mapper",
-    "com.jiuxi.module.auth.infra.persistence.mapper"
+    "com.jiuxi.module.auth.infra.persistence.mapper",
+    "com.jiuxi.module.system.infra.persistence.mapper"
 })
 @EnableAsync
 public class Application {

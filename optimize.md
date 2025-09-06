@@ -81,7 +81,7 @@ ps-be/
 | 用户管理领域 | 100% | 完成用户聚合根、仓储、领域服务、应用服务、DTO、装配器、控制器等完整DDD架构实现 |
 | 组织架构领域 | 100% | 完成部门聚合根、仓储、领域服务、应用服务、DTO、装配器、控制器等完整DDD架构实现 |
 | 权限管理领域 | 100% | 完成角色、权限、菜单聚合根及枚举定义，实现角色、权限、菜单相关仓储、领域服务、应用服务、DTO、装配器、控制器等 |
-| 系统管理领域 | 0% | 待开始 |
+| 系统管理领域 | 100% | 完成字典、字典项、系统配置聚合根及枚举定义，实现相关仓储接口、应用服务、DTO、装配器、基础设施层、接口层 |
 | 日志管理领域 | 0% | 待开始 |
 | 文件管理领域 | 0% | 待开始 |
 
@@ -103,11 +103,25 @@ ps-be/
   - [x] 仓储实现：RoleRepositoryImpl、PermissionRepositoryImpl、MenuRepositoryImpl
 - [x] 接口层
   - [x] Web控制器：RoleController、PermissionController、MenuController
-- [ ] 系统管理领域
-  - [ ] 领域层设计
-  - [ ] 应用层设计
-  - [ ] 基础设施层设计
-  - [ ] 接口层设计
+- [x] 系统管理领域
+  - [x] 领域层设计
+    - [x] 实体：Dictionary（字典聚合根）
+    - [x] 实体：DictionaryItem（字典项实体）
+    - [x] 实体：SystemConfig（系统配置实体）
+    - [x] 仓储接口：DictionaryRepository、DictionaryItemRepository、SystemConfigRepository
+  - [x] 应用层设计
+    - [x] 应用服务：DictionaryApplicationService、DictionaryItemApplicationService、SystemConfigApplicationService
+    - [x] DTO：DictionaryCreateDTO、DictionaryUpdateDTO、DictionaryResponseDTO
+    - [x] DTO：DictionaryItemCreateDTO、DictionaryItemUpdateDTO、DictionaryItemResponseDTO
+    - [x] DTO：SystemConfigCreateDTO、SystemConfigUpdateDTO、SystemConfigResponseDTO
+    - [x] 装配器：DictionaryAssembler、DictionaryItemAssembler、SystemConfigAssembler
+  - [x] 基础设施层设计
+    - [x] 持久化实体：DictionaryPO、DictionaryItemPO、SystemConfigPO
+    - [x] Mapper接口：DictionaryMapper、DictionaryItemMapper、SystemConfigMapper
+    - [x] 仓储实现：DictionaryRepositoryImpl、DictionaryItemRepositoryImpl、SystemConfigRepositoryImpl
+    - [x] PO装配器：DictionaryPOAssembler、DictionaryItemPOAssembler、SystemConfigPOAssembler
+  - [x] 接口层设计
+    - [x] Web控制器：DictionaryController、DictionaryItemController、SystemConfigController
 
 ### 三、优化后的目录结构
 

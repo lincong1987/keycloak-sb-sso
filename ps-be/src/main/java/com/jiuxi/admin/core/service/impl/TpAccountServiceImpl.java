@@ -85,6 +85,7 @@ public class TpAccountServiceImpl implements TpAccountService {
     private TpAccountEventService tpAccountEventService;
 
     @Autowired(required = false)
+    @Qualifier("adminEmailService")
     private EmailService emailService;
 
     @Autowired(required = false)

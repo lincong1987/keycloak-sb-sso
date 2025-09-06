@@ -9,7 +9,7 @@ import com.jiuxi.mvc.core.config.CorsConfigurer;
 import com.jiuxi.mvc.core.config.MvcWebMvcConfigurer;
 import com.jiuxi.mvc.core.interceptor.TenantInterceptor;
 import com.jiuxi.mvc.core.interceptor.TokenInterceptor;
-import com.jiuxi.mvc.exception.GlobalExceptionHandler;
+import com.jiuxi.common.exception.GlobalExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;

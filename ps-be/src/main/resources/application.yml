@@ -12,14 +12,14 @@ spring:
   config:
     import: 
       - "classpath:config/env/${spring.profiles.active}/application-${spring.profiles.active}.yml"
-      - "optional:classpath:config/db/database-${spring.profiles.active}.yml"
-      - "optional:classpath:config/cache/cache-${spring.profiles.active}.yml"
-      - "optional:classpath:config/sec/security-${spring.profiles.active}.yml"
+      - "classpath:config/db/database-${spring.profiles.active}.yml"
+      - "classpath:config/cache/cache-${spring.profiles.active}.yml"
+      - "classpath:config/sec/security-${spring.profiles.active}.yml"
   profiles:
     active: dev
   application:
-    name: ps-bmp-backend
-    id: ps-bmp-backend-01
+    name: ps-be
+    id: ps-be
   main:
     allow-bean-definition-overriding: true
   servlet:
@@ -63,7 +63,7 @@ management:
 info:
   app:
     name: ${spring.application.name}
-    description: PS BMP Backend Application
+    description: ps-be
     version: 2.2.2-SNAPSHOT
     encoding: UTF-8
     java:

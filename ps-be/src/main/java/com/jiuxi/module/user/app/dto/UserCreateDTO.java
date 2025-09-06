@@ -1,9 +1,12 @@
 package com.jiuxi.module.user.app.dto;
 
+import com.jiuxi.common.validation.annotations.Phone;
+import com.jiuxi.common.validation.annotations.IdCard;
+import com.jiuxi.common.validation.groups.AddGroup;
+import com.jiuxi.common.validation.groups.UpdateGroup;
+
+import javax.validation.constraints.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 /**
  * 用户创建请求DTO
@@ -13,17 +16,17 @@ import javax.validation.constraints.Size;
  */
 public class UserCreateDTO {
     
-    @NotBlank(message = "部门ID不能为空")
+    @NotBlank(message = "部门ID不能为空", groups = {AddGroup.class, UpdateGroup.class})
     private String deptId;
     
-    @NotBlank(message = "用户姓名不能为空")
-    @Size(max = 50, message = "用户姓名长度不能超过50个字符")
+    @NotBlank(message = "用户姓名不能为空", groups = {AddGroup.class, UpdateGroup.class})
+    @Size(max = 50, message = "用户姓名长度不能超过50个字符", groups = {AddGroup.class, UpdateGroup.class})
     private String personName;
     
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @Phone(message = "手机号格式不正确", groups = {AddGroup.class, UpdateGroup.class})
     private String phone;
     
-    @Email(message = "邮箱格式不正确")
+    @Email(message = "邮箱格式不正确", groups = {AddGroup.class, UpdateGroup.class})
     private String email;
     
     private String tel;
@@ -34,8 +37,7 @@ public class UserCreateDTO {
     
     private String idType;
     
-    @Pattern(regexp = "^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$", 
-             message = "身份证号格式不正确")
+    @IdCard(message = "身份证号格式不正确", allowEmpty = true, groups = {AddGroup.class, UpdateGroup.class})
     private String idCard;
     
     private String nativePlace;
@@ -53,12 +55,16 @@ public class UserCreateDTO {
     private String category;
     
     // 账户信息
-    @NotBlank(message = "用户名不能为空")
-    @Size(min = 3, max = 20, message = "用户名长度必须在3-20个字符之间")
+    @NotBlank(message = "用户名不能为空", groups = {AddGroup.class, UpdateGroup.class})
+    @Size(min = 3, max = 20, message = "用户名长度必须在3-20个字符之间", groups = {AddGroup.class, UpdateGroup.class})
+    @Pattern(regexp = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]+$", message = "用户名只能包含字母、数字、下划线和中文", groups = {AddGroup.class, UpdateGroup.class})
     private String username;
-    
-    @NotBlank(message = "密码不能为空")
-    @Size(min = 6, message = "密码长度不能少于6位")
+
+    @NotBlank(message = "密码不能为空", groups = {AddGroup.class})
+    @Size(min = 6, max = 20, message = "密码长度必须在6-20个字符之间", groups = {AddGroup.class})
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*?&]{6,}$", 
+             message = "密码必须包含至少一个小写字母、一个大写字母和一个数字", 
+             groups = {AddGroup.class})
     private String password;
     
     // Getters and Setters

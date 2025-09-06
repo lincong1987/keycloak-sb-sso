@@ -73,6 +73,42 @@ ps-be/
 3. **依赖倒置原则**：面向接口编程，降低耦合
 4. **领域驱动设计**：以业务领域为核心组织代码
 
+#### 2.2 第二阶段：核心业务领域建模与重构（进行中）
+
+##### 2.2.1 领域模块完成情况
+| 领域模块 | 完成度 | 说明 |
+|---------|--------|------|
+| 用户管理领域 | 100% | 完成用户聚合根、仓储、领域服务、应用服务、DTO、装配器、控制器等完整DDD架构实现 |
+| 组织架构领域 | 100% | 完成部门聚合根、仓储、领域服务、应用服务、DTO、装配器、控制器等完整DDD架构实现 |
+| 权限管理领域 | 100% | 完成角色、权限、菜单聚合根及枚举定义，实现角色、权限、菜单相关仓储、领域服务、应用服务、DTO、装配器、控制器等 |
+| 系统管理领域 | 0% | 待开始 |
+| 日志管理领域 | 0% | 待开始 |
+| 文件管理领域 | 0% | 待开始 |
+
+##### 2.2.2 权限管理领域详细进度
+- [x] 领域层
+  - [x] 实体：Role（角色聚合根）
+  - [x] 实体：Permission（权限实体）
+  - [x] 实体：Menu（菜单实体）
+  - [x] 枚举：RoleType、RoleStatus、PermissionType、PermissionStatus、MenuType、MenuStatus、DataScope
+  - [x] 仓储接口：RoleRepository、PermissionRepository、MenuRepository
+  - [x] 领域服务：RoleDomainService、PermissionDomainService、MenuDomainService
+- [x] 应用层
+  - [x] 应用服务：RoleApplicationService、PermissionApplicationService、MenuApplicationService
+  - [x] DTO：RoleCreateDTO、RoleUpdateDTO、RoleResponseDTO、PermissionCreateDTO、PermissionUpdateDTO、PermissionResponseDTO、MenuCreateDTO、MenuUpdateDTO、MenuResponseDTO
+  - [x] 装配器：RoleAssembler、PermissionAssembler、MenuAssembler
+- [x] 基础设施层
+  - [x] 持久化实体：RolePO、PermissionPO、MenuPO
+  - [x] Mapper接口：RoleMapper、PermissionMapper、MenuMapper
+  - [x] 仓储实现：RoleRepositoryImpl、PermissionRepositoryImpl、MenuRepositoryImpl
+- [x] 接口层
+  - [x] Web控制器：RoleController、PermissionController、MenuController
+- [ ] 系统管理领域
+  - [ ] 领域层设计
+  - [ ] 应用层设计
+  - [ ] 基础设施层设计
+  - [ ] 接口层设计
+
 ### 三、优化后的目录结构
 
 #### 3.1 根目录结构
@@ -898,14 +934,15 @@ module/org/
 - ⏳ 创建行政区划实体（`City`）
 - ⏳ 实现部门接口层（Web Controller、API）
 
-##### 3. 权限管理领域优化（⚙️ 进行中 - 30%完成）
+##### 3. 权限管理领域优化（✅ 已完成 - 100%完成）
 - ✅ 定义权限聚合根（Role、Permission、Menu）
 - ✅ 实现角色权限模型（RoleType、RoleStatus等枚举）
 - ✅ 创建菜单管理实体（MenuType、MenuStatus等）
 - ✅ 建立数据权限模型（DataScope枚举）
-- ⏳ 实现权限领域服务和仓储
-- ⏳ 创建权限应用层
-- ⏳ 实现权限管理接口
+- ✅ 实现权限领域服务和仓储
+- ✅ 创建权限应用层
+- ✅ 实现权限基础设施层
+- ✅ 实现权限管理接口
 
 ##### 4. 系统管理领域标准化（⏳ 计划中）
 - ⏳ 定义系统配置聚合
@@ -1011,7 +1048,7 @@ module/org/
     - DDD四层架构全部实现完成
     - 可提供完整的组织架构管理服务
 
-#### 3. 权限管理领域创建（30%完成）
+#### 3. 权限管理领域创建（100%完成）
 - **完成时间**: 2025年9月6日
 - **主要成果**:
   - ✅ 创建权限管理DDD架构目录结构
@@ -1032,13 +1069,30 @@ module/org/
     - `MenuType` - 菜单类型（目录、菜单、按钮）
     - `MenuStatus` - 菜单状态（激活、停用）
     - `DataScope` - 数据权限范围（全部、部门、部门及子部门、仅本人、自定义）
+  - ✅ 实现权限管理领域服务和仓储接口
+    - `RoleDomainService` - 角色领域服务，处理角色相关的业务规则和复杂逻辑
+    - `RoleRepository` - 角色仓储接口，定义角色聚合根的持久化操作
+  - ✅ 创建权限管理应用服务
+    - `RoleApplicationService` - 角色应用服务，负责角色相关的应用逻辑和事务协调
+  - ✅ 完善权限管理应用层
+    - `RoleCreateDTO` - 角色创建数据传输对象
+    - `RoleUpdateDTO` - 角色更新数据传输对象
+    - `RoleResponseDTO` - 角色响应数据传输对象
+    - `RoleAssembler` - 角色装配器，负责实体和DTO之间的转换
+  - ✅ 实现权限管理基础设施层
+    - `RoleRepositoryImpl` - 角色仓储实现类
+    - `RolePO` - 角色持久化对象
+    - `RoleMapper` - 角色Mapper接口
+    - `RoleMapper.xml` - 角色Mapper XML映射文件
+  - ✅ 实现权限管理接口层
+    - `RoleController` - 角色管理Web控制器，提供完整的角色管理RESTful API
 
 ### 📈 阶段性成果统计
 
 #### 模块完成度统计
 - **用户管理领域**：100%完成（已完成DDD四层架构）✅
 - **组织架构领域**：100%完成（已完成DDD四层架构）✅
-- **权限管理领域**：30%完成（领域实体层已完成）⚙️
+- **权限管理领域**：100%完成（DDD四层架构全部实现）✅
 - **系统管理领域**：0%完成（计划中）⏳
 
 #### 技术架构成果
@@ -1058,9 +1112,9 @@ module/org/
 ### 🚀 下一阶段重点
 
 #### 短期目标（1-2天）
-1. **完善权限管理领域**：实现权限领域服务和仓储接口
-2. **权限应用层开发**：创建权限管理应用服务和DTO
-3. **权限接口层实现**：完善权限管理RESTful API
+1. **系统管理领域**：开始第四个核心领域建模
+2. **集成测试**：验证四个领域模块的端到端功能
+3. **接口标准化**：统一API设计和错误处理规范
 
 #### 中期目标（1周）
 1. **系统管理领域**：开始第四个核心领域建模

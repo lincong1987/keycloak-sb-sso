@@ -1,4 +1,4 @@
-package com.jiuxi.module.org.interface.web;
+package com.jiuxi.module.org.interfaces.web;
 
 import com.jiuxi.common.bean.JsonResponse;
 import com.jiuxi.core.core.annotation.Authorization;

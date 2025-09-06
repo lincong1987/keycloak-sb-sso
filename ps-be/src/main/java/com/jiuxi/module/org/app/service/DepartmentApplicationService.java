@@ -215,6 +215,17 @@ public class DepartmentApplicationService {
     }
     
     /**
+     * 根据ID查询部门（兼容控制器调用）
+     * @param deptId 部门ID
+     * @return 部门响应
+     */
+    @Transactional(readOnly = true)
+    public DepartmentResponseDTO getDepartmentById(String deptId) {
+        return findDepartmentById(deptId)
+                .orElseThrow(() -> new IllegalArgumentException("部门不存在: " + deptId));
+    }
+    
+    /**
      * 查询部门树
      * @param tenantId 租户ID
      * @return 部门树
@@ -228,6 +239,16 @@ public class DepartmentApplicationService {
     }
     
     /**
+     * 查询部门树（兼容控制器调用）
+     * @param tenantId 租户ID
+     * @return 部门树
+     */
+    @Transactional(readOnly = true)
+    public List<DepartmentResponseDTO> getDepartmentTree(String tenantId) {
+        return findDepartmentTree(tenantId);
+    }
+    
+    /**
      * 根据父部门查询子部门
      * @param parentDeptId 父部门ID
      * @return 子部门列表
@@ -236,6 +257,30 @@ public class DepartmentApplicationService {
     public List<DepartmentResponseDTO> findChildDepartments(String parentDeptId) {
         List<Department> children = departmentRepository.findByParentId(parentDeptId);
         return children.stream()
+                .map(departmentAssembler::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 根据父部门查询子部门（兼容控制器调用）
+     * @param parentDeptId 父部门ID
+     * @return 子部门列表
+     */
+    @Transactional(readOnly = true)
+    public List<DepartmentResponseDTO> getChildDepartments(String parentDeptId) {
+        return findChildDepartments(parentDeptId);
+    }
+    
+    /**
+     * 获取根部门列表（兼容控制器调用）
+     * @param tenantId 租户ID
+     * @return 根部门列表
+     */
+    @Transactional(readOnly = true)
+    public List<DepartmentResponseDTO> getRootDepartments(String tenantId) {
+        List<Department> rootDepartments = departmentRepository.findRootDepartments();
+        return rootDepartments.stream()
+                .filter(dept -> tenantId.equals(dept.getTenantId()))
                 .map(departmentAssembler::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -259,6 +304,15 @@ public class DepartmentApplicationService {
     }
     
     /**
+     * 启用部门（兼容控制器调用）
+     * @param deptId 部门ID
+     * @param operator 操作者
+     */
+    public void enableDepartment(String deptId, String operator) {
+        activateDepartment(deptId, operator);
+    }
+    
+    /**
      * 停用部门
      * @param deptId 部门ID
      * @param operator 操作者
@@ -274,5 +328,36 @@ public class DepartmentApplicationService {
         department.setUpdator(operator);
         
         departmentRepository.save(department);
+    }
+    
+    /**
+     * 停用部门（兼容控制器调用）
+     * @param deptId 部门ID
+     * @param operator 操作者
+     */
+    public void disableDepartment(String deptId, String operator) {
+        deactivateDepartment(deptId, operator);
+    }
+    
+    /**
+     * 批量删除部门（兼容控制器调用）
+     * @param deptIds 部门ID列表
+     * @param tenantId 租户ID
+     * @param operator 操作者
+     */
+    public void deleteDepartments(List<String> deptIds, String tenantId, String operator) {
+        for (String deptId : deptIds) {
+            deleteDepartment(deptId, tenantId, operator);
+        }
+    }
+    
+    /**
+     * 获取部门用户数量（兼容控制器调用）
+     * @param deptId 部门ID
+     * @return 用户数量
+     */
+    @Transactional(readOnly = true)
+    public long getDepartmentUserCount(String deptId) {
+        return departmentRepository.countUsersByDeptId(deptId);
     }
 }

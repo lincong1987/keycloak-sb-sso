@@ -1,0 +1,144 @@
+############################################################
+#############  数据库配置 (多环境)
+#############  Database Configuration (Multi-Environment)
+############################################################
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    druid:
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+##########################################################################
+#############  MyBatis 相关配置
+##########################################################################
+topinfo:
+  mybatis:
+    ## 租户模式（可选）
+    tenant: false
+    ## 忽略不需要添加租户条件的表, 数组（可选）
+    ignore-tenant-tables:
+      - test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mariadb://alilaoba.cn:13307/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: W4HV=QxtHz
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 500
+      # 开发环境开启SQL监控
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+topinfo:
+  mybatis:
+    ## 数据中心（可选）
+    datacenterId: 0
+    ## 机器（可选）
+    machineId: 0
+    ## 数据源配置
+    datasource-config:
+      # mysql数据库接配置
+      url: jdbc:mariadb://alilaoba.cn:13307/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      # 用户名
+      username: root
+      # 密码
+      password: W4HV=QxtHz
+      ## 最新连接数（可选）， 默认：5
+      minIdle: 5
+      ## 最大连接数（可选）， 默认：500
+      maxActive: 500
+      ## 校验连接sql（可选）, 默认： SELECT 1
+      validationQuery: SELECT 1
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mariadb://test-db-server:3306/ps-bmp-test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:ps_test_user}
+    password: ${DB_PASSWORD:test_password}
+    druid:
+      initial-size: 10
+      min-idle: 10
+      max-active: 200
+      # 测试环境禁用SQL监控界面
+      stat-view-servlet:
+        enabled: false
+topinfo:
+  mybatis:
+    ## 数据中心（可选）
+    datacenterId: 1
+    ## 机器（可选）
+    machineId: 1
+    ## 数据源配置
+    datasource-config:
+      url: jdbc:mariadb://test-db-server:3306/ps-bmp-test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      username: ${DB_USERNAME:ps_test_user}
+      password: ${DB_PASSWORD:test_password}
+      minIdle: 10
+      maxActive: 200
+      validationQuery: SELECT 1
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    # 生产环境使用环境变量配置数据库连接
+    url: ${DB_URL:jdbc:mariadb://prod-db-server:3306/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    druid:
+      initial-size: 20
+      min-idle: 20
+      max-active: 500
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      # 生产环境禁用SQL监控界面
+      stat-view-servlet:
+        enabled: false
+      # 生产环境启用SQL防火墙
+      filter:
+        wall:
+          enabled: true
+          config:
+            select-allow: true
+            delete-allow: false
+            update-allow: true
+            insert-allow: true
+topinfo:
+  mybatis:
+    ## 数据中心（可选）
+    datacenterId: ${DATACENTER_ID:0}
+    ## 机器（可选）
+    machineId: ${MACHINE_ID:0}
+    ## 数据源配置
+    datasource-config:
+      url: ${DB_URL:jdbc:mariadb://prod-db-server:3306/ps-bmp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      minIdle: 20
+      maxActive: 500
+      validationQuery: SELECT 1
+    ## 租户模式（可选）
+    tenant: ${TENANT_MODE:false}

@@ -11,10 +11,10 @@ spring:
   # 配置文件导入和环境切换
   config:
     import: 
-      - "classpath:config/env/${spring.profiles.active}/application-${spring.profiles.active}.yml"
-      - "classpath:config/db/database-${spring.profiles.active}.yml"
-      - "classpath:config/cache/cache-${spring.profiles.active}.yml"
-      - "classpath:config/sec/security-${spring.profiles.active}.yml"
+      - "classpath:config/application-${spring.profiles.active}.yml"
+      - "classpath:config/database.yml"
+      - "classpath:config/cache.yml"
+      - "classpath:config/security.yml"
   profiles:
     active: dev
   application:
@@ -73,7 +73,7 @@ info:
 #############  默认日志配置（各环境可覆盖）
 ############################################################  
 logging:
-  config: classpath:config/log/logback-spring.xml
+  config: classpath:config/logback-spring.xml
   level:
     root: INFO
     com.jiuxi: INFO

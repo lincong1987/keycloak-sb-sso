@@ -190,6 +190,9 @@ src/main/resources/
 │   └── logback-spring.xml
 ````
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.3.2 迁移配置文件
 
 **操作步骤：**
@@ -226,6 +229,9 @@ src/main/resources/
          - "classpath:config/cache.yml"
          - "classpath:config/security.yml"
    ````
+
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
 
 ## 2. 第二阶段：模块迁移
 

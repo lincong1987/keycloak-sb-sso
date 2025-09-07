@@ -18,7 +18,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
     "com.jiuxi.module.user",
     "com.jiuxi.module.org",
     "com.jiuxi.module.auth",
-    "com.jiuxi.module.sys"
+    "com.jiuxi.module.sys",
+    "com.jiuxi.admin"
 })
 @MapperScan(basePackages = {
     "com.jiuxi.admin.core.mapper",

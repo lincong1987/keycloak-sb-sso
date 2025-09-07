@@ -46,21 +46,6 @@ public class TpOperateLogController {
     @RequestMapping("/list")
     public JsonResponse list(TpOperateLogQuery query, String jwtpid) {
 
-        // 判断token是否为空
-        // if (StrUtil.isBlank(token)) {
-        //     return JsonResponse.buildFailure("token不能为空！");
-        // }
-
-        // 校验token是否有效
-        
-
-        // 校验token是否有效
-        // try {
-        //     JwtTokenUtils.checkToken(token);
-        // } catch (Exception e) {
-        //     return JsonResponse.buildFailure("token无效！");
-        // }
-
         IPage<TpOperateLogVO> page = tpOperateLogService.queryPage(query, jwtpid);
         return JsonResponse.buildSuccess(page);
     }

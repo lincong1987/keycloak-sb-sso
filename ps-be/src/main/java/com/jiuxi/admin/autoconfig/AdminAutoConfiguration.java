@@ -14,7 +14,6 @@ import com.jiuxi.admin.core.service.PersonAccountService;
 import com.jiuxi.admin.core.service.TpSmsSendService;
 import com.jiuxi.admin.core.service.impl.*;
 import com.jiuxi.admin.core.util.CommonDataPermissionsUtil;
-// import com.jiuxi.easyexcel.service.DownloadDataService;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -69,20 +68,6 @@ public class AdminAutoConfiguration {
     public PersonAccountService PersonAccountService() {
         return new PersonAccountServiceImpl();
     }
-
-    /**
-     * excel默认导出实现
-     *
-     * @param
-     * @return com.jiuxi.easyexcel.service.DownloadDataService
-     * @author pand
-     * @date   2022-05-24 11:27
-     */
-    // @ConditionalOnMissingBean
-    // @Bean("downloadDataService")
-    // public DownloadDataService downloadDataService() {
-    //     return new DownloadDataServiceImpl();
-    // }
 
     /**
      * 人员基本信息同步监听事件实例化

@@ -67,7 +67,7 @@ public class SmsControllerApp {
      * tag：每个项目注册短信模版不一样，该接口当作demo，发送注册短信具体项目可以参考该接口
      * 注册发送验证码。
      */
-    // @RequestMapping("/send")
+
     public JsonResponse send(@Validated() TpMemVerificationCodeVO vo) {
         vo.setBusType("REGIST_BUS_TYPE_001");
 
@@ -80,7 +80,7 @@ public class SmsControllerApp {
      * tag：每个项目注册短信模版不一样，该接口当作demo，校验短信具体项目可以参考该接口
      * 校验短信验证码
      */
-    // @RequestMapping("/check")
+
     public JsonResponse check(String phone, String vcode) {
 
         boolean flag = tpSmsSendService.check(phone, "REGIST_BUS_TYPE_001", vcode);

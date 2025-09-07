@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.fasterxml.jackson.annotation.JsonFormat;
-// import io.swagger.annotations.ApiModel;
-// import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -19,7 +17,6 @@ import java.time.LocalDateTime;
  * @author 系统生成
  * @since 1.0
  */
-// @ApiModel(value = "OrgTreeChangeHistory", description = "组织机构树变更历史记录表")
 @TableName("org_tree_change_history")
 public class OrgTreeChangeHistory implements Serializable {
 
@@ -28,21 +25,18 @@ public class OrgTreeChangeHistory implements Serializable {
     /**
      * 操作ID（主键，自增）
      */
-    // @ApiModelProperty(value = "操作ID（主键，自增）")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 操作类型（CREATE/UPDATE/DELETE/QUERY）
      */
-    // @ApiModelProperty(value = "操作类型（CREATE/UPDATE/DELETE/QUERY）")
     @TableField("operation_type")
     private String operationType;
 
     /**
      * 操作时间（默认当前时间）
      */
-    // @ApiModelProperty(value = "操作时间（默认当前时间）")
     @TableField("operation_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime operationTime;
@@ -50,35 +44,30 @@ public class OrgTreeChangeHistory implements Serializable {
     /**
      * 操作用户ID（外键关联用户表）
      */
-    // @ApiModelProperty(value = "操作用户ID（外键关联用户表）")
     @TableField("operator_id")
     private Long operatorId;
 
     /**
      * 变更前的组织机构树JSON数据
      */
-    // @ApiModelProperty(value = "变更前的组织机构树JSON数据")
     @TableField("before_data")
     private String beforeData;
 
     /**
      * 变更后的组织机构树JSON数据
      */
-    // @ApiModelProperty(value = "变更后的组织机构树JSON数据")
     @TableField("after_data")
     private String afterData;
 
     /**
      * 变更前的完整组织机构节点树JSON数据
      */
-    // @ApiModelProperty(value = "变更前的完整组织机构节点树JSON数据")
     @TableField("before_full_tree")
     private String beforeFullTree;
 
     /**
      * 变更后的完整组织机构节点树JSON数据
      */
-    // @ApiModelProperty(value = "变更后的完整组织机构节点树JSON数据")
     @TableField("after_full_tree")
     private String afterFullTree;
 

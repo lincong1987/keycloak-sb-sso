@@ -256,19 +256,15 @@ public class JwtTokenUtils {
     public static Boolean checkToken(String token) throws TokenExpiredException {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET)).acceptLeeway(leeway).build();
-            // LOGGER.info("================这里token报错！token = {}", token);
             verifier.verify(token);
         } catch (AlgorithmMismatchException e) {
             // token 解析失败
-            // LOGGER.error("校验Token异常:" + ExceptionUtils.getStackTrace(e));
             throw new RuntimeException("登录凭证解析失败，请重新登录！");
         } catch (SignatureVerificationException e) {
             // token 验签失败
-            // LOGGER.error("校验Token异常:" + ExceptionUtils.getStackTrace(e));
             throw new RuntimeException("登录凭证验签失败，请重新登录！");
         } catch (InvalidClaimException e) {
             // claim 包含的值异常
-            // LOGGER.error("校验Token异常:" + ExceptionUtils.getStackTrace(e));
             throw new RuntimeException("登录凭证信息异常，请重新登录！");
         }
 

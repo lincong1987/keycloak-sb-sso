@@ -50,14 +50,12 @@ public class AnalysisTokenHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         
-        // 调试代码已移除
-        // System.out.println("=== AnalysisTokenHandlerInterceptor.preHandle 被调用 ===" + request.getRequestURI());
+        // preHandle方法中的调试代码已移除
 
         // 判断请求是否是一个方法，即handler是HandlerMethod类型请求
         // 如不是，则不需要拦截，比如静态资源的请求
         if (!(handler instanceof HandlerMethod)) {
-            // 调试代码已移除
-            // System.out.println("=== AnalysisToken: 不是HandlerMethod，直接放行 ===");
+            // HandlerMethod判断的调试代码已移除
             return true;
         }
 

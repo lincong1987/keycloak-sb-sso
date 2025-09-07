@@ -668,7 +668,6 @@ public class TpDeptBasicinfoServiceImpl implements TpDeptBasicinfoService {
                 vo.setAscnId(newAscnId);
                 // 更新id在list中的部门的单位id
                 int count = tpDeptBasicinfoMapper.updateAscnIdByDeptIds(list, newAscnId);
-                // LOGGER.info("更新了{}个部门的单位id", count);
                 // 部门类型发生变更，更新部门下的人所在单位id
                 tpPersonBasicinfoMapper.updateAscnIdByDeptIds(list, newAscnId, oldAscnId);
             }

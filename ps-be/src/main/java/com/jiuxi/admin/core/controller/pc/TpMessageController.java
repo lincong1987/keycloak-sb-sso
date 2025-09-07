@@ -89,22 +89,6 @@ public class TpMessageController {
     }
 
 
-    /**
-     * 修改
-     */
-    // @RequestMapping("/update")
-    // public JsonResponse update(TpMessageVO tpMessage, String jwtpid) {
-    //     tpMessageService.update(tpMessage, jwtpid);
-    //     return JsonResponse.buildSuccess();
-    // }
-
-    /**
-     * 删除
-     */
-    // @RequestMapping("/delete")
-    // public JsonResponse delete(String[] msgIds) {
-    //     tpMessageService.deleteByIds(Arrays.asList(msgIds));
-    //     return JsonResponse.buildSuccess();
-    // }
+    // 已移除未使用的update和delete方法
 
 }

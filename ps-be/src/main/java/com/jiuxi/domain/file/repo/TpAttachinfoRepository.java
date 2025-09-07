@@ -1,22 +1,18 @@
-package com.jiuxi.admin.core.service;
+package com.jiuxi.domain.file.repo;
 
-import com.jiuxi.admin.core.bean.entity.TpAttachinfo;
-import com.jiuxi.admin.core.bean.vo.TpAttachinfoRefVO;
-import com.jiuxi.admin.core.bean.vo.TpAttachinfoVO;
-
+import com.jiuxi.domain.file.model.TpAttachinfo;
 import java.util.List;
 
 /**
- * 附件服务适配器接口
- * 用于兼容旧的代码依赖
+ * 附件仓储接口
  */
-public interface TpAttachinfoService {
+public interface TpAttachinfoRepository {
 
     int save(TpAttachinfo bean);
 
     TpAttachinfo view(String attachId);
 
-    List<TpAttachinfoVO> selectByReferIdAndType(String referId, String referType);
+    List<TpAttachinfo> selectByReferIdAndType(String referId, String referType);
 
     int update(TpAttachinfo bean, String pid);
 
@@ -28,17 +24,17 @@ public interface TpAttachinfoService {
      *    如果 referId 不为空， 则根据 数据权限 判断是否能够删除，如果权限不对，则抛出异常 逻辑删除
      *</pre>
      *
-     * @param attachId: 附件ID
-     * @param jwtpid:   JWT用户标识
-     * @return int 删除结果
+     * @param attachId:
+     * @param jwtpid:
+     * @return int
      */
     int remove(String referId, String attachId, String jwtpid);
 
     /**
      * 物理删除
      *
-     * @param attachId: 附件ID
-     * @return int 删除结果
+     * @param attachId:
+     * @return int
      */
     int delete(String attachId);
 
@@ -46,28 +42,12 @@ public interface TpAttachinfoService {
 
     /**
      * 根据 referId 删除附件
-     * @param referId    关联业务主键
-     * @param referType  关联业务类型
-     * @param pid        操作人员ID
-     * @return int 删除结果
+     * @param referId
+     * @param referType
+     * @param pid
+     * @return int
      */
     int deleteByReferIdAndReferType(String referId, String referType, String pid);
-
-    /**
-     * 批量附件绑定
-     * @param list    附件列表
-     * @param referId 关联业务主键
-     * @param pid     操作人员ID
-     */
-    void listBand(List<TpAttachinfoRefVO> list, String referId, String pid);
-
-    /**
-     * 单类型附件绑定
-     * @param vo      附件信息
-     * @param referId 关联业务主键
-     * @param pid     操作人员ID
-     */
-    void band(TpAttachinfoRefVO vo, String referId, String pid);
 
     /**
      * 修改附件的rederId
@@ -91,8 +71,8 @@ public interface TpAttachinfoService {
     /**
      * 判断附件是否存在 （忽略actived字段）
      *
-     * @param attachId 附件ID
-     * @return boolean 是否存在
+     * @param attachId
+     * @return boolean
      */
     boolean exists(String attachId);
 }

@@ -305,6 +305,12 @@ src/main/resources/
 2. 将 `src/main/java/com/jiuxi/module/file/domain/` 下的内容移动到 `src/main/java/com/jiuxi/domain/file/model/` 和 `src/main/java/com/jiuxi/domain/file/service/`
 3. 将 `src/main/java/com/jiuxi/module/file/infra/` 下的内容移动到 `src/main/java/com/jiuxi/infra/file/`
 4. 将 `src/main/java/com/jiuxi/module/file/interfaces/` 下的内容移动到 `src/main/java/com/jiuxi/intf/file/`
+5. 创建FileAppService接口及其实现类FileAppServiceImpl
+6. 创建FileController控制器类
+7. 修复编译错误，确保项目能够成功编译
+
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-08
 
 ### 2.2 整合功能模块到新的分层结构
 

@@ -26,7 +26,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
     "com.jiuxi.intf.auth",
     "com.jiuxi.module.sys",
     "com.jiuxi.admin",
-    "com.jiuxi.infra.user"
+    "com.jiuxi.infra.user",
+    "com.jiuxi.intf.file"  // 添加这一行以扫描新的文件控制器
 })
 @MapperScan(basePackages = {
     "com.jiuxi.admin.core.mapper",

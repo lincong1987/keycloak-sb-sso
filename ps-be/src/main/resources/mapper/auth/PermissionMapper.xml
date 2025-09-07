@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jiuxi.infra.auth.persistence.mapper.PermissionMapper">
+
+    <!-- 权限结果映射 -->
+    <resultMap type="com.jiuxi.infra.auth.persistence.entity.PermissionPO" id="permissionMap">
+        <result property="id" column="id"/>
+        <result property="permissionCode" column="permission_code"/>
+        <result property="permissionName" column="permission_name"/>
+        <result property="permissionDesc" column="permission_desc"/>
+        <result property="permissionType" column="permission_type"/>
+        <result property="status" column="status"/>
+        <result property="permissionUri" column="permission_uri"/>
+        <result property="permissionMethod" column="permission_method"/>
+        <result property="componentId" column="component_id"/>
+        <result property="dataScope" column="data_scope"/>
+        <result property="orderIndex" column="order_index"/>
+        <result property="creator" column="creator"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updator" column="updator"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <!-- 插入权限 -->
+    <insert id="insert" parameterType="com.jiuxi.infra.auth.persistence.entity.PermissionPO">
+        INSERT INTO sys_permission
+            (id, permission_code, permission_name, permission_desc, permission_type, status, permission_uri, permission_method, component_id, data_scope, order_index, creator, create_time, updator, update_time, tenant_id, deleted)
+        VALUES
+            (#{id}, #{permissionCode}, #{permissionName}, #{permissionDesc}, #{permissionType}, #{status}, #{permissionUri}, #{permissionMethod}, #{componentId}, #{dataScope}, #{orderIndex}, #{creator}, #{createTime}, #{updator}, #{updateTime}, #{tenantId}, #{deleted})
+    </insert>
+
+    <!-- 更新权限 -->
+    <update id="updateById" parameterType="com.jiuxi.infra.auth.persistence.entity.PermissionPO">
+        UPDATE sys_permission
+        <set>
+            <if test="permissionCode != null and permissionCode != ''">permission_code = #{permissionCode},</if>
+            <if test="permissionName != null and permissionName != ''">permission_name = #{permissionName},</if>
+            <if test="permissionDesc != null">permission_desc = #{permissionDesc},</if>
+            <if test="permissionType != null">permission_type = #{permissionType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="permissionUri != null">permission_uri = #{permissionUri},</if>
+            <if test="permissionMethod != null">permission_method = #{permissionMethod},</if>
+            <if test="componentId != null">component_id = #{componentId},</if>
+            <if test="dataScope != null">data_scope = #{dataScope},</if>
+            <if test="orderIndex != null">order_index = #{orderIndex},</if>
+            <if test="updator != null">updator = #{updator},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            deleted = #{deleted}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询权限 -->
+    <select id="selectById" parameterType="String" resultMap="permissionMap">
+        SELECT id, permission_code, permission_name, permission_desc, permission_type, status, permission_uri, permission_method, component_id, data_scope, order_index, creator, create_time, updator, update_time, tenant_id, deleted
+        FROM sys_permission
+        WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <!-- 根据条件查询单个权限 -->
+    <select id="selectOne" parameterType="com.baomidou.mybatisplus.core.conditions.query.QueryWrapper" resultMap="permissionMap">
+        SELECT id, permission_code, permission_name, permission_desc, permission_type, status, permission_uri, permission_method, component_id, data_scope, order_index, creator, create_time, updator, update_time, tenant_id, deleted
+        FROM sys_permission
+        <where>
+            deleted = 0
+            <if test="ew != null and ew.sqlSegment != null and ew.sqlSegment != ''">
+                AND ${ew.sqlSegment}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID删除权限（逻辑删除） -->
+    <update id="deleteById" parameterType="String">
+        UPDATE sys_permission
+        SET deleted = 1
+        WHERE id = #{id}
+    </update>
+
+</mapper>

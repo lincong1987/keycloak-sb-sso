@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.jiuxi.module.auth.infra.persistence.mapper.RoleMapper">
+<mapper namespace="com.jiuxi.infra.auth.persistence.mapper.RoleMapper">
 
     <!-- 角色结果映射 -->
-    <resultMap type="com.jiuxi.module.auth.infra.persistence.entity.RolePO" id="roleMap">
+    <resultMap type="com.jiuxi.infra.auth.persistence.entity.RolePO" id="roleMap">
         <result property="id" column="id"/>
         <result property="roleCode" column="role_code"/>
         <result property="roleName" column="role_name"/>
@@ -24,7 +24,7 @@
     </resultMap>
 
     <!-- 插入角色 -->
-    <insert id="insert" parameterType="com.jiuxi.module.auth.infra.persistence.entity.RolePO">
+    <insert id="insert" parameterType="com.jiuxi.infra.auth.persistence.entity.RolePO">
         INSERT INTO sys_role
             (id, role_code, role_name, role_desc, role_type, status, built_in, dept_id, data_scope, order_index, creator, create_time, updator, update_time, tenant_id, deleted)
         VALUES
@@ -32,7 +32,7 @@
     </insert>
 
     <!-- 更新角色 -->
-    <update id="updateById" parameterType="com.jiuxi.module.auth.infra.persistence.entity.RolePO">
+    <update id="updateById" parameterType="com.jiuxi.infra.auth.persistence.entity.RolePO">
         UPDATE sys_role
         <set>
             <if test="roleCode != null and roleCode != ''">role_code = #{roleCode},</if>

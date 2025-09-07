@@ -17,7 +17,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
     "com.jiuxi",
     "com.jiuxi.module.user",
     "com.jiuxi.module.org",
-    "com.jiuxi.module.auth",
+    "com.jiuxi.app.auth",
+    "com.jiuxi.domain.auth",
+    "com.jiuxi.infra.auth",
+    "com.jiuxi.intf.auth",
     "com.jiuxi.module.sys",
     "com.jiuxi.admin"
 })
@@ -25,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
     "com.jiuxi.admin.core.mapper",
     "com.jiuxi.module.user.infra.persistence.mapper",
     "com.jiuxi.module.org.infra.persistence.mapper",
-    "com.jiuxi.module.auth.infra.persistence.mapper",
+    "com.jiuxi.infra.auth.persistence.mapper",
     "com.jiuxi.infra.sys.persistence.mapper"
 })
 @EnableAsync

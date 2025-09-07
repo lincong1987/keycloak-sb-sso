@@ -1,4 +1,4 @@
-package com.jiuxi;
+package com.jiuxi.startup;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

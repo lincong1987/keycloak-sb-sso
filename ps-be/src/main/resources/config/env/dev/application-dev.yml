@@ -20,10 +20,24 @@ spring:
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
-  # 禁用邮件自动配置以避免启动问题
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+  # 邮件配置
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: 18069853753@163.com
+    password: WQbFDS7fdK92fKcU
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
   # DevTools配置 - 启用热重载
   devtools:
     restart:
@@ -59,6 +73,14 @@ logging:
     org.springframework.transaction: DEBUG
     # 显示数据源相关日志
     org.springframework.jdbc.datasource: DEBUG
+    # 监控模块详细日志
+    com.jiuxi.monitor: DEBUG
+    # 监控客户端日志
+    com.jiuxi.monitor.client: DEBUG
+    # 监控服务端日志
+    com.jiuxi.monitor.server: DEBUG
+    # 监控通用模块日志
+    com.jiuxi.monitor.common: DEBUG
 
 ############################################################
 #############  开发环境特定配置
@@ -78,6 +100,15 @@ jiuxi:
         client-id: "ps-bmp-backend-dev"
         connection-timeout: 3000
         read-timeout: 5000
-
+        # 邮件配置
+        mail-config:
+          # 发件人邮箱
+          user: 18069853753@163.com
+          # 邮箱密码或授权码
+          password: WQbFDS7fdK92fKcU
+          # SMTP服务器地址
+          smtp: smtp.163.com
+          # SMTP端口
+          port: 465
 # 开发环境JVM配置建议
 # -Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200

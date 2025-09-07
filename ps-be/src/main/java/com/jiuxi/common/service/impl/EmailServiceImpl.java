@@ -4,6 +4,8 @@ import com.jiuxi.common.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -26,7 +28,8 @@ import java.util.regex.Pattern;
  * @Date: 2025/01/07
  * @Copyright: 2025 www.jiuxi.com Inc. All rights reserved.
  */
-@Service
+@Service("commonEmailService")
+@ConditionalOnClass(JavaMailSender.class)
 public class EmailServiceImpl implements EmailService {
     
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
@@ -50,7 +53,8 @@ public class EmailServiceImpl implements EmailService {
     
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
     
-    public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
+    public EmailServiceImpl(@Autowired(required = false) JavaMailSender mailSender, 
+                           @Autowired(required = false) TemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
     }

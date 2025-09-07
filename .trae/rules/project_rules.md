@@ -67,7 +67,7 @@ JSON返回都是使用 `JsonResponse`，可以使用 `buildSuccess` 和 `buildFa
   "pages": 10        // 总页数
 }
 ```
-spring boot 的配置文件为 `application-dev.yml`，请不要使用 `application.yml`，否则会报错, 位置在 `D:\projects\ps-bmp\keycloak-sb-sso\ps-be\src\main\resources\config\environments\dev\application-dev.yml`
+spring boot 的配置文件位置在 `D:\projects\ps-bmp\keycloak-sb-sso\ps-be\src\main\resources\application.yml` 
 
 # 前端
 端口为10801

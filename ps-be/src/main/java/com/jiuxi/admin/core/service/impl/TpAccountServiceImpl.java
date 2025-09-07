@@ -830,10 +830,10 @@ public class TpAccountServiceImpl implements TpAccountService {
             List<TpAccount> list = tpAccountMapper.selectByEmail(email);
             if (list.size() == 0) {
                 LOGGER.error("{} 该邮箱未注册！", email);
-                throw new TopinfoRuntimeException(-1, "找回密码失败！");
+                throw new TopinfoRuntimeException(-1, "该邮箱地址未注册，请检查邮箱地址是否正确或联系管理员");
             } else if (list.size() > 1) {
                 LOGGER.error("{} 该邮箱对应多个账号！", email);
-                throw new TopinfoRuntimeException(-1, "找回密码失败！");
+                throw new TopinfoRuntimeException(-1, "该邮箱地址关联了多个账号，请联系管理员处理");
             }
             // 判断上个验证码发送时间距离当前验证码发送时间的间隔
             String verificationCode = list.get(0).getVerificationCode();

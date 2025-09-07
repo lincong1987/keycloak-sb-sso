@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMessage;
  * @Date: 2024/12/19
  * @Copyright: 2024 www.tuxun.net Inc. All rights reserved.
  */
-@Service
+@Service("adminEmailService")
 @ConditionalOnClass(JavaMailSender.class)
 public class EmailServiceImpl implements EmailService {
 

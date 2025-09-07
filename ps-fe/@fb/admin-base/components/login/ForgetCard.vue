@@ -163,7 +163,7 @@
 								this.forgetForm1.username = json.data
 								this.$message.success('请注意查收验证码')
 							} else {
-								this.$message.success(json.message)
+								this.$message.error(json.message)
 							}
 						})
 					} else {
@@ -178,7 +178,7 @@
 						if (json && json.code == 1) {
 							this.$message.success('请注意查收验证码')
 						} else {
-							this.$message.success(json.message)
+							this.$message.error(json.message)
 						}
 					})
 					this.countDown()
@@ -215,7 +215,7 @@
 								this.$refs.forgetTwo.resetFields()
 								this.$message.success(json.data)
 							} else {
-								this.$message.success(json.data)
+								this.$message.error(json.data)
 							}
 						})
 					} else {

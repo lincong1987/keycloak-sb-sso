@@ -165,7 +165,7 @@
 								this.forgetForm1.emailCode = ''
 								this.$message.success('请注意查收验证码')
 							} else {
-								this.$message.success(json.message)
+								this.$message.error(json.message)
 							}
 						})
 					} else {
@@ -182,7 +182,7 @@
 							this.forgetForm1.emailCode = ''
 							this.$message.success('请注意查收验证码')
 						} else {
-							this.$message.success(json.message)
+							this.$message.error(json.message)
 						}
 					})
 					this.countDown()
@@ -219,7 +219,7 @@
 								this.$refs.forgetTwo.resetFields()
 								this.$message.success(json.data)
 							} else {
-								this.$message.success(json.data)
+								this.$message.error(json.data)
 							}
 						})
 					} else {

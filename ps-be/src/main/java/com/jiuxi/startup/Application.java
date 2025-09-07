@@ -26,7 +26,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
     "com.jiuxi.module.user.infra.persistence.mapper",
     "com.jiuxi.module.org.infra.persistence.mapper",
     "com.jiuxi.module.auth.infra.persistence.mapper",
-    "com.jiuxi.module.sys.infra.persistence.mapper"
+    "com.jiuxi.infra.sys.persistence.mapper"
 })
 @EnableAsync
 public class Application {

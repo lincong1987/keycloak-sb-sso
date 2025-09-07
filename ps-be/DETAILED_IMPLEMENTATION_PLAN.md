@@ -205,6 +205,9 @@ src/main/resources/
 7. 将 `src/main/resources/config/cache/cache-dev.yml`、`cache-test.yml`、`cache-prod.yml` 合并为 `src/main/resources/config/cache.yml`
 8. 将 `src/main/resources/config/log/logback-spring.xml` 移动到 `src/main/resources/config/logback-spring.xml`
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.3.3 更新 application.yml
 
 **操作步骤：**
@@ -244,6 +247,9 @@ src/main/resources/
 2. 将 `src/main/java/com/jiuxi/module/sys/domain/` 下的内容移动到 `src/main/java/com/jiuxi/domain/sys/model/` 和 `src/main/java/com/jiuxi/domain/sys/service/`
 3. 将 `src/main/java/com/jiuxi/module/sys/infra/` 下的内容移动到 `src/main/java/com/jiuxi/infra/sys/`
 4. 将 `src/main/java/com/jiuxi/module/sys/interfaces/` 下的内容移动到 `src/main/java/com/jiuxi/intf/sys/`
+
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
 
 #### 2.1.2 迁移 auth 模块
 

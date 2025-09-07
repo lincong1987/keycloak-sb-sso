@@ -91,9 +91,13 @@ public class TpTraceServiceImpl extends ServiceImpl<TpTraceMapper, TpTrace> impl
         TpTrace bean = new TpTrace();
         // 转换成数据库对象
         BeanUtil.copyProperties(vo, bean);
+        // 更新人
+        bean.setUpdator(jwtpid);
+        // 更新时间
+        bean.setUpdateTime(CommonDateUtil.now());
 
         try {
-            int count = tpTraceMapper.add(bean);
+            int count = tpTraceMapper.update(bean);
             return count;
         } catch (Exception e) {
             LOGGER.error("修改失败！vo:{}, 错误: {}", JSONObject.toJSONString(vo), ExceptionUtils.getStackTrace(e));
@@ -121,8 +125,12 @@ public class TpTraceServiceImpl extends ServiceImpl<TpTraceMapper, TpTrace> impl
             if (null == ids || ids.isEmpty()) {
                 throw new TopinfoRuntimeException(-1, "删除数据id不能为空！");
             }
+            // 获取当前用户ID和时间
+            String jwtpid = "SYSTEM"; // 这里应该从上下文中获取，暂时用默认值
+            String now = CommonDateUtil.now();
+            
             ids.forEach(id -> {
-                tpTraceMapper.delete(id);
+                tpTraceMapper.delete(id, now, jwtpid);
             });
             return ids.size();
         } catch (Exception e) {

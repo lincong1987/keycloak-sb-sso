@@ -59,6 +59,16 @@ public class TpTrace implements Serializable {
 	 */
 	private String createTime;
 
+	/**
+	 * 更新人ID
+	 */
+	private String updator;
+
+	/**
+	 * 更新时间
+	 */
+	private String updateTime;
+
 
 	public String getId() {
 		return id;
@@ -138,6 +148,22 @@ public class TpTrace implements Serializable {
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getUpdator() {
+		return updator;
+	}
+
+	public void setUpdator(String updator) {
+		this.updator = updator;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
 	}
 
 

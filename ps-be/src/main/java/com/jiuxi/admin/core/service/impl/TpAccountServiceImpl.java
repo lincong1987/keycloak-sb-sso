@@ -143,7 +143,7 @@ public class TpAccountServiceImpl implements TpAccountService {
         }
 
 
-        // TODO TAG 判断 undefined 是因为向前兼容，密码修改的时候，传过来了 undefined. 经过1个大版本更新时，会删掉。目前版本1.0.6-SNAPSHOT
+        // TODO TAG 判断 undefined 是因为向前兼容，密码修改的时候，传过来了 undefined. 经过1个大版本更新时，会删掉。目前版本2.2.2-SNAPSHOT
         if (StrUtil.equals(userpwd, "undefined")) {
             vo.setUserpwd("");
         }

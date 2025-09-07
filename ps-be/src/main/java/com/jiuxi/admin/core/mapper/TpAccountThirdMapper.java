@@ -28,4 +28,5 @@ public interface TpAccountThirdMapper {
 
     int delete(@Param("id") String id, @Param("updateTime") String updateTime, @Param("updator") String updator);
 
+    int batchDelete(@Param("ids") String[] ids, @Param("updateTime") String updateTime, @Param("updator") String updator);
 }

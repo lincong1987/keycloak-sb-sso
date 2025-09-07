@@ -79,5 +79,13 @@
     <update id="delete" parameterType="String" >
         UPDATE tp_account_third SET ACTIVED = 0, UPDATE_TIME = #{updateTime}, UPDATOR = #{updator} WHERE APP_KEY = #{id}
     </update>
+    
+    <update id="batchDelete">
+        UPDATE tp_account_third SET ACTIVED = 0, UPDATE_TIME = #{updateTime}, UPDATOR = #{updator} 
+        WHERE APP_KEY IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 
 </mapper>

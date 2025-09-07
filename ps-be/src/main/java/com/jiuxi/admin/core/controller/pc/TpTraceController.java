@@ -11,6 +11,10 @@ import com.jiuxi.admin.core.bean.vo.TpTraceVO;
 import com.jiuxi.admin.core.bean.entity.TpTrace;
 import com.jiuxi.admin.core.bean.query.TpTraceQuery;
 import com.jiuxi.admin.core.service.TpTraceService;
+import cn.hutool.core.bean.BeanUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -42,8 +46,8 @@ public class TpTraceController {
      */
     @RequestMapping("/view")
     public JsonResponse view(String id){
-        // TODO
-        return JsonResponse.buildSuccess();
+        TpTraceVO vo = tpTraceService.view(id);
+        return JsonResponse.buildSuccess(vo);
     }
 
     /**
@@ -51,8 +55,12 @@ public class TpTraceController {
      */
     @RequestMapping("/add")
     public JsonResponse add(@RequestBody TpTrace tpTrace){
-        // TODO
-        return JsonResponse.buildSuccess();
+        // 获取当前用户ID（这里需要从请求上下文中获取，暂时用占位符）
+        String jwtpid = "CURRENT_USER_ID"; // TODO: 需要从请求上下文中获取真实用户ID
+        TpTraceVO vo = new TpTraceVO();
+        BeanUtil.copyProperties(tpTrace, vo);
+        String id = tpTraceService.add(vo, jwtpid);
+        return JsonResponse.buildSuccess("保存成功", id);
     }
 
     /**
@@ -60,8 +68,12 @@ public class TpTraceController {
      */
     @RequestMapping("/update")
     public JsonResponse update(@RequestBody TpTrace tpTrace){
-        // TODO
-        return JsonResponse.buildSuccess();
+        // 获取当前用户ID（这里需要从请求上下文中获取，暂时用占位符）
+        String jwtpid = "CURRENT_USER_ID"; // TODO: 需要从请求上下文中获取真实用户ID
+        TpTraceVO vo = new TpTraceVO();
+        BeanUtil.copyProperties(tpTrace, vo);
+        int count = tpTraceService.update(vo, jwtpid);
+        return JsonResponse.buildSuccess("修改成功，影响记录数：" + count);
     }
 
     /**
@@ -69,8 +81,9 @@ public class TpTraceController {
      */
     @RequestMapping("/delete")
     public JsonResponse delete(@RequestBody String[] ids){
-        // TODO
-        return JsonResponse.buildSuccess();
+        ArrayList<String> idList = new ArrayList<>(Arrays.asList(ids));
+        int count = tpTraceService.deleteByIds(idList);
+        return JsonResponse.buildSuccess("删除成功，影响记录数：" + count);
     }
 
 }

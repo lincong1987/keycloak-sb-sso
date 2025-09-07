@@ -27,6 +27,6 @@ public interface TpTraceMapper extends BaseMapper<TpTrace> {
 
     TpTraceVO view(String id);
 
-    int delete(String id);
+    int delete(@Param("id") String id, @Param("updateTime") String updateTime, @Param("updator") String updator);
 
 }

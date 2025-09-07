@@ -14,10 +14,12 @@
         <result property="creator" column="CREATOR"/>
         <result property="creatorName" column="CREATOR_NAME"/>
         <result property="createTime" column="CREATE_TIME"/>
+        <result property="updator" column="UPDATOR"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
     </resultMap>
 
     <sql id="baseSql">
-        SELECT ID, MODULE_TYPE, RECORD_ID, UPDATE_BEFORE, UPDATE_AFTER, ACTIVED, CREATOR, CREATOR_NAME, CREATE_TIME FROM tp_trace
+        SELECT ID, MODULE_TYPE, RECORD_ID, UPDATE_BEFORE, UPDATE_AFTER, ACTIVED, CREATOR, CREATOR_NAME, CREATE_TIME, UPDATOR, UPDATE_TIME FROM tp_trace
     </sql>
 
     <insert id="add" parameterType="com.jiuxi.admin.core.bean.entity.TpTrace">
@@ -41,6 +43,8 @@
             <if test="null != creator">CREATOR = #{creator},</if>
             <if test="null != creatorName">CREATOR_NAME = #{creatorName},</if>
             <if test="null != createTime">CREATE_TIME = #{createTime},</if>
+            <if test="null != updator">UPDATOR = #{updator},</if>
+            <if test="null != updateTime">UPDATE_TIME = #{updateTime},</if>
         </set>
         WHERE ID = #{id}
     </update>
@@ -59,8 +63,8 @@
         ACTIVED = 1 and ID = #{id}
     </select>
 
-    <update id="delete">
-        <!-- TODO 删除逻辑，自己实现 -->
+    <update id="delete" parameterType="String">
+        UPDATE tp_trace SET ACTIVED = 0, UPDATE_TIME = #{updateTime}, UPDATOR = #{updator} WHERE ID = #{id}
     </update>
 
 </mapper>

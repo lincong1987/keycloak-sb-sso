@@ -8,6 +8,7 @@ import com.jiuxi.admin.core.bean.vo.CJsonVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,4 +31,5 @@ public interface CJsonMapper {
 
     int delete(@Param("mcode") String mcode, @Param("id") String id);
 
+    int batchDelete(@Param("mcode") String mcode, @Param("ids") List<String> ids);
 }

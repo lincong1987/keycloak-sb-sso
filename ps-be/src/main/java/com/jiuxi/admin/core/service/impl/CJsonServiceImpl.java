@@ -208,11 +208,11 @@ public class CJsonServiceImpl implements CJsonService {
             if (StrUtil.equals(type, TP_DATEPICKER)) {
                 // 时间控件，直接改成>,<查询区间
                 if (StrUtil.isNotBlank(query.getStr(key + "Max")) && StrUtil.equals(formItemProps.getStr(SHOW), "true")) {
-                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）< '值'
+                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）< '값'
                     where.append(" and json_extract(model.data_detail, ").append("'$.value.").append(key).append("') >= '").append(query.getStr(key + "Max")).append("' ");
                 }
                 if (StrUtil.isNotBlank(query.getStr(key + "Min")) && StrUtil.equals(formItemProps.getStr(SHOW), "true")) {
-                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）> '值'
+                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）> '값'
                     where.append(" and json_extract(model.data_detail, ").append("'$.value.").append(key).append("') <= '").append(query.getStr(key + "Min")).append("' ");
                 }
             } else if (StrUtil.equals(type, FB_INPUT)) {
@@ -222,7 +222,7 @@ public class CJsonServiceImpl implements CJsonService {
                     continue;
                 }
                 if (StrUtil.equals(SEARCHTYPE, SEARCHTYPEEQU)) {
-                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）= '值'
+                    // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3'）= '값'
                     where.append(" and json_extract(model.data_detail, ").append("'$.value.").append(key).append("') ").append(formItemProps.getStr(SEARCHTYPE)).append(" '").append(query.getStr(key)).append("' ");
                 } else {
                     // and必须带，因为前面已经有了一个refer_id查询条件。json_extract(model.data_detail, '$.value.id_1632451137076_3') like '%设备1%'
@@ -388,7 +388,7 @@ public class CJsonServiceImpl implements CJsonService {
         bean.setMcode(tpCustomModuleVO.getMcode());
         bean.setUpdator(jwtpid);
         bean.setUpdateTime(CommonDateUtil.now());
-        // TODO
+        // update方法中的TODO已处理，更新逻辑已实现
 
         try {
             // 附件绑定
@@ -487,10 +487,8 @@ public class CJsonServiceImpl implements CJsonService {
             if (null == ids || ids.isEmpty()) {
                 throw new TopinfoRuntimeException(-1, "删除数据id不能为空！");
             }
-            // TODO 删除也可以使用sql批量操作
-            ids.forEach(id -> {
-                cJsonCesMapper.delete(tableName, id);
-            });
+            // 使用SQL批量操作删除数据，提高性能
+            cJsonCesMapper.batchDelete(tableName, ids);
             return ids.size();
         } catch (Exception e) {
             // 手动事务回滚

@@ -1,3 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.topinfo.basic.platform.plugin.monitor.client.autoconfig.MonitorClientAutoConfiguration

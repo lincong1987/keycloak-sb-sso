@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Configuration;
 public class SsoAutoConfiguration {
     
     public SsoAutoConfiguration() {
-        System.out.println("SsoAutoConfiguration 已创建！");
+        
     }
 }

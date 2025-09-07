@@ -61,9 +61,4 @@ public class BcryptUtils {
     public static boolean match(String password, String encodePassword) {
         return BCrypt.checkpw(password, encodePassword);
     }
-
-    public static void main(String[] args) {
-        System.out.println(encode("8153d677e1e655f32b9d5ce3bd7eb6f80d03439c85a9c4c5166fac805fb2ad9e"));
-    }
-
 }

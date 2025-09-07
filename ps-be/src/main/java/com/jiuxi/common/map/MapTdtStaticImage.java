@@ -116,8 +116,6 @@ public class MapTdtStaticImage {
             // 生成分片文件下载目录
             fileDir = rootDir + "/" + yyyyMM + "/" + fileName;
 
-            System.out.println(url);
-
             // 将文件下载后保存，返回结果为下载文件大小
             HttpUtil.downloadFile(url, FileUtil.file(fileDir));
         } catch (UnsupportedEncodingException e) {

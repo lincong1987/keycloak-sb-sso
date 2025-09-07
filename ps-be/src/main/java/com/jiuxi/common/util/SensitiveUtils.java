@@ -57,11 +57,6 @@ public class SensitiveUtils {
         return StrUtil.hide(cardNum, thisStart, thisEnd);
     }
 
-    public static void main(String[] args) {
-        String str = "0370-8032030";
-        System.out.println(StrUtil.hide(str, 5, str.length() - 3));
-    }
-
     /**
      * 座机号，6-10位模糊
      *

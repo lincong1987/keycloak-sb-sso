@@ -8,6 +8,8 @@ import com.jiuxi.admin.core.bean.vo.TpSystemConfigVO;
 import com.jiuxi.admin.core.mapper.TpSystemConfigMapper;
 import com.jiuxi.admin.core.service.TpSystemConfigService;
 import com.jiuxi.config.ConfigChangeEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TpSystemConfigServiceImpl implements TpSystemConfigService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TpSystemConfigServiceImpl.class);
 
     @Override
     public void setConfigValue(String configKey, String configValue) {
@@ -146,7 +150,7 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
             eventPublisher.publishEvent(event);
         } catch (Exception e) {
             // 记录日志但不影响主流程
-            System.err.println("发布配置变更事件失败: " + e.getMessage());
+            LOGGER.warn("发布配置变更事件失败", e);
         }
     }
 
@@ -193,7 +197,7 @@ public class TpSystemConfigServiceImpl implements TpSystemConfigService {
                 eventPublisher.publishEvent(event);
             } catch (Exception e) {
                 // 记录日志但不影响主流程
-                System.err.println("发布配置变更事件失败: " + e.getMessage());
+                LOGGER.warn("发布配置变更事件失败", e);
             }
         }
     }

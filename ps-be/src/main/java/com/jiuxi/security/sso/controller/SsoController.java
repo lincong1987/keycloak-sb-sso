@@ -72,7 +72,6 @@ public class SsoController {
     private TpSystemConfigService tpSystemConfigService;
     
     public SsoController() {
-        System.out.println("SsoController 已创建！");
         logger.info("SsoController 已创建！");
     }
     
@@ -296,7 +295,6 @@ public class SsoController {
      */
     @GetMapping("/login-url")
     public ResponseEntity<Map<String, Object>> getLoginUrl(HttpServletRequest request) {
-        System.out.println("=== getLoginUrl 方法被调用 ===");
         logger.info("收到 SSO 登录 URL 请求");
         
         // 从系统配置表获取SSO配置

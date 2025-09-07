@@ -36,7 +36,6 @@ import java.util.Map;
 public class KeycloakShiroConfiguration {
     
     public KeycloakShiroConfiguration() {
-        System.out.println("KeycloakShiroConfiguration 已创建！");
     }
     
     @Autowired

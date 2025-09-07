@@ -958,7 +958,6 @@ public class TpAccountServiceImpl implements TpAccountService {
     @Async
     @EventListener
     public void handleKeycloakSync(KeycloakSyncEvent event) {
-        System.out.println("=== handleKeycloakSync方法被调用 === accountId=" + event.getAccountId() + ", username=" + event.getUsername());
         LOGGER.info("=== handleKeycloakSync方法被调用 === accountId={}, username={}", 
                 event.getAccountId(), event.getUsername());
         

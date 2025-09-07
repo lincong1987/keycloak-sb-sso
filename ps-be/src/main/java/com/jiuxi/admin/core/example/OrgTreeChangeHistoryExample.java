@@ -2,6 +2,8 @@ package com.jiuxi.admin.core.example;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jiuxi.admin.core.service.OrgTreeChangeHistoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrgTreeChangeHistoryExample {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrgTreeChangeHistoryExample.class);
 
     @Autowired
     private OrgTreeChangeHistoryService orgTreeChangeHistoryService;
@@ -84,11 +88,7 @@ public class OrgTreeChangeHistoryExample {
                 afterFullTree
         );
 
-        if (historyId != null) {
-            System.out.println("记录变更成功，历史记录ID: " + historyId);
-        } else {
-            System.out.println("记录变更失败");
-        }
+        // 调试语句已移除
     }
 
     /**
@@ -115,7 +115,7 @@ public class OrgTreeChangeHistoryExample {
             );
         } catch (Exception e) {
             // 记录变更历史失败不应该影响主业务，只记录警告日志
-            System.err.println("记录组织架构变更历史失败，但不影响主业务: " + e.getMessage());
+            LOGGER.warn("记录组织架构变更历史失败，但不影响主业务", e);
         }
     }
 }

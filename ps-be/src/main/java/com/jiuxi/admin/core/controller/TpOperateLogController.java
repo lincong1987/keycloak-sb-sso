@@ -144,8 +144,6 @@ public class TpOperateLogController {
                 extend03 = URLDecoder.decode(extend03, Charset.forName("UTF-8"));
             }
             
-            System.out.println("===collection operterMsg: " + operterMsg + ", appName: " + appName);
-            
             tpOperateLogService.collection(moduleCode, operterType, operterRid, username, category, jt, ip, userAgent, operterMsg, appName, extend03);
             return JsonResponse.buildSuccess("操作日志记录成功");
         } catch (Exception e) {

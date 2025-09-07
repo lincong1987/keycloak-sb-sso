@@ -28,7 +28,8 @@ import java.util.Map;
 public class DefaultShiroConfiguration {
     
     public DefaultShiroConfiguration() {
-        System.out.println("DefaultShiroConfiguration 已创建！");
+        // 调试代码已移除
+        // System.out.println("DefaultShiroConfiguration 已创建！");
     }
     
     /**

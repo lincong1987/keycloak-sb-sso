@@ -5,7 +5,7 @@
 ### 1.1 创建新的包结构
 
 #### 1.1.1 创建应用层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── app/
 │   ├── auth/
@@ -15,14 +15,17 @@ src/main/java/com/jiuxi/
 │   ├── log/
 │   ├── file/
 │   └── common/
-```
+````
 
 **操作步骤：**
 1. 创建 [app](file://src/main/java/com/jiuxi/app) 目录
 2. 在 [app](file://src/main/java/com/jiuxi/app) 目录下创建 auth、org、sys、user、log、file、common 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.2 创建领域层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── domain/
 │   ├── auth/
@@ -60,15 +63,18 @@ src/main/java/com/jiuxi/
 │       ├── service/
 │       ├── repo/
 │       └── exception/
-```
+````
 
 **操作步骤：**
 1. 创建 [domain](file://src/main/java/com/jiuxi/domain) 目录
 2. 在 [domain](file://src/main/java/com/jiuxi/domain) 目录下创建 auth、org、sys、user、log、file、common 子目录
 3. 在每个业务领域目录下创建 model、service、repo、exception 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.3 创建基础设施层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── infra/
 │   ├── auth/
@@ -79,14 +85,17 @@ src/main/java/com/jiuxi/
 │   ├── file/
 │   ├── common/
 │   └── config/
-```
+````
 
 **操作步骤：**
 1. 创建 [infra](file://src/main/java/com/jiuxi/infra) 目录
 2. 在 [infra](file://src/main/java/com/jiuxi/infra) 目录下创建 auth、org、sys、user、log、file、common、config 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.4 创建接口层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── intf/
 │   ├── auth/
@@ -96,14 +105,17 @@ src/main/java/com/jiuxi/
 │   ├── log/
 │   ├── file/
 │   └── common/
-```
+````
 
 **操作步骤：**
 1. 创建 [intf](file://src/main/java/com/jiuxi/intf) 目录
 2. 在 [intf](file://src/main/java/com/jiuxi/intf) 目录下创建 auth、org、sys、user、log、file、common 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.5 创建配置层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── config/
 │   ├── sec/
@@ -111,37 +123,46 @@ src/main/java/com/jiuxi/
 │   ├── cache/
 │   ├── web/
 │   └── common/
-```
+````
 
 **操作步骤：**
 1. 创建 [config](file://src/main/java/com/jiuxi/config) 目录
 2. 在 [config](file://src/main/java/com/jiuxi/config) 目录下创建 sec、db、cache、web、common 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.6 创建通用层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── common/
 │   ├── util/
 │   ├── exception/
 │   ├── constant/
 │   └── annotation/
-```
+````
 
 **操作步骤：**
 1. 创建 [common](file://src/main/java/com/jiuxi/common_2) 目录（注意与现有 common 包区分）
 2. 在 [common](file://src/main/java/com/jiuxi/common_2) 目录下创建 util、exception、constant、annotation 子目录
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 1.1.7 创建启动层包结构
-```
+````
 src/main/java/com/jiuxi/
 ├── startup/
 │   ├── config/
 │   └── Application.java
-```
+````
 
 **操作步骤：**
 1. 创建 [startup](file://src/main/java/com/jiuxi/startup) 目录
 2. 在 [startup](file://src/main/java/com/jiuxi/startup) 目录下创建 config 子目录
+
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
 
 ### 1.2 移动 Application.java
 
@@ -153,7 +174,7 @@ src/main/java/com/jiuxi/
 ### 1.3 重构配置文件目录结构
 
 #### 1.3.1 创建新的配置目录结构
-```
+````
 src/main/resources/
 ├── application.yml
 ├── config/
@@ -164,7 +185,7 @@ src/main/resources/
 │   ├── security.yml
 │   ├── cache.yml
 │   └── logback-spring.xml
-```
+````
 
 #### 1.3.2 迁移配置文件
 
@@ -183,7 +204,7 @@ src/main/resources/
 **操作步骤：**
 1. 更新 `src/main/resources/application.yml` 中的配置文件导入路径
 2. 将原来的：
-   ```yaml
+   ````yaml
    spring:
      config:
        import: 
@@ -191,9 +212,9 @@ src/main/resources/
          - "classpath:config/db/database-${spring.profiles.active}.yml"
          - "classpath:config/cache/cache-${spring.profiles.active}.yml"
          - "classpath:config/sec/security-${spring.profiles.active}.yml"
-   ```
+   ````
    修改为：
-   ```yaml
+   ````yaml
    spring:
      config:
        import: 
@@ -201,7 +222,7 @@ src/main/resources/
          - "classpath:config/database.yml"
          - "classpath:config/cache.yml"
          - "classpath:config/security.yml"
-   ```
+   ````
 
 ## 2. 第二阶段：模块迁移
 
@@ -352,7 +373,7 @@ src/main/resources/
 
 **操作步骤：**
 1. 创建新的测试目录结构：
-   ```
+   ````
    src/test/java/com/jiuxi/
    ├── unit/
    │   ├── app/
@@ -362,7 +383,7 @@ src/main/resources/
    ├── integration/
    ├── performance/
    └── testcontainers/
-   ```
+   ````
 2. 将现有的单元测试按照新的目录结构进行迁移
 3. 运行所有单元测试，确保功能正常
 

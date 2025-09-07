@@ -295,6 +295,9 @@ src/main/resources/
 3. 将 `src/main/java/com/jiuxi/module/log/infra/` 下的内容移动到 `src/main/java/com/jiuxi/infra/log/`
 4. 将 `src/main/java/com/jiuxi/module/log/interfaces/` 下的内容移动到 `src/main/java/com/jiuxi/intf/log/`
 
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
+
 #### 2.1.6 迁移 file 模块
 
 **操作步骤：**

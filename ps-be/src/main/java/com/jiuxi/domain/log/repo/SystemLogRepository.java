@@ -1,9 +1,9 @@
-package com.jiuxi.module.system.domain.repository;
+package com.jiuxi.domain.log.repo;
 
-import com.jiuxi.module.system.domain.entity.SystemLog;
-import com.jiuxi.module.system.domain.entity.LogType;
-import com.jiuxi.module.system.domain.entity.LogLevel;
-import com.jiuxi.module.system.domain.entity.LogStatus;
+import com.jiuxi.domain.log.model.SystemLog;
+import com.jiuxi.domain.log.model.LogType;
+import com.jiuxi.domain.log.model.LogLevel;
+import com.jiuxi.domain.log.model.LogStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

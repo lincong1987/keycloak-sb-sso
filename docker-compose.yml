@@ -61,11 +61,11 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin123
       
       # 开发模式配置
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
-      KC_HTTP_ENABLED: true
-      KC_HEALTH_ENABLED: true
-      KC_METRICS_ENABLED: true
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
     command:
       - start-dev
     ports:
@@ -81,6 +81,29 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  # MySQL数据库 - 应用使用
+  mysql:
+    image: mysql:5.7
+    container_name: ps-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: W4HV=QxtHz
+      MYSQL_DATABASE: ps-bmp
+      MYSQL_USER: ps-user
+      MYSQL_PASSWORD: ps-password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - keycloak-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   # Redis缓存服务
   redis:
@@ -101,6 +124,8 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  mysql_data:
     driver: local
   redis_data:
     driver: local

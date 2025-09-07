@@ -109,3 +109,15 @@ realm 为 `ps-realm`
 客户端ID 为 `ps-be`
 admin账号为 `admin`
 admin密码为 `admin123`
+
+
+
+# 测试服务器
+- 开发环境是甲方客户提供的 4C 8G 的阿里云服务器。
+- 硬件配置 `4C 8G`
+- 操作系统 `Ubuntu`
+- 公网 IP `60.205.161.235`
+- 账号 `root`
+- 密码 `Dangxiao@123`
+- 运行目录 `/root/ps-bmp`
+- 使用 sudo

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,15 +21,16 @@ import javax.mail.internet.MimeMessage;
  * @Date: 2024/12/19
  * @Copyright: 2024 www.tuxun.net Inc. All rights reserved.
  */
-@Service("adminEmailService")
+@Service
+@ConditionalOnClass(JavaMailSender.class)
 public class EmailServiceImpl implements EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username:}")
     private String from;
 
     @PostConstruct
@@ -71,6 +73,11 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public boolean sendTextMail(String to, String subject, String content) {
+        if (mailSender == null) {
+            LOGGER.warn("邮件服务未配置，无法发送邮件到: {}", to);
+            return false;
+        }
+        
         try {
             LOGGER.info("邮件服务配置 - 发件人: {}, SMTP主机: {}", from, "smtp.163.com");
             LOGGER.info("JavaMailSender实例: {}", mailSender != null ? "已注入" : "未注入");
@@ -102,6 +109,11 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public boolean sendHtmlMail(String to, String subject, String content) {
+        if (mailSender == null) {
+            LOGGER.warn("邮件服务未配置，无法发送HTML邮件到: {}", to);
+            return false;
+        }
+        
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

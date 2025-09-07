@@ -157,7 +157,11 @@
 				this.service.view({}).then((result) => {
 					// 判断code
 					if (result && result.code == 1) {
-						this.formData = result.data
+						// 如果返回数据不为空，则更新表单数据
+						if (result.data) {
+							this.formData = result.data
+						}
+						// 如果返回数据为空，保持默认的formData结构
 					} else {
 						// 服务器返回失败
 						this.$message.error('错误提示:' + result.message)

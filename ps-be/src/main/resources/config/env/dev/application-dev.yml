@@ -20,6 +20,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
+  # 禁用邮件自动配置以避免启动问题
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
   # DevTools配置 - 启用热重载
   devtools:
     restart:
@@ -61,6 +65,19 @@ logging:
 ############################################################
 # 开发环境可以开启的调试功能
 debug: false
+
+############################################################
+#############  监控配置
+############################################################
+jiuxi:
+  platform:
+    plugin:
+      monitor:
+        server-url: http://localhost:8082/ps-be
+        system-desc: "PS-BMP后端系统"
+        client-id: "ps-bmp-backend-dev"
+        connection-timeout: 3000
+        read-timeout: 5000
 
 # 开发环境JVM配置建议
 # -Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200

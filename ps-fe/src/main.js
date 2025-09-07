@@ -19,7 +19,7 @@ import TpComponents, { Page } from '@fb/tp-components/src/index'
 import TpSchedule from '@fb/schedule-ui/src/index'
 import AdminBase, { AdminBaseScreenUtil } from '@fb/admin-base'
 import './assets/styles/main.less';
-//import MonitorUi from '@fb/monitor-ui'
+import MonitorUi from '@fb/monitor-ui'
 // 导入组件
 import LogCenterUi from '@fb/log-center-ui'
 import { setKeycloakInitConfig } from '../@fb/fb-core/src/util/keycloak'
@@ -33,7 +33,7 @@ window.app = new Application({
 	use: {
 		Vue,
 		Vuex,
-		//MonitorUi,
+		MonitorUi,
 		VueRouter: {
 			plugin: VueRouter,
 			beforeEach(to, from, next) {

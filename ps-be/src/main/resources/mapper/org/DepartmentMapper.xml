@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.jiuxi.module.org.infra.persistence.mapper.DepartmentMapper">
+<mapper namespace="com.jiuxi.infra.org.persistence.mapper.DepartmentMapper">
 
     <!-- 部门持久化对象结果映射 -->
-    <resultMap type="com.jiuxi.module.org.infra.persistence.entity.DepartmentPO" id="departmentPOMap">
+    <resultMap type="com.jiuxi.infra.org.persistence.entity.DepartmentPO" id="departmentPOMap">
         <result property="deptId" column="DEPT_ID"/>
         <result property="pdeptId" column="PDEPT_ID"/>
         <result property="deptLevelcode" column="DEPT_LEVELCODE"/>
@@ -35,7 +35,7 @@
     </resultMap>
 
     <!-- 插入部门 -->
-    <insert id="insert" parameterType="com.jiuxi.module.org.infra.persistence.entity.DepartmentPO">
+    <insert id="insert" parameterType="com.jiuxi.infra.org.persistence.entity.DepartmentPO">
         INSERT INTO tp_dept_basicinfo
         (DEPT_ID, PDEPT_ID, DEPT_LEVELCODE, DEPT_NO, DEPT_FULL_NAME, DEPT_SIMPLE_NAME, DEPT_TYPE, DEPT_DESC,
          ORDER_INDEX, PRINCIPAL_NAME, PRINCIPAL_TEL, CATEGORY, CITY_CODE, ASCN_ID,
@@ -48,7 +48,7 @@
     </insert>
 
     <!-- 根据ID更新部门 -->
-    <update id="updateById" parameterType="com.jiuxi.module.org.infra.persistence.entity.DepartmentPO">
+    <update id="updateById" parameterType="com.jiuxi.infra.org.persistence.entity.DepartmentPO">
         UPDATE tp_dept_basicinfo
         <set>
             <if test="pdeptId != null">PDEPT_ID = #{pdeptId},</if>

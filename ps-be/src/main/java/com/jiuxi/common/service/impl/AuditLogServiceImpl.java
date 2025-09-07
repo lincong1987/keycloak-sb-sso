@@ -1,7 +1,8 @@
 package com.jiuxi.common.service.impl;
 
 import com.jiuxi.common.service.AuditLogService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,9 +18,10 @@ import java.util.stream.Collectors;
  * @Date: 2025/01/07
  * @Copyright: 2025 www.jiuxi.com Inc. All rights reserved.
  */
-@Slf4j
 @Service
 public class AuditLogServiceImpl implements AuditLogService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AuditLogServiceImpl.class);
     
     // 内存存储审计日志（实际项目中应使用数据库）
     private final Map<String, List<Map<String, Object>>> auditLogs = new ConcurrentHashMap<>();
@@ -198,7 +200,6 @@ public class AuditLogServiceImpl implements AuditLogService {
             
             log.info("系统事件日志记录成功: eventType={}, eventName={}, severity={}", eventType, eventName, severity);
             return logId;
-            
         } catch (Exception e) {
             log.error("系统事件日志记录失败: eventType={}, eventName={}", eventType, eventName, e);
             return null;

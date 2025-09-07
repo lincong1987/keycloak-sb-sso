@@ -11,7 +11,8 @@ import com.jiuxi.admin.core.bean.vo.TpIpAccessLogVO;
 import com.jiuxi.admin.core.mapper.TpIpAccessLogMapper;
 import com.jiuxi.admin.core.service.TpIpAccessLogService;
 import com.jiuxi.admin.core.util.IpAccessControlUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,10 @@ import java.util.Map;
  * @Date: 2024-01-27
  * @Copyright: www.jiuxi.com Inc. All rights reserved.
  */
-@Slf4j
 @Service
 public class TpIpAccessLogServiceImpl implements TpIpAccessLogService {
+    
+    private static final Logger log = LoggerFactory.getLogger(TpIpAccessLogServiceImpl.class);
 
     @Autowired
     private TpIpAccessLogMapper tpIpAccessLogMapper;

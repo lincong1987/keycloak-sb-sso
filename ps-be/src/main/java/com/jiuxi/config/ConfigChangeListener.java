@@ -1,6 +1,7 @@
 package com.jiuxi.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -12,9 +13,10 @@ import org.springframework.stereotype.Component;
  * @author ps-bmp
  * @since 2024-01-20
  */
-@Slf4j
 @Component
 public class ConfigChangeListener implements ApplicationListener<ConfigChangeEvent> {
+    
+    private static final Logger log = LoggerFactory.getLogger(ConfigChangeListener.class);
 
     @Autowired
     private IpAccessConfigCache ipAccessConfigCache;

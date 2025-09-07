@@ -3,7 +3,8 @@ package com.jiuxi.admin.core.service.impl;
 import com.jiuxi.admin.core.bean.entity.TpKeycloakAccount;
 import com.jiuxi.admin.core.service.KeycloakSyncService;
 import com.jiuxi.admin.core.service.TpKeycloakAccountService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -21,9 +22,10 @@ import java.util.*;
  * @author System
  * @since 2025-01-21
  */
-@Slf4j
 @Service
 public class KeycloakSyncServiceImpl implements KeycloakSyncService {
+
+    private static final Logger log = LoggerFactory.getLogger(KeycloakSyncServiceImpl.class);
 
     @Autowired
     private TpKeycloakAccountService tpKeycloakAccountService;

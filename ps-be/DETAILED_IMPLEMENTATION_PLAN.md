@@ -280,6 +280,12 @@ src/main/resources/
 2. 将 `src/main/java/com/jiuxi/module/user/domain/` 下的内容移动到 `src/main/java/com/jiuxi/domain/user/model/` 和 `src/main/java/com/jiuxi/domain/user/service/`
 3. 将 `src/main/java/com/jiuxi/module/user/infra/` 下的内容移动到 `src/main/java/com/jiuxi/infra/user/`
 4. 将 `src/main/java/com/jiuxi/module/user/interfaces/` 下的内容移动到 `src/main/java/com/jiuxi/intf/user/`
+5. 修复迁移过程中发现的包引用和类路径问题
+6. 更新Spring Boot主应用类的包扫描配置以包含新的user模块
+7. 解决多个@MapperScan注解相互覆盖的问题
+
+**状态：** 已完成 ✓
+**完成时间：** 2025-09-07
 
 #### 2.1.5 迁移 log 模块
 

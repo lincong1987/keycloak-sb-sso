@@ -2,7 +2,8 @@ package com.jiuxi.common.service.impl;
 
 import com.jiuxi.common.service.NotificationService;
 import com.jiuxi.common.service.EmailService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,10 @@ import java.util.stream.Collectors;
  * @Date: 2025/01/07
  * @Copyright: 2025 www.jiuxi.com Inc. All rights reserved.
  */
-@Slf4j
 @Service
 public class NotificationServiceImpl implements NotificationService {
+    
+    private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
     
     @Autowired
     private EmailService emailService;

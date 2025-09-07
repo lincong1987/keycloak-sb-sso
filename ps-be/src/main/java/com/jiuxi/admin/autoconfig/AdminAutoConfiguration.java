@@ -33,7 +33,10 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @EnableConfigurationProperties({AdminConfigurationProperties.class})
 @Import(CommonDataPermissionsUtil.class)
-@MapperScan(basePackages = {"com.jiuxi.admin.core.mapper"})
+@MapperScan(basePackages = {
+    "com.jiuxi.admin.core.mapper",
+    "com.jiuxi.infra.user.persistence.mapper"
+})
 @ComponentScan({"com.jiuxi.admin.core.controller", "com.jiuxi.admin.core.service"})
 public class AdminAutoConfiguration {
     /**

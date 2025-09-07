@@ -125,4 +125,46 @@ public class TpIpAccessLogQuery {
      * 扩展字段3
      */
     private String extend03;
+    
+    /**
+     * 获取当前页
+     */
+    public Integer getCurrent() {
+        return current;
+    }
+    
+    /**
+     * 设置当前页
+     */
+    public void setCurrent(Integer current) {
+        this.current = current;
+    }
+    
+    /**
+     * 获取每页大小
+     */
+    public Integer getSize() {
+        return size;
+    }
+    
+    /**
+     * 设置每页大小
+     */
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+    
+    /**
+     * 设置客户端IP地址
+     */
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+    
+    /**
+     * 设置访问结果
+     */
+    public void setAccessResult(String accessResult) {
+        this.accessResult = accessResult;
+    }
 }
